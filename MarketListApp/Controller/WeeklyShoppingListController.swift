@@ -234,7 +234,6 @@ class WeeklyShoppingListObjectController {
     }
     //getting cell
     func getCell(inCellAddress index : [CellAddressDictionary : Int], inTheArray ary: [Market])-> Item {
-        print(uObjCtrlWeeklyVC.getCellAdress())
         let cellIndex = uObjCtrlWeeklyVC.computeRowAndColum(atSection: index[.marketAndSectorIndex]!, atRow: index[.itemIndex]!, inMarketArray: ary)
         let selectedCell = ary[index[.marketAndSectorIndex]!].getSector()[cellIndex.section].getItem()[cellIndex.row]
         return selectedCell

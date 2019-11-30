@@ -101,6 +101,13 @@
 			path = MarketItemMercadoVCCell;
 			sourceTree = "<group>";
 		};
+		386EE9602391F24E000BF2FD /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		3880B68C231DFB65008A11D0 = {
 			isa = PBXGroup;
 			children = (
@@ -225,6 +232,7 @@
 			children = (
 				38DEDEAC232E775A0085A219 /* ItemItemMercadoVCCell.swift */,
 				38DEDEAD232E775A0085A219 /* ItemItemMercadoVCCell.xib */,
+				386EE9602391F24E000BF2FD /* New Group */,
 			);
 			path = ItemItemMercadoVCCell;
 			sourceTree = "<group>";

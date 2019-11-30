@@ -84,6 +84,7 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             itemsMercadoTableView.separatorStyle = .singleLine
             iCell.checkmarkSign.addTarget(self, action: #selector(addItemToWeeklyShoppingList(sender:)), for: .touchUpInside)
             iCell.itemImageButton.addTarget(self, action: #selector(checkTouchInsideImageView(sender:)), for: .touchUpInside)
+            iCell.itemNotes.addTarget(self, action: #selector(getItemNotesItemsVC(sender:)), for: .touchUpInside)
             return objCtrl.returnItemCell(withCell: iCell, inMarket: indexPath.section, inSector: rowAndSection.section, itemIndex: rowAndSection.row, indexPathRow: indexPath.row, withMarketsArray: marketsArray)
         }
     }
@@ -119,6 +120,12 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             quantityDetailsLabel.text = objCtrl.updatingQttyScrollViewInformationLabels(selectedCell: selectedCell)[1]
             scrollViewOutletShow()
         }
+    }
+    //get item notes
+    @objc func getItemNotesItemsVC(sender: UIButton){
+        uObjCtrl.setTagForCellAddressForOtherFunctionsOutsideTableView(atIndexPath: sender.tag)
+        let cell = objCtrl.getCell(inCellAddress: uObjCtrl.getCellAdress(), inTheArray: marketsArray)
+        print(cell.getName())
     }
     //MARK:- TEXTFIELDS
     //textfield delegate method

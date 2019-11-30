@@ -112,8 +112,10 @@ class itemsMercadoObjectController {
             cell.checkmarkSign.setImage(nil, for: .normal)
             cell.cellView.backgroundColor = nil
         }
-        cell.checkmarkSign.tag = mkt*uObjCtrl.getCellAdress()[.constantForCellAddress]!+row
-        cell.itemImageButton.tag = mkt*uObjCtrl.getCellAdress()[.constantForCellAddress]!+row
+        let tagNumber = mkt*uObjCtrl.getCellAdress()[.constantForCellAddress]!+row
+        cell.checkmarkSign.tag = tagNumber
+        cell.itemImageButton.tag = tagNumber
+        cell.itemNotes.tag = tagNumber
 //         iCell.checkmarkSign.tag = (indexPath.section*objCtrl.getCellAdress()[.constaForCellAddress]!)+indexPath.row
         return cell
     }
@@ -128,6 +130,13 @@ class itemsMercadoObjectController {
         } else {
             return CGFloat(itemCell.hValue)
         }
+    }
+    //MARK:- DATA MANIPULATION
+    //getting cell
+    func getCell(inCellAddress index : [CellAddressDictionary : Int], inTheArray ary: [Market])-> Item {
+        let cellIndex = uObjCtrlItemsVC.computeRowAndColum(atSection: index[.marketAndSectorIndex]!, atRow: index[.itemIndex]!, inMarketArray: ary)
+        let selectedCell = ary[index[.marketAndSectorIndex]!].getSector()[cellIndex.section].getItem()[cellIndex.row]
+        return selectedCell
     }
     //MARK:- LAYOUT
     func updatingQttyScrollViewInformationLabels(selectedCell: Item) -> [String] {
