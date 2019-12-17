@@ -13,7 +13,13 @@
 		381FC2452324064800C484C2 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381FC2442324064800C484C2 /* Item.swift */; };
 		381FC265232494AF00C484C2 /* ToBuyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381FC264232494AF00C484C2 /* ToBuyList.swift */; };
 		381FC267232496D200C484C2 /* PurchasedItemsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381FC266232496D200C484C2 /* PurchasedItemsList.swift */; };
+		382004F62398923500B7E913 /* Structs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382004F52398923500B7E913 /* Structs.swift */; };
+		382004F92398B5BE00B7E913 /* SingleItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382004F82398B5BE00B7E913 /* SingleItemController.swift */; };
 		3820B68C232E979300E2FEFA /* SingleItemInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3820B68B232E979300E2FEFA /* SingleItemInfoVC.swift */; };
+		382651DB23A85B79006261C3 /* ItemPurchaseHistoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382651DA23A85B79006261C3 /* ItemPurchaseHistoryVC.swift */; };
+		382651DD23A85B8A006261C3 /* ItemPurchaseHistoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382651DC23A85B8A006261C3 /* ItemPurchaseHistoryController.swift */; };
+		382651E523A8633D006261C3 /* ItemPurchaseHistoryVCCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382651E323A8633D006261C3 /* ItemPurchaseHistoryVCCell.swift */; };
+		382651E623A8633D006261C3 /* ItemPurchaseHistoryVCCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 382651E423A8633D006261C3 /* ItemPurchaseHistoryVCCell.xib */; };
 		382A5E9D23800B22008F3B83 /* ItemImageExpandedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382A5E9C23800B22008F3B83 /* ItemImageExpandedVC.swift */; };
 		38306190232DEAA3003725FB /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3830618F232DEAA3003725FB /* HomeVC.swift */; };
 		38306192232DFA04003725FB /* ItemsMercadoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38306191232DFA04003725FB /* ItemsMercadoVC.swift */; };
@@ -49,7 +55,13 @@
 		381FC2442324064800C484C2 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		381FC264232494AF00C484C2 /* ToBuyList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBuyList.swift; sourceTree = "<group>"; };
 		381FC266232496D200C484C2 /* PurchasedItemsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasedItemsList.swift; sourceTree = "<group>"; };
+		382004F52398923500B7E913 /* Structs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structs.swift; sourceTree = "<group>"; };
+		382004F82398B5BE00B7E913 /* SingleItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleItemController.swift; sourceTree = "<group>"; };
 		3820B68B232E979300E2FEFA /* SingleItemInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleItemInfoVC.swift; sourceTree = "<group>"; };
+		382651DA23A85B79006261C3 /* ItemPurchaseHistoryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPurchaseHistoryVC.swift; sourceTree = "<group>"; };
+		382651DC23A85B8A006261C3 /* ItemPurchaseHistoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPurchaseHistoryController.swift; sourceTree = "<group>"; };
+		382651E323A8633D006261C3 /* ItemPurchaseHistoryVCCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPurchaseHistoryVCCell.swift; sourceTree = "<group>"; };
+		382651E423A8633D006261C3 /* ItemPurchaseHistoryVCCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ItemPurchaseHistoryVCCell.xib; sourceTree = "<group>"; };
 		382A5E9C23800B22008F3B83 /* ItemImageExpandedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ItemImageExpandedVC.swift; path = ../../ItemImageExpandedVC.swift; sourceTree = "<group>"; };
 		3830618F232DEAA3003725FB /* HomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeVC.swift; sourceTree = "<group>"; };
 		38306191232DFA04003725FB /* ItemsMercadoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsMercadoVC.swift; sourceTree = "<group>"; };
@@ -92,6 +104,62 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3809FEB3239603AA00B82E16 /* 3- WeeklyShoppingList ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				387D3FF42384B9DB00567B95 /* WeeklyShoppingList.swift */,
+				387D3FF62384BE2D00567B95 /* WeeklyShoppingListController.swift */,
+			);
+			path = "3- WeeklyShoppingList ViewController";
+			sourceTree = "<group>";
+		};
+		3809FEB4239603E900B82E16 /* 2- ItemMercado ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				38306191232DFA04003725FB /* ItemsMercadoVC.swift */,
+				386E0F392349586F0048539F /* ItemsMercadoVCController.swift */,
+				382004F72398B5AC00B7E913 /* singleItemVC */,
+				38D9A2C12331E2FC0010E2EE /* NewItemVC.swift */,
+			);
+			path = "2- ItemMercado ViewControllers";
+			sourceTree = "<group>";
+		};
+		3809FEB52396040600B82E16 /* 1- Home ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				3830618F232DEAA3003725FB /* HomeVC.swift */,
+			);
+			path = "1- Home ViewController";
+			sourceTree = "<group>";
+		};
+		382004F72398B5AC00B7E913 /* singleItemVC */ = {
+			isa = PBXGroup;
+			children = (
+				382651D923A85B42006261C3 /* purchaseHistoryVC */,
+				3820B68B232E979300E2FEFA /* SingleItemInfoVC.swift */,
+				382004F82398B5BE00B7E913 /* SingleItemController.swift */,
+			);
+			path = singleItemVC;
+			sourceTree = "<group>";
+		};
+		382651D923A85B42006261C3 /* purchaseHistoryVC */ = {
+			isa = PBXGroup;
+			children = (
+				382651DA23A85B79006261C3 /* ItemPurchaseHistoryVC.swift */,
+				382651DC23A85B8A006261C3 /* ItemPurchaseHistoryController.swift */,
+			);
+			path = purchaseHistoryVC;
+			sourceTree = "<group>";
+		};
+		382651DE23A862D1006261C3 /* ItemPurchaseHistoryVCCell */ = {
+			isa = PBXGroup;
+			children = (
+				382651E323A8633D006261C3 /* ItemPurchaseHistoryVCCell.swift */,
+				382651E423A8633D006261C3 /* ItemPurchaseHistoryVCCell.xib */,
+			);
+			path = ItemPurchaseHistoryVCCell;
+			sourceTree = "<group>";
+		};
 		38306197232DFFA7003725FB /* MarketItemMercadoVCCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -99,13 +167,6 @@
 				38306194232DFF9D003725FB /* MarketItemMercadoVCCell.xib */,
 			);
 			path = MarketItemMercadoVCCell;
-			sourceTree = "<group>";
-		};
-		386EE9602391F24E000BF2FD /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "New Group";
 			sourceTree = "<group>";
 		};
 		3880B68C231DFB65008A11D0 = {
@@ -153,6 +214,7 @@
 		3880B6AB231DFB94008A11D0 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				382651DE23A862D1006261C3 /* ItemPurchaseHistoryVCCell */,
 				38B8E1EA2385DE81009E426D /* WeeklyShoppingListVC */,
 				38B8E1E92385DE6A009E426D /* ItemsMercadoVC cells */,
 				3880B6A1231DFB66008A11D0 /* LaunchScreen.storyboard */,
@@ -165,17 +227,14 @@
 			isa = PBXGroup;
 			children = (
 				3880B698231DFB65008A11D0 /* AppDelegate.swift */,
-				3830618F232DEAA3003725FB /* HomeVC.swift */,
-				38306191232DFA04003725FB /* ItemsMercadoVC.swift */,
+				3809FEB52396040600B82E16 /* 1- Home ViewController */,
+				3809FEB4239603E900B82E16 /* 2- ItemMercado ViewControllers */,
+				3809FEB3239603AA00B82E16 /* 3- WeeklyShoppingList ViewController */,
 				382A5E9C23800B22008F3B83 /* ItemImageExpandedVC.swift */,
-				386E0F392349586F0048539F /* ItemsMercadoVCController.swift */,
-				3820B68B232E979300E2FEFA /* SingleItemInfoVC.swift */,
-				38D9A2C12331E2FC0010E2EE /* NewItemVC.swift */,
 				38B0DBD72373AB4200F7EA9D /* Extensions.swift */,
 				38F3D7E92384FE6400C90281 /* UniversalObjectController.swift */,
 				387D3FF22384AFFD00567B95 /* Enums.swift */,
-				387D3FF42384B9DB00567B95 /* WeeklyShoppingList.swift */,
-				387D3FF62384BE2D00567B95 /* WeeklyShoppingListController.swift */,
+				382004F52398923500B7E913 /* Structs.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -232,7 +291,6 @@
 			children = (
 				38DEDEAC232E775A0085A219 /* ItemItemMercadoVCCell.swift */,
 				38DEDEAD232E775A0085A219 /* ItemItemMercadoVCCell.xib */,
-				386EE9602391F24E000BF2FD /* New Group */,
 			);
 			path = ItemItemMercadoVCCell;
 			sourceTree = "<group>";
@@ -313,6 +371,7 @@
 				3880B6A0231DFB66008A11D0 /* Assets.xcassets in Resources */,
 				38DEDEAF232E775A0085A219 /* ItemItemMercadoVCCell.xib in Resources */,
 				3880B69E231DFB65008A11D0 /* Main.storyboard in Resources */,
+				382651E623A8633D006261C3 /* ItemPurchaseHistoryVCCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +383,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				381FC267232496D200C484C2 /* PurchasedItemsList.swift in Sources */,
+				382651DB23A85B79006261C3 /* ItemPurchaseHistoryVC.swift in Sources */,
 				38F3D7E72384E11000C90281 /* ItemItemWeeklyShoppingListVC.swift in Sources */,
 				38306190232DEAA3003725FB /* HomeVC.swift in Sources */,
 				38306195232DFF9D003725FB /* MarketItemMercadoVCCell.swift in Sources */,
@@ -338,14 +398,18 @@
 				382A5E9D23800B22008F3B83 /* ItemImageExpandedVC.swift in Sources */,
 				3867F62F23899B1F007659EC /* SectorItemWeeklyShoppingList.swift in Sources */,
 				3880B699231DFB65008A11D0 /* AppDelegate.swift in Sources */,
+				382651E523A8633D006261C3 /* ItemPurchaseHistoryVCCell.swift in Sources */,
 				381FC23F2324044A00C484C2 /* Market.swift in Sources */,
 				38DEDEA7232E75950085A219 /* SectorItemMercadoVCCell.swift in Sources */,
+				382004F62398923500B7E913 /* Structs.swift in Sources */,
 				38B0DBD82373AB4200F7EA9D /* Extensions.swift in Sources */,
 				38306192232DFA04003725FB /* ItemsMercadoVC.swift in Sources */,
 				381FC2452324064800C484C2 /* Item.swift in Sources */,
+				382651DD23A85B8A006261C3 /* ItemPurchaseHistoryController.swift in Sources */,
 				381FC2412324059800C484C2 /* Sector.swift in Sources */,
 				387D3FF32384AFFD00567B95 /* Enums.swift in Sources */,
 				387D3FF72384BE2D00567B95 /* WeeklyShoppingListController.swift in Sources */,
+				382004F92398B5BE00B7E913 /* SingleItemController.swift in Sources */,
 				3820B68C232E979300E2FEFA /* SingleItemInfoVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

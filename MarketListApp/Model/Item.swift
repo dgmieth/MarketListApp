@@ -12,34 +12,30 @@ import UIKit
 class Item {
     private static var classCounter : Int = 0
     private let ID : Int
+    //main item information
     private var name : String
-    private var brand : String
-    private var coldItem : Bool
+    private var brand : String?
     private var formOfSale : ItemSaleForm = ItemSaleForm()
-    private var addToShopList : Bool
-    private var notes : String?
+    private var coldItem : Bool = false
+    //secondaryItemInformation
+    private var information : String?
     private var purchaseHistory = [[String]]()
-    private var image : UIImage
-    private var purchased : Bool
+    private var image : UIImage = UIImage(named: "standarNewItemImage")!
+    private var addToShopList : Bool = false
+    private var purchased : Bool = false
     
-    init (itemName name : String, itsBrandIs brand : String, itIsCold temp : Bool){
+    init (itemName name : String){
         Item.classCounter = Item.classCounter + 1
         self.ID = Item.classCounter
         self.name = name
-        self.brand = brand
-        self.coldItem = temp
-        self.image = UIImage(named: "standarNewItemImage")!
-        self.addToShopList = false
-        self.purchased = false
     }
     init(){
         self.ID = 0
         self.name = ""
-        self.brand = ""
-        self.coldItem = false
         self.image = UIImage(named: "standarNewItemImage")!
-        self.addToShopList = false
-        self.purchased = false
+    }
+    deinit {
+        print("killed")
     }
     //getter&setters
     func getID()->Int{
@@ -54,8 +50,12 @@ class Item {
     func setBrand(itsBrandIs brand : String){
         self.brand = brand
     }
-    func getBrand()->String{
-        return self.brand
+    func getBrand()->(hasValue: Bool, Value: String){
+        if let value = self.brand {
+            return (true, value)
+        } else {
+            return (false, "")
+        }
     }
     func setItemTemp (isItCold cold : Bool){
         self.coldItem = cold
@@ -90,6 +90,16 @@ class Item {
     }
     func getPurchaseHistory() -> [[String]]{
         return self.purchaseHistory
+    }
+    func setItemInformation(information info : String){
+        self.information = info
+    }
+    func getItemInformation()->String {
+        if let itemInfo = self.information {
+            return itemInfo
+        } else {
+            return "Nao ha informacoes para este item"
+        }
     }
     //formOfSale
     func getFormOfSale () -> ItemSaleForm {

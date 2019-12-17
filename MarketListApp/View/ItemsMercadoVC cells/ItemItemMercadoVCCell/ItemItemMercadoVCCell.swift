@@ -24,6 +24,7 @@ class ItemItemMercadoVCCell: UITableViewCell {
     @IBOutlet weak var itemImage: UIImageView!
     @IBOutlet weak var itemImageButton: UIButton!
     @IBOutlet weak var itemNotes: UIButton!
+    @IBOutlet weak var coldSingImageView: UIImageView!
     
     
     @IBOutlet weak var checkmarkSign: UIButton!

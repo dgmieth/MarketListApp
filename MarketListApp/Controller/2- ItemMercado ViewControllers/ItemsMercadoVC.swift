@@ -12,7 +12,7 @@ protocol updateMainItemsArray {
     func updatingMainItemsArraySaveInHomeVC(withArray ary: [Market])
 }
 
-class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, addingNewItemsToArray  {
+class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, addingNewItemsToArray, updatingArrayOfItemSIVC {
     
     var marketsArray = [Market]()
     var objCtrl = itemsMercadoObjectController()
@@ -37,6 +37,9 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     //decimal keyboard toolbar
     var decimalKeyTooblar : UIToolbar?
     var keyboardHeight = CGFloat()
+    
+    //variables for single item VC
+    var itemInformation : CellInformation?
     
     let marketCell = MarketItemMercadoVCCell()
     let sectorCell = SectorItemMercadoVCCell()
@@ -92,7 +95,7 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return objCtrl.returnHeightForCell(atIndexPath: indexPath, usingMarketsArray: marketsArray)
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(indexPath.row)
+        goToSingleItemVC(usingIndexPath: indexPath)
         itemsMercadoTableView.deselectRow(at: indexPath, animated: true)
     }
     //MARK:- TARGETS
@@ -124,8 +127,7 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     //get item notes
     @objc func getItemNotesItemsVC(sender: UIButton){
         uObjCtrl.setTagForCellAddressForOtherFunctionsOutsideTableView(atIndexPath: sender.tag)
-        let cell = objCtrl.getCell(inCellAddress: uObjCtrl.getCellAdress(), inTheArray: marketsArray)
-        print(cell.getName())
+        present(itemInfoAlertIMVC(withSenderTag: sender.tag), animated: true, completion: nil)
     }
     //MARK:- TEXTFIELDS
     //textfield delegate method
@@ -226,6 +228,30 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
         textFieldsResignFirstResponder()
     }
+    //MARK:- ALERTS
+    func itemInfoAlertIMVC(withSenderTag tag: Int) -> UIAlertController {
+        let cell = objCtrl.getCellForTargets(inCellAddress: uObjCtrl.getCellAdress(), inTheArray: marketsArray)
+        var textField = UITextField()
+        let alert = UIAlertController(
+            title: "Item Information",
+            message: "\nOBSERVACOES:\n\(cell.getItemInformation())",
+            preferredStyle: .alert)
+        let save = UIAlertAction(title: "Salvar", style: .default) { (action) in
+            if !textField.text!.isEmpty {
+                cell.setItemInformation(information: textField.text!)
+            } else {
+                print("ERROR | ItemsMercadoVC || itemInfoAlertIMVC || could no save item info")
+            }
+        }
+        let cancel = UIAlertAction(title: "Cancelar", style: .cancel)
+        alert.addAction(cancel)
+        alert.addAction(save)
+        alert.addTextField { (field) in
+            field.placeholder = "Alterar: escreva e salve"
+            textField = field
+        }
+        return alert
+    }
     //MARK:- LAYOUT
     //setting kilo decimal or other form of sales units in the textfield
     func registeringAndUnregisteringTargetForAddingToWeeklyShoppingListButton(registerTrueAndUnregisterFalse value : Bool) {
@@ -273,6 +299,11 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             let destinationVC = segue.destination as! NewItemVC
             destinationVC.marketsArray = self.marketsArray
             destinationVC.delegate = self
+        } else if segue.identifier == "goToSingleItemVC" {
+            let destinationVC = segue.destination as! SingleItemInfoVC
+            destinationVC.selectedCellInformation = itemInformation
+            destinationVC.marketsArraySingleVC = marketsArray
+            destinationVC.delegate = self
         }
     }
     //adding a new item
@@ -282,12 +313,28 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     func goToNewItemVC () {
         performSegue(withIdentifier: "goToAddNewItem", sender: self)
     }
-    func passingNewArraysOfElements(sendMarketsArray ary: [Market]) {
-        marketsArray = ary
-    }
     //showing image
     func goToItemImageExpandedVC() {
         performSegue(withIdentifier: "goToItemImageExpandedVC", sender: self)
+    }
+    func goToSingleItemVC(usingIndexPath indexPath: IndexPath){
+        itemInformation = CellInformation(
+            itemObj: objCtrl.getCellForDidSelectRowAt(withIndexPath: indexPath, withMarketsArray: marketsArray).selectedCell,
+            marketIndex: objCtrl.getCellForDidSelectRowAt(withIndexPath: indexPath, withMarketsArray: marketsArray).mktIndex,
+            sectorIndex: objCtrl.getCellForDidSelectRowAt(withIndexPath: indexPath, withMarketsArray: marketsArray).sctIndex,
+            itemIndex: objCtrl.getCellForDidSelectRowAt(withIndexPath: indexPath, withMarketsArray: marketsArray).itemIndex,
+            formOfSaleIndex: objCtrl.getCellForDidSelectRowAt(withIndexPath: indexPath, withMarketsArray: marketsArray).formOfSaleIndex
+        )
+        performSegue(withIdentifier: "goToSingleItemVC", sender: self)
+    }
+    //MARK:- DELEGATE METHODS
+    //from newItem VC
+    func passingNewArraysOfElements(sendMarketsArray ary: [Market]) {
+        marketsArray = ary
+    }
+    //from singleItem VC
+    func updatingArrayWithNewArrayFromSIVC(sendMarketsArray ary: [Market]) {
+        marketsArray = ary
     }
     //MARK:- START/END
     func initialFunctions(){

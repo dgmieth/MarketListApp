@@ -113,7 +113,7 @@ class WeeklyShoppingList: UIViewController, UITableViewDelegate, UITableViewData
         return objCtrl.returnHeightForCell(atIndexPath: indexPath, usingMarketsArray: weeklyOnlyToBuyItems)
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        present(didSelectRowAtAlerts(withIndexPath: indexPath) , animated: true)
+        present(didSelectRowAtAlertsWSLVC(withIndexPath: indexPath) , animated: true)
     }
     //MARK:- TARGETS
     //set items as purchased upon touching it
@@ -132,7 +132,7 @@ class WeeklyShoppingList: UIViewController, UITableViewDelegate, UITableViewData
     //get notes about the item
     @objc func getItemNotes(sender: UIButton){
         uObjCtrl.setTagForCellAddressForOtherFunctionsOutsideTableView(atIndexPath: sender.tag)
-        let cell = objCtrl.getCell(inCellAddress: uObjCtrl.getCellAdress(), inTheArray: weeklyOnlyToBuyItems)
+        present(itemInfoAlertWSLVC(withSenderTag: sender.tag), animated: true, completion: nil)
     }
     //MARK:- DATA MANIPULATION
     func removeItemFromListWhenDesctructiveButtonInAlertIsTouched(selectedCell cell: Item){
@@ -226,7 +226,7 @@ class WeeklyShoppingList: UIViewController, UITableViewDelegate, UITableViewData
         textFieldsResignFirstResponder()
     }
     //MARK:- ALERTS
-    func didSelectRowAtAlerts(withIndexPath indexPath: IndexPath)->UIAlertController {
+    func didSelectRowAtAlertsWSLVC(withIndexPath indexPath: IndexPath)->UIAlertController {
         let cellIndex = uObjCtrl.computeRowAndColum(atSection: indexPath.section, atRow: indexPath.row, inMarketArray: weeklyOnlyToBuyItems)
         let selectedCell = weeklyOnlyToBuyItems[indexPath.section].getSector()[cellIndex.section].getItem()[cellIndex.row]
         if uObjCtrl.checkIfItemIsSoldInKiloOrLiter(withDescription: selectedCell.getFormOfSale().getUnitMeasure()) {
@@ -261,6 +261,22 @@ class WeeklyShoppingList: UIViewController, UITableViewDelegate, UITableViewData
         alert.addAction(editQuantity)
         alert.addAction(cancel)
         alert.addAction(removeItem)
+        return alert
+    }
+    func itemInfoAlertWSLVC(withSenderTag tag: Int) -> UIAlertController {
+        let cell = objCtrl.getCell(inCellAddress: uObjCtrl.getCellAdress(), inTheArray: weeklyOnlyToBuyItems)
+        var alertMsg = ""
+        if cell.getBrand().hasValue {
+            alertMsg = "\nMARCA:\n\(cell.getBrand().Value)\n\nINFORMACAO ATUAL:\n\(cell.getItemInformation())"
+        } else {
+            alertMsg = "\nOBSERVACOES:\n\(cell.getItemInformation())"
+        }
+        let alert = UIAlertController(
+            title: "Item Information",
+            message: alertMsg,
+            preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Cancelar", style: .cancel)
+        alert.addAction(cancel)
         return alert
     }
     //MARK:- BUTTONS

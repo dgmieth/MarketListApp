@@ -21,7 +21,7 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
     var viewHeight : CGFloat = 0
     var refrigeratedItem : Bool = false
     var gramOrMlSelected : Bool = false
-    let emptyItemCell = Item(itemName: "", itsBrandIs: "", itIsCold: false)
+    let emptyItemCell = Item()
     //decimal keyboard toolbar
     var decimalKeyTooblar : UIToolbar?
     var keyboardHeight = CGFloat()
@@ -140,8 +140,13 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
     //adding new item in array
     @IBAction func addButtonPressed(_ sender: Any) {
         if returnCanSaveItem() {
-            let newItem = Item(itemName: nameTextField.text!, itsBrandIs: brandTextField.text!, itIsCold: refrigeratedItem.self)
-            
+            //item name
+            let newItem = Item(itemName: nameTextField.text!)
+            //item brand
+            if let brand = brandTextField.text {
+                newItem.setBrand(itsBrandIs: brand)
+            }
+            //item form of sale
             newItem.getFormOfSale().setUnitMeasure(howItIsSold: UnitMeasure.allCases[formOfSalePicker.selectedRow(inComponent: 0)])
             newItem.getFormOfSale().setItemPrice(howMuchIsIt: priceTextField.text!)
             if formOfSalePicker.selectedRow(inComponent: 0) == 1 {
@@ -150,6 +155,7 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
             } else {
                 newItem.getFormOfSale().setStandarWeightValue()
             }
+            newItem.setItemTemp(isItCold: refrigeratedItem)
             if let image = itemImageView.image {
                 newItem.setImage(useImage: image)
             }

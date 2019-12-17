@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -109,8 +109,16 @@
                                 <color key="textColor" red="0.14901960780000001" green="0.1960784314" blue="0.21960784310000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="airConditioningUnit" translatesAutoresizingMaskIntoConstraints="NO" id="4M4-r9-hrw" userLabel="coldSingImageView">
+                                <rect key="frame" x="105" y="4" width="18" height="18"/>
+                                <color key="backgroundColor" red="0.13652637370255" green="0.20553743709707659" blue="0.57460787849847716" alpha="0.5" colorSpace="custom" customColorSpace="displayP3"/>
+                                <color key="tintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="18" id="LKr-lq-NQ2"/>
+                                </constraints>
+                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoDark" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UCf-rZ-MMo" userLabel="itemNotes">
-                                <rect key="frame" x="105" y="1" width="25" height="24"/>
+                                <rect key="frame" x="124" y="1" width="25" height="24"/>
                                 <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </button>
                         </subviews>
@@ -123,16 +131,18 @@
                             <constraint firstAttribute="trailing" secondItem="Xlm-sI-9Uq" secondAttribute="trailing" constant="1" id="DYQ-fd-o1A"/>
                             <constraint firstItem="aJC-ep-kB1" firstAttribute="top" secondItem="NJZ-Ry-kwb" secondAttribute="top" constant="2" id="FRt-Kb-bNh"/>
                             <constraint firstItem="UCf-rZ-MMo" firstAttribute="top" secondItem="NJZ-Ry-kwb" secondAttribute="top" constant="1" id="FYg-C4-xlm"/>
+                            <constraint firstItem="4M4-r9-hrw" firstAttribute="leading" secondItem="aJC-ep-kB1" secondAttribute="trailing" constant="1" id="P8j-hu-kX2"/>
                             <constraint firstItem="uUj-Fx-D8F" firstAttribute="leading" secondItem="NJZ-Ry-kwb" secondAttribute="leading" constant="5" id="TDW-9M-kX0"/>
                             <constraint firstItem="aJC-ep-kB1" firstAttribute="leading" secondItem="NJZ-Ry-kwb" secondAttribute="leading" constant="2" id="VnX-c1-TfX"/>
                             <constraint firstItem="KyY-Yf-iuf" firstAttribute="top" secondItem="uUj-Fx-D8F" secondAttribute="bottom" id="WZ2-SB-G9j"/>
                             <constraint firstItem="KyY-Yf-iuf" firstAttribute="leading" secondItem="qyV-X0-0mD" secondAttribute="trailing" constant="3" id="Ym2-sZ-DzX"/>
-                            <constraint firstItem="UCf-rZ-MMo" firstAttribute="leading" secondItem="aJC-ep-kB1" secondAttribute="trailing" constant="1" id="cQg-yh-EdL"/>
                             <constraint firstItem="qyV-X0-0mD" firstAttribute="leading" secondItem="NJZ-Ry-kwb" secondAttribute="leading" constant="5" id="egm-ka-eAo"/>
                             <constraint firstItem="wbt-Z5-aBg" firstAttribute="leading" secondItem="NJZ-Ry-kwb" secondAttribute="leading" constant="5" id="h7H-HP-3HY"/>
                             <constraint firstItem="ZD8-Xt-n0G" firstAttribute="top" secondItem="aJC-ep-kB1" secondAttribute="bottom" id="jkh-Ek-oYN"/>
                             <constraint firstItem="uUj-Fx-D8F" firstAttribute="top" secondItem="wbt-Z5-aBg" secondAttribute="bottom" id="oHh-QS-vvO"/>
+                            <constraint firstItem="UCf-rZ-MMo" firstAttribute="leading" secondItem="4M4-r9-hrw" secondAttribute="trailing" constant="1" id="qCG-UL-nfS"/>
                             <constraint firstItem="ZD8-Xt-n0G" firstAttribute="leading" secondItem="wbt-Z5-aBg" secondAttribute="trailing" constant="5" id="w0d-uc-EIo"/>
+                            <constraint firstItem="4M4-r9-hrw" firstAttribute="top" secondItem="NJZ-Ry-kwb" secondAttribute="top" constant="4" id="wlY-MH-nhs"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -156,6 +166,7 @@
                 <outlet property="addedToWeeklyShoppingListLab" destination="qyV-X0-0mD" id="qGF-Lh-W53"/>
                 <outlet property="cellView" destination="NJZ-Ry-kwb" id="wUO-ur-YGp"/>
                 <outlet property="checkmarkSign" destination="Xlm-sI-9Uq" id="0Wr-lb-4lx"/>
+                <outlet property="coldSingImageView" destination="4M4-r9-hrw" id="FIC-z1-QTv"/>
                 <outlet property="formOfSaleLable" destination="wbt-Z5-aBg" id="Me6-aB-3YH"/>
                 <outlet property="itemFormOfSale" destination="ZD8-Xt-n0G" id="ttr-8e-w5G"/>
                 <outlet property="itemImage" destination="Ebl-1D-C9S" id="Rme-6E-WHw"/>
@@ -168,4 +179,7 @@
             <point key="canvasLocation" x="-429" y="60"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="airConditioningUnit" width="18" height="18"/>
+    </resources>
 </document>

@@ -29,6 +29,7 @@ class ItemItemWeeklyShoppingListVC: UITableViewCell {
     @IBOutlet weak var cellView: UIView!
     
     @IBOutlet weak var itemNotes: UIButton!
+    @IBOutlet weak var coldSingImageView: UIImageView!
     
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

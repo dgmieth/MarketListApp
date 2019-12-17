@@ -17,7 +17,7 @@ class UniversalObjectController {
     func getUIColorForSelectedTableViewCells() -> UIColor {
         return UIColor(red:0.81, green:0.85, blue:0.86, alpha:1.0)
     }
-    //MARK:- formatted information
+    //MARK:- FORMAT
     func returnFormattedCurrency(usingNumber number: Double)->String{
         let currencyFormatter = NumberFormatter()
         currencyFormatter.usesGroupingSeparator = true
@@ -36,6 +36,16 @@ class UniversalObjectController {
     func returnFormattedQttyInInt(formatQtty value : Double)-> Int {
         let qtty = Int(value)
         return qtty
+    }
+    func returnDecimalNumberFormattedAccordingToLocality(valueToFormat value: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.usesGroupingSeparator = true
+        formatter.locale = NSLocale(localeIdentifier: "pt_BR") as Locale
+        formatter.maximumFractionDigits = 3
+        formatter.minimumFractionDigits = 3
+        let valueF = formatter.string(from: NSNumber(value: value))!
+        print(value)
+        return valueF
     }
     //MARK: -GET CELL FROM ARRAY
     func computeRowAndColum(atSection market : Int, atRow row : Int, inMarketArray ary : [Market]) -> IndexPath {

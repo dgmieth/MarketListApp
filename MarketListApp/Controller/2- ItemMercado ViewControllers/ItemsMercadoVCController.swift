@@ -92,6 +92,13 @@ class itemsMercadoObjectController {
         }
         cell.itemFormOfSale.text = itemsInfo.getFormOfSale().getUnitMeasure()
         cell.itemImage.image = itemsInfo.getImage()
+        if itemsInfo.getItemTemp() {
+            cell.coldSingImageView.isHidden = false
+            cell.itemNotes.imageEdgeInsets.left = 1
+        } else {
+            cell.coldSingImageView.isHidden = true
+            cell.itemNotes.imageEdgeInsets.left = -35
+        }
         if itemsInfo.getAddToBuyList() {
             cell.checkmarkSign.setImage(UIImage(named: "checkMarkAppAdded"), for: .normal)
             cell.addedToWeeklyShoppingListLab.isHidden = false
@@ -100,7 +107,7 @@ class itemsMercadoObjectController {
                 cell.addedToWeeklyListTextField.text = "\(Int(itemsInfo.getFormOfSale().getItemQuantityInWeight())) unidade(s)"
             } else {
                 if uObjCtrl.checkIfItemIsSoldInKiloOrLiter(withDescription: itemsInfo.getFormOfSale().getUnitMeasure()) {
-                    cell.addedToWeeklyListTextField.text = "\(itemsInfo.getFormOfSale().getItemQuantityInWeight()) \(itemsInfo.getFormOfSale().getUnitMeasure())(s)"
+                    cell.addedToWeeklyListTextField.text = "\( uObjCtrl.returnDecimalNumberFormattedAccordingToLocality(valueToFormat: itemsInfo.getFormOfSale().getItemQuantityInWeight())) \(itemsInfo.getFormOfSale().getUnitMeasure())(s)"
                 } else {
                     cell.addedToWeeklyListTextField.text = "\(Int(itemsInfo.getFormOfSale().getItemQuantityInWeight())) \(itemsInfo.getFormOfSale().getUnitMeasure())(s)"
                 }
@@ -116,7 +123,6 @@ class itemsMercadoObjectController {
         cell.checkmarkSign.tag = tagNumber
         cell.itemImageButton.tag = tagNumber
         cell.itemNotes.tag = tagNumber
-//         iCell.checkmarkSign.tag = (indexPath.section*objCtrl.getCellAdress()[.constaForCellAddress]!)+indexPath.row
         return cell
     }
     //Mreturn cell height
@@ -133,10 +139,23 @@ class itemsMercadoObjectController {
     }
     //MARK:- DATA MANIPULATION
     //getting cell
-    func getCell(inCellAddress index : [CellAddressDictionary : Int], inTheArray ary: [Market])-> Item {
+    func getCellForTargets(inCellAddress index : [CellAddressDictionary : Int], inTheArray ary: [Market])-> Item {
         let cellIndex = uObjCtrlItemsVC.computeRowAndColum(atSection: index[.marketAndSectorIndex]!, atRow: index[.itemIndex]!, inMarketArray: ary)
         let selectedCell = ary[index[.marketAndSectorIndex]!].getSector()[cellIndex.section].getItem()[cellIndex.row]
         return selectedCell
+    }
+    func getCellForDidSelectRowAt(withIndexPath indexPath: IndexPath, withMarketsArray ary: [Market])->(selectedCell: Item, mktIndex: Int, sctIndex: Int, itemIndex: Int, formOfSaleIndex: Int) {
+        let rowAndSection = uObjCtrl.computeRowAndColum(atSection: indexPath.section, atRow: indexPath.row, inMarketArray: ary)
+        let itemsInfo = ary[indexPath.section].getSector()[rowAndSection.section].getItem()[rowAndSection.row]
+        return (itemsInfo, indexPath.section, rowAndSection.section, rowAndSection.row, returnIndexForFormOfSale(withItem: itemsInfo))
+    }
+    func returnIndexForFormOfSale(withItem item : Item) -> Int {
+        for i in 0..<UnitMeasure.allCases.count {
+            if item.getFormOfSale().getUnitMeasureNoRawValue() == UnitMeasure.allCases[i] {
+                 return i
+            }
+        }
+        return -1
     }
     //MARK:- LAYOUT
     func updatingQttyScrollViewInformationLabels(selectedCell: Item) -> [String] {

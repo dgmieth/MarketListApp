@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -110,20 +110,31 @@
                                     <constraint firstAttribute="width" constant="65" id="nxW-wr-M0G"/>
                                 </constraints>
                             </button>
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="airConditioningUnit" translatesAutoresizingMaskIntoConstraints="NO" id="ZbP-Yv-vWi" userLabel="coldSingImageView">
+                                <rect key="frame" x="105" y="4" width="18" height="19"/>
+                                <color key="backgroundColor" red="0.13652637370000001" green="0.2055374371" blue="0.57460787849999995" alpha="0.5" colorSpace="custom" customColorSpace="displayP3"/>
+                                <color key="tintColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="18" id="2Pt-1z-l31"/>
+                                </constraints>
+                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoDark" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8ZA-a1-k3V" userLabel="itemNotes">
-                                <rect key="frame" x="105" y="1" width="25" height="24"/>
+                                <rect key="frame" x="124" y="1" width="25" height="24"/>
                                 <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="31F-Yh-l5J" firstAttribute="top" secondItem="ZbP-Yv-vWi" secondAttribute="bottom" constant="1" id="658-g4-yIG"/>
+                            <constraint firstItem="ZbP-Yv-vWi" firstAttribute="leading" secondItem="N0f-Bo-L08" secondAttribute="trailing" constant="1" id="D9r-Tn-BIy"/>
                             <constraint firstItem="N0f-Bo-L08" firstAttribute="leading" secondItem="KFw-Jd-BWf" secondAttribute="leading" constant="2" id="GEY-8m-13M"/>
                             <constraint firstItem="Upm-35-ofk" firstAttribute="top" secondItem="HbE-C6-l2v" secondAttribute="bottom" id="Gth-zJ-JbV"/>
                             <constraint firstItem="x5N-3Y-R0D" firstAttribute="top" secondItem="Upm-35-ofk" secondAttribute="bottom" id="GuL-Kf-3Cg"/>
+                            <constraint firstItem="8ZA-a1-k3V" firstAttribute="leading" secondItem="ZbP-Yv-vWi" secondAttribute="trailing" constant="1" id="IAS-l4-BN9"/>
                             <constraint firstItem="HbE-C6-l2v" firstAttribute="leading" secondItem="KFw-Jd-BWf" secondAttribute="leading" constant="5" id="NIp-ne-SZF"/>
                             <constraint firstItem="HbE-C6-l2v" firstAttribute="top" secondItem="N0f-Bo-L08" secondAttribute="bottom" id="PT0-Ad-b2e"/>
                             <constraint firstItem="QzL-BP-Hqq" firstAttribute="top" secondItem="KFw-Jd-BWf" secondAttribute="top" id="RJY-Cj-KyN"/>
                             <constraint firstItem="YW9-MT-iP4" firstAttribute="leading" secondItem="x5N-3Y-R0D" secondAttribute="trailing" constant="3" id="SJH-re-2yE"/>
-                            <constraint firstItem="8ZA-a1-k3V" firstAttribute="leading" secondItem="N0f-Bo-L08" secondAttribute="trailing" constant="1" id="TwM-G9-ANg"/>
+                            <constraint firstItem="ZbP-Yv-vWi" firstAttribute="top" secondItem="KFw-Jd-BWf" secondAttribute="top" constant="4" id="ULM-5S-jZI"/>
                             <constraint firstItem="8ZA-a1-k3V" firstAttribute="top" secondItem="KFw-Jd-BWf" secondAttribute="top" constant="1" id="VKh-Ej-7Nk"/>
                             <constraint firstItem="31F-Yh-l5J" firstAttribute="leading" secondItem="HbE-C6-l2v" secondAttribute="trailing" constant="5" id="Zzf-Ww-GKv"/>
                             <constraint firstItem="N0f-Bo-L08" firstAttribute="top" secondItem="KFw-Jd-BWf" secondAttribute="top" constant="2" id="cub-ob-ElL"/>
@@ -154,6 +165,7 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="cellView" destination="KFw-Jd-BWf" id="SuJ-6i-EqG"/>
+                <outlet property="coldSingImageView" destination="ZbP-Yv-vWi" id="hAY-8h-NDe"/>
                 <outlet property="itemImageView" destination="NM4-MR-rx3" id="3qL-9G-a1E"/>
                 <outlet property="itemNameLbl" destination="N0f-Bo-L08" id="aqs-5v-ha0"/>
                 <outlet property="itemNotes" destination="8ZA-a1-k3V" id="lYT-in-XzU"/>
@@ -166,7 +178,10 @@
                 <outlet property="singleItemPriceLbl" destination="Upm-35-ofk" id="5JS-2A-zYV"/>
                 <outlet property="singleItemPriceTxtField" destination="FZo-03-YKO" id="leS-Xt-cT5"/>
             </connections>
-            <point key="canvasLocation" x="137.68115942028987" y="130.24553571428572"/>
+            <point key="canvasLocation" x="137.68115942028987" y="129.91071428571428"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="airConditioningUnit" width="18" height="18"/>
+    </resources>
 </document>

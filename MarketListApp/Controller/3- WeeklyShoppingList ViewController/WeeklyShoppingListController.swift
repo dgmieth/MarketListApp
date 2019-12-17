@@ -38,7 +38,6 @@ class WeeklyShoppingListObjectController {
                 var itemArrays = [Item]()
                 if ary[m].getSector()[s].getItem().count > 0 {
                     for i in 0..<ary[m].getSector()[s].getItem().count {
-                        print(ary[m].getSector()[s].getItem()[i].getPurchaseHistory())
                         if ary[m].getSector()[s].getItem()[i].getAddToBuyList() {
                             itemArrays.append(ary[m].getSector()[s].getItem()[i])
                         }
@@ -146,7 +145,7 @@ class WeeklyShoppingListObjectController {
             cell.quantityTxtField.text = "\(Int(itemsInfo.getFormOfSale().getItemQuantityInWeight())) unidade(s)"
         } else {
             if uObjCtrlWeeklyVC.checkIfItemIsSoldInKiloOrLiter(withDescription: itemsInfo.getFormOfSale().getUnitMeasure()) {
-                cell.quantityTxtField.text = "\(itemsInfo.getFormOfSale().getItemQuantityInWeight()) \(itemsInfo.getFormOfSale().getUnitMeasure())(s)"
+                cell.quantityTxtField.text = "\( uObjCtrlWeeklyVC.returnDecimalNumberFormattedAccordingToLocality(valueToFormat: itemsInfo.getFormOfSale().getItemQuantityInWeight())) \(itemsInfo.getFormOfSale().getUnitMeasure())(s)"
             } else {
                 cell.quantityTxtField.text = "\(Int(itemsInfo.getFormOfSale().getItemQuantityInWeight())) \(itemsInfo.getFormOfSale().getUnitMeasure())(s)"
             }
@@ -170,6 +169,13 @@ class WeeklyShoppingListObjectController {
         cell.priceTimesQuantityLbl.text = "Total:"
         cell.priceTimesQuantityTxtField.text = "\(itemsInfo.getFormOfSale().getFormattedFinalQuantityPrice())"
         cell.itemImageView.image = itemsInfo.getImage()
+        if itemsInfo.getItemTemp() {
+            cell.coldSingImageView.isHidden = false
+            cell.itemNotes.imageEdgeInsets.left = 1
+        } else {
+            cell.coldSingImageView.isHidden = true
+            cell.itemNotes.imageEdgeInsets.left = -35
+        }
         let tagNumber = mkt*uObjCtrlWeeklyVC.getCellAdress()[.constantForCellAddress]!+row
         cell.purchasedButton.tag = tagNumber
         cell.seeImageButton.tag = tagNumber
@@ -206,7 +212,6 @@ class WeeklyShoppingListObjectController {
                                     item.setPurchase(value: false)
                                     item.setAddToBuyList(changeBoolValue: false)
                                     var array = [String]()
-                                    array.append(uObjCtrlWeeklyVC.returnFormattedCurrentSystemDate())
                                     array.append(uObjCtrlWeeklyVC.returnFormattedCurrentSystemDate())
                                     if item.getFormOfSale().getUnitMeasure() == UnitMeasure.averageWeight.rawValue {
                                         array.append("\(Int(item.getFormOfSale().getItemQuantityInWeight())) unidade(s)")
