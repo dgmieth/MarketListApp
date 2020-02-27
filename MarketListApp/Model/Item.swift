@@ -23,6 +23,7 @@ class Item {
     private var image : UIImage = UIImage(named: "standarNewItemImage")!
     private var addToShopList : Bool = false
     private var purchased : Bool = false
+    private let purchaseHistoryArrayLength = 5
     
     init (itemName name : String){
         Item.classCounter = Item.classCounter + 1
@@ -85,11 +86,19 @@ class Item {
         return self.purchased
     }
     func setPurchaseHistory(withText txt: [String]){
-        self.purchaseHistory.append(txt)
-        print(self.purchaseHistory)
+        if self.purchaseHistory.count == 0 {
+            self.purchaseHistory.append(txt)
+        } else {
+            self.purchaseHistory.insert(txt, at: 0)
+        }
     }
     func getPurchaseHistory() -> [[String]]{
-        return self.purchaseHistory
+        if self.purchaseHistory.count == self.purchaseHistoryArrayLength {
+            self.purchaseHistory.remove(at: self.purchaseHistoryArrayLength - 1)
+            return self.purchaseHistory
+        } else {
+            return self.purchaseHistory
+        }
     }
     func setItemInformation(information info : String){
         self.information = info
@@ -100,6 +109,9 @@ class Item {
         } else {
             return "Nao ha informacoes para este item"
         }
+    }
+    func getPurchaseHistoryArrayLength()->Int{
+        return self.purchaseHistoryArrayLength
     }
     //formOfSale
     func getFormOfSale () -> ItemSaleForm {

@@ -32,17 +32,17 @@ class ItemPurchaseHistoryVC: UIViewController, UITableViewDelegate, UITableViewD
     }
     //MARK:- TABLEVIEW
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if item.getPurchaseHistory().count > 0 {
-            print(1)
+        if item.getPurchaseHistory().count > 0{
             return item.getPurchaseHistory().count
         } else {
-            print(2)
-        return 1
+            return 1
         }
     }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if item.getPurchaseHistory().count > 0 {
+        if indexPath.row == 0 && item.getPurchaseHistory().count == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "purchasedHistoryVCCell", for: indexPath)
+            return cell
+        } else if indexPath.row <= item.getPurchaseHistoryArrayLength() - 3 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "itemPurchaseHistoryVCCell", for: indexPath) as! ItemPurchaseHistoryVCCell
             cell.itemDateLbl.text = item.getPurchaseHistory()[indexPath.row][0]
             cell.itemPriceLbl.text = item.getPurchaseHistory()[indexPath.row][2]
@@ -50,12 +50,14 @@ class ItemPurchaseHistoryVC: UIViewController, UITableViewDelegate, UITableViewD
             cell.ItemFinalVlLbl.text = item.getPurchaseHistory()[indexPath.row][3]
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "purchasedHistoryVCCell", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "oldPurchasedHistoryVCCell", for: indexPath)
             return cell
         }
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if item.getPurchaseHistory().count > 0 {
+        if indexPath.row == 0 && item.getPurchaseHistory().count == 0 {
+            return objCtrlIPHVC.returnCellHeightForCellForRowAT(isItCustomTableViewCell: false)
+        } else if indexPath.row <= item.getPurchaseHistoryArrayLength() - 3 {
             return objCtrlIPHVC.returnCellHeightForCellForRowAT(isItCustomTableViewCell: true)
         } else {
             return objCtrlIPHVC.returnCellHeightForCellForRowAT(isItCustomTableViewCell: false)

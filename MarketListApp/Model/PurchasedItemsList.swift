@@ -10,14 +10,36 @@ import Foundation
 
 class PurchasedItemsList{
     private static var classCounter : Int = 0
-    private var itemsStrArray : [[[[[[String]]]]]]
-    private var boughtIn : Date
+    private var itemsStrArray = [PurchasedItem]()
+    private let boughtIn : Date
     private var totalAmountSpent : Double
+    private var boughtItemsQtty : Double
     
-    init(boughIn date: Date, supermarketItemsCost amount: Double){
+    init(){
         PurchasedItemsList.classCounter = PurchasedItemsList.classCounter + 1
-        self.itemsStrArray = [[[[[[]]]]]]
-        self.boughtIn = date
-        self.totalAmountSpent = amount
+        self.boughtIn = Date()
+        self.totalAmountSpent = 0
+        self.boughtItemsQtty = 0
+    }
+    func addBoughtItem(item: PurchasedItem){
+        self.itemsStrArray.append(item)
+    }
+    func getListFinishedDate()->Date {
+        return self.boughtIn
+    }
+    func getBoughItems()->[PurchasedItem]{
+        return self.itemsStrArray
+    }
+    func setTotalAmountSpent(price : Double){
+        self.totalAmountSpent = self.totalAmountSpent + price
+    }
+    func getTotalAmountSpent()->Double{
+        return totalAmountSpent
+    }
+    func setBoughtItemsQtty(itemQtty value: Double){
+        self.boughtItemsQtty = self.boughtItemsQtty + value
+    }
+    func getBoughtItemsQtty()-> Double{
+        return self.boughtItemsQtty
     }
 }

@@ -93,6 +93,9 @@ class ItemSaleForm{
         let amount = currencyFormatter.string(from: NSNumber(value: self.price))!
         return amount
     }
+    func getItemPriceDouble()->Double {
+        return self.price
+    }
     func getFinalQuantityPrice()->Double{
         var result = Double()
         switch self.soldBy {
@@ -112,6 +115,9 @@ class ItemSaleForm{
         currencyFormatter.locale = NSLocale(localeIdentifier: "pt_BR") as Locale
         let amount = currencyFormatter.string(from: NSNumber(value: self.getFinalQuantityPrice()))!
         return amount
+    }
+    func getFinalQuantityPriceDouble()->Double{
+        self.getFinalQuantityPrice()
     }
 }
 

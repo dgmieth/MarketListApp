@@ -48,6 +48,9 @@
                                                 </fragment>
                                             </attributedString>
                                         </state>
+                                        <connections>
+                                            <action selector="goToFinishedShoppingListsVC:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zrE-Ei-W5h"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BaI-Vl-gVE">
                                         <rect key="frame" x="0.0" y="100" width="150" height="100"/>
@@ -57,7 +60,21 @@
                                         </constraints>
                                         <state key="normal">
                                             <attributedString key="attributedTitle">
-                                                <fragment content="Lista de Compras Semanal">
+                                                <fragment content="Lista">
+                                                    <attributes>
+                                                        <color key="NSColor" red="0.97931609450000001" green="1" blue="0.98021287040000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                        <font key="NSFont" size="18" name="Charter-Bold"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="clipping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment content=" Semanal">
+                                                    <attributes>
+                                                        <color key="NSColor" red="0.97931999999999997" green="1" blue="0.98021000000000003" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                        <font key="NSFont" size="18" name="Charter-Bold"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="clipping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment content=" de Compra">
                                                     <attributes>
                                                         <color key="NSColor" red="0.97931609450000001" green="1" blue="0.98021287040000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                         <font key="NSFont" size="18" name="Charter-Bold"/>
@@ -136,6 +153,7 @@
                     <connections>
                         <segue destination="S9j-gu-ESE" kind="show" identifier="goToItemsMercadoVC" id="Pk3-HX-bXD"/>
                         <segue destination="T4c-ac-exJ" kind="show" identifier="goToWeeklyShoppingListVC" id="hOs-Ft-CM2"/>
+                        <segue destination="hDc-PD-LKQ" kind="show" identifier="goToFinishedListsVC" id="4aW-NG-lnL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -450,7 +468,85 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YqQ-I7-O00" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="578" y="-209"/>
+            <point key="canvasLocation" x="3558" y="534"/>
+        </scene>
+        <!--Listas Finalizadas-->
+        <scene sceneID="9OR-ZC-5ma">
+            <objects>
+                <viewController title="Listas Finalizadas" id="hDc-PD-LKQ" customClass="FinishedShoppingListsVC" customModule="MarketListApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="OaR-Hh-OQL">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5et-Cs-W4U" userLabel="mainView">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="774"/>
+                                <subviews>
+                                    <searchBar contentMode="redraw" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s34-k8-8M5" userLabel="finishedListsSearchBar">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="Or8-tQ-F0K"/>
+                                        </constraints>
+                                        <color key="tintColor" red="0.1891500263" green="0.3928193129" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <color key="barTintColor" red="0.3294117647" green="0.43137254899999999" blue="0.47843137250000001" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </searchBar>
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="U5v-ji-CCM" userLabel="finishedListsTableView">
+                                        <rect key="frame" x="0.0" y="44" width="414" height="730"/>
+                                        <color key="backgroundColor" red="0.81176470590000005" green="0.84705882349999995" blue="0.86274509799999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <prototypes>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="finishedListsCell" id="bar-1P-3jL">
+                                                <rect key="frame" x="0.0" y="28" width="414" height="43.666667938232422"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bar-1P-3jL" id="9Rk-6B-8fa" userLabel="finishedListsCell">
+                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.666667938232422"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="teste teste teste teste teste teste" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jhK-Uk-g4W" userLabel="testLbl">
+                                                            <rect key="frame" x="80.666666666666686" y="11.333333333333336" width="253" height="21"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="jhK-Uk-g4W" firstAttribute="centerY" secondItem="9Rk-6B-8fa" secondAttribute="centerY" id="Evm-Tb-rV0"/>
+                                                        <constraint firstItem="jhK-Uk-g4W" firstAttribute="centerX" secondItem="9Rk-6B-8fa" secondAttribute="centerX" id="xhQ-xU-iFF"/>
+                                                    </constraints>
+                                                </tableViewCellContentView>
+                                            </tableViewCell>
+                                        </prototypes>
+                                    </tableView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="U5v-ji-CCM" firstAttribute="top" secondItem="s34-k8-8M5" secondAttribute="bottom" symbolic="YES" id="Obg-YE-kbC"/>
+                                    <constraint firstItem="U5v-ji-CCM" firstAttribute="leading" secondItem="5et-Cs-W4U" secondAttribute="leading" id="UfX-gH-Rid"/>
+                                    <constraint firstAttribute="trailing" secondItem="U5v-ji-CCM" secondAttribute="trailing" id="VfA-xI-UmV"/>
+                                    <constraint firstAttribute="bottom" secondItem="U5v-ji-CCM" secondAttribute="bottom" id="aUw-gB-T1G"/>
+                                    <constraint firstAttribute="trailing" secondItem="s34-k8-8M5" secondAttribute="trailing" symbolic="YES" id="lEv-3V-fj9"/>
+                                    <constraint firstItem="s34-k8-8M5" firstAttribute="leading" secondItem="5et-Cs-W4U" secondAttribute="leading" id="rd5-3d-pU2"/>
+                                    <constraint firstItem="s34-k8-8M5" firstAttribute="top" secondItem="5et-Cs-W4U" secondAttribute="top" id="vEw-bB-iBF"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.81176470590000005" green="0.84705882349999995" blue="0.86274509799999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="5et-Cs-W4U" firstAttribute="leading" secondItem="Mpj-Ic-wS3" secondAttribute="leading" id="LIa-cM-Tsz"/>
+                            <constraint firstItem="Mpj-Ic-wS3" firstAttribute="trailing" secondItem="5et-Cs-W4U" secondAttribute="trailing" id="gnH-TX-JeF"/>
+                            <constraint firstItem="Mpj-Ic-wS3" firstAttribute="bottom" secondItem="5et-Cs-W4U" secondAttribute="bottom" id="iGU-cs-cK8"/>
+                            <constraint firstItem="5et-Cs-W4U" firstAttribute="top" secondItem="Mpj-Ic-wS3" secondAttribute="top" id="xHU-ih-ba3"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="Mpj-Ic-wS3"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Listas Finalizadas" id="VXh-1L-NoF"/>
+                    <connections>
+                        <outlet property="finishedListsTableView" destination="U5v-ji-CCM" id="PYA-YX-Ece"/>
+                        <outlet property="searchBarFSLVC" destination="s34-k8-8M5" id="Na4-DS-9sf"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Dbu-VU-Eas" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3558" y="1261"/>
         </scene>
         <!--Item Image-->
         <scene sceneID="hG5-ej-oY9">
@@ -482,7 +578,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="e3J-R9-0Wr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1757" y="-908"/>
+            <point key="canvasLocation" x="5138" y="534"/>
         </scene>
         <!--Items List-->
         <scene sceneID="9AM-4f-aHw">
@@ -1212,7 +1308,7 @@ Compras</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7jb-qu-Z0C" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3829.5999999999999" y="-908.9955022488756"/>
+            <point key="canvasLocation" x="5138" y="-229"/>
         </scene>
         <!--Purchase History-->
         <scene sceneID="JtW-a4-pIJ">
@@ -1240,8 +1336,8 @@ Compras</string>
                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Historico de compras" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Fw-6J-ArQ" userLabel="nameLbl">
-                                                <rect key="frame" x="20" y="152.66666666666666" width="192.66666666666666" height="25"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Histórico de compras" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Fw-6J-ArQ" userLabel="purchaseHistoryLbl">
+                                                <rect key="frame" x="20" y="177.66666666666669" width="192.66666666666666" height="25"/>
                                                 <fontDescription key="fontDescription" name="Charter-BoldItalic" family="Charter" pointSize="20"/>
                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
@@ -1253,7 +1349,7 @@ Compras</string>
                                             <constraint firstItem="YoB-fP-7j9" firstAttribute="centerY" secondItem="ti2-Iy-cKb" secondAttribute="centerY" id="bHv-rz-Tri"/>
                                             <constraint firstItem="YoB-fP-7j9" firstAttribute="centerX" secondItem="ti2-Iy-cKb" secondAttribute="centerX" id="dhx-yv-FXl"/>
                                             <constraint firstItem="1Gk-Fz-SOX" firstAttribute="centerY" secondItem="ti2-Iy-cKb" secondAttribute="centerY" constant="-45" id="hhP-Ys-lED"/>
-                                            <constraint firstAttribute="bottom" secondItem="1Fw-6J-ArQ" secondAttribute="bottom" id="qf2-73-hPP"/>
+                                            <constraint firstAttribute="bottom" secondItem="1Fw-6J-ArQ" secondAttribute="bottom" constant="-25" id="qf2-73-hPP"/>
                                         </constraints>
                                     </view>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" bouncesZoom="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="hTC-MY-8mA" userLabel="purchaseHIstoryTableView">
@@ -1278,6 +1374,27 @@ Compras</string>
                                                     <constraints>
                                                         <constraint firstItem="aao-4A-vrh" firstAttribute="centerY" secondItem="vXc-oT-b1c" secondAttribute="centerY" id="4Ko-aI-MOF"/>
                                                         <constraint firstItem="aao-4A-vrh" firstAttribute="centerX" secondItem="vXc-oT-b1c" secondAttribute="centerX" id="P3W-kZ-8Ri"/>
+                                                    </constraints>
+                                                </tableViewCellContentView>
+                                            </tableViewCell>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="oldPurchasedHistoryVCCell" id="uvs-6c-rfb" userLabel="oldPurchasedHistoryVCCell">
+                                                <rect key="frame" x="0.0" y="71.666667938232422" width="354" height="43.666667938232422"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="uvs-6c-rfb" id="unH-9F-7eL">
+                                                    <rect key="frame" x="0.0" y="0.0" width="354" height="43.666667938232422"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Older purchase history has been deleted" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zgj-Xv-Ytv">
+                                                            <rect key="frame" x="23.333333333333343" y="12.666666666666666" width="307.33333333333326" height="18.333333333333336"/>
+                                                            <fontDescription key="fontDescription" name="Charter-BlackItalic" family="Charter" pointSize="15"/>
+                                                            <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" red="0.81176470590000005" green="0.84705882349999995" blue="0.86274509799999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <constraints>
+                                                        <constraint firstItem="Zgj-Xv-Ytv" firstAttribute="centerY" secondItem="unH-9F-7eL" secondAttribute="centerY" id="7qi-XC-P0W"/>
+                                                        <constraint firstItem="Zgj-Xv-Ytv" firstAttribute="centerX" secondItem="unH-9F-7eL" secondAttribute="centerX" id="ERA-x9-FRY"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
                                             </tableViewCell>
@@ -1315,7 +1432,7 @@ Compras</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BbS-w7-9rj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4917.3913043478269" y="-909.375"/>
+            <point key="canvasLocation" x="6072" y="-229"/>
         </scene>
         <!--Add New Item-->
         <scene sceneID="scZ-9t-3Fz">
@@ -1872,7 +1989,7 @@ do mercado</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fN7-bF-Mv6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4877" y="-210"/>
+            <point key="canvasLocation" x="3558" y="-730"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="kNz-Sv-RDj">

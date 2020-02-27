@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19D76" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Items" representedClassName="Items" syncable="YES" codeGenerationType="class">
+        <attribute name="addToList" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="bought" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="brand" optional="YES" attributeType="String"/>
+        <attribute name="coldItem" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="image" optional="YES" attributeType="Binary"/>
+        <attribute name="information" optional="YES" attributeType="String"/>
+        <attribute name="itemID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lengthPurchaseHistoryArray" attributeType="Integer 16" defaultValueString="5" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="sector" maxCount="1" deletionRule="Nullify" destinationEntity="Sectors" inverseName="items" inverseEntity="Sectors"/>
+    </entity>
+    <entity name="Market" representedClassName="Market" syncable="YES" codeGenerationType="class">
+        <attribute name="marketID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="sectors" toMany="YES" deletionRule="Cascade" destinationEntity="Sectors" inverseName="market" inverseEntity="Sectors"/>
+    </entity>
+    <entity name="Sectors" representedClassName="Sectors" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="sectorID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="items" toMany="YES" deletionRule="Cascade" destinationEntity="Items" inverseName="sector" inverseEntity="Items"/>
+        <relationship name="market" maxCount="1" deletionRule="Nullify" destinationEntity="Market" inverseName="sectors" inverseEntity="Market"/>
+    </entity>
+    <elements>
+        <element name="Items" positionX="242.25" positionY="-280.97265625" width="128" height="193"/>
+        <element name="Market" positionX="288" positionY="-180" width="128" height="88"/>
+        <element name="Sectors" positionX="315" positionY="-171" width="128" height="103"/>
+    </elements>
+</model>

@@ -102,14 +102,12 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     //expand UIImage to expandedImageView
     @objc func checkTouchInsideImageView(sender: UIImageView) {
         uObjCtrl.setTagForCellAddressForOtherFunctionsOutsideTableView(atIndexPath: sender.tag)
-        print(sender.tag)
         chosenImageForItemImageExpandedVC = objCtrl.getItemImage(inCellAddress: uObjCtrl.getCellAdress(), inMarketsArray: marketsArray)
         goToItemImageExpandedVC()
     }
     //tap gesture for Item CELL
     @objc func addItemToWeeklyShoppingList(sender: UIButton) {
         uObjCtrl.setTagForCellAddressForOtherFunctionsOutsideTableView(atIndexPath: sender.tag)
-        print(sender.tag)
         let cellIndex = uObjCtrl.computeRowAndColum(atSection: uObjCtrl.getCellAdress()[.marketAndSectorIndex]!, atRow: uObjCtrl.getCellAdress()[.itemIndex]!, inMarketArray: marketsArray)
         let selectedCell = marketsArray[uObjCtrl.getCellAdress()[.marketAndSectorIndex]!].getSector()[cellIndex.section].getItem()[cellIndex.row]
         if selectedCell.getAddToBuyList() {

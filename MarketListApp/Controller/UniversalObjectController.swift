@@ -33,6 +33,12 @@ class UniversalObjectController {
         let result = formatter.string(from: datePurhcased)
         return result
     }
+    func returnFormattedDate(withDate x: Date)->String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy"
+        let result = formatter.string(from: x)
+        return result
+    }
     func returnFormattedQttyInInt(formatQtty value : Double)-> Int {
         let qtty = Int(value)
         return qtty
@@ -44,8 +50,13 @@ class UniversalObjectController {
         formatter.maximumFractionDigits = 3
         formatter.minimumFractionDigits = 3
         let valueF = formatter.string(from: NSNumber(value: value))!
-        print(value)
         return valueF
+    }
+    func stringToDoubleForPriceData(withString price: String) -> Double {
+        let tempStr = price.trimmingCharacters(in: NSCharacterSet.decimalDigits.inverted).split(separator: ",").joined().split(separator: ".").joined()
+        let decimalNR = NSDecimalNumber(string: tempStr)
+        let intNr = decimalNR.doubleValue/100
+        return intNr
     }
     //MARK: -GET CELL FROM ARRAY
     func computeRowAndColum(atSection market : Int, atRow row : Int, inMarketArray ary : [Market]) -> IndexPath {
@@ -97,10 +108,8 @@ class UniversalObjectController {
     func checkIfInputInformationIsNotZero(price str: String)-> Bool{
         let price = (Double(str.numbersOnly.integerValue))
         if price > 0 {
-            print("true")
             return true
         } else {
-            print("true")
             return false
         }
     }

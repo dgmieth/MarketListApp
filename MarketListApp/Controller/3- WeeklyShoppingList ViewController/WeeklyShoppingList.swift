@@ -7,13 +7,18 @@
 //
 
 import UIKit
+protocol UpdateBoughItemsArrayFromWeeklyShoppingListVC {
+    func updateBoghtItemsArray(withArray ary: [PurchasedItemsList])
+}
 
 class WeeklyShoppingList: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     var weeklyVCMarketsArray = [Market]()
     var weeklyOnlyToBuyItems = [Market]()
+    var purchasedItemsArrayWSLVC = [PurchasedItemsList]()
     var objCtrl = WeeklyShoppingListObjectController()
     var uObjCtrl = UniversalObjectController()
     var chosenImageForItemImageExpandedVC = UIImage()
+    var delegate : UpdateBoughItemsArrayFromWeeklyShoppingListVC?
     
     let marketCell = MarketItemWeeklyShoppingList()
     let sectorCell = SectorItemWeeklyShoppingList()
@@ -381,10 +386,22 @@ class WeeklyShoppingList: UIViewController, UITableViewDelegate, UITableViewData
     func goToItemImageExpandedVC() {
         performSegue(withIdentifier: "goToItemImageExpandedFromWeeklyShoppingListVC", sender: self)
     }
+    //MARK:- DELEGATE
+    
     //MARK:- START UP/END
     //Conlcude list buttonPressed
     @IBAction func finishListButtonPressed(_ sender: Any) {
-        objCtrl.updatingMainArrayForHomeVC(weeklyShoppingListMarketsArray: weeklyVCMarketsArray)
+        if let ary = objCtrl.updatingMainArrayForHomeVC(weeklyShoppingListMarketsArray: weeklyVCMarketsArray) {
+            print(10001001000100)
+            print(ary.getBoughItems().count)
+            if purchasedItemsArrayWSLVC.count == 0 {
+                purchasedItemsArrayWSLVC.append(ary)
+            } else {
+                purchasedItemsArrayWSLVC.insert(ary, at: 0)
+            }
+        }
+//        }
+        delegate?.updateBoghtItemsArray(withArray: purchasedItemsArrayWSLVC)
         navigationController?.popViewController(animated: true)
     }
 }

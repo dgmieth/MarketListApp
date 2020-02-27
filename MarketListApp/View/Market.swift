@@ -9,7 +9,7 @@
 import Foundation
 
 class Market {
-    private static  var classCounter : Int = 0
+    private static var classCounter : Int = 0
     private let ID : Int
     private var name : String
     private var sectors : [Sector] = []
@@ -34,7 +34,7 @@ class Market {
         return Market.classCounter
     }
     func setSector(sector: Sector){
-            self.sectors.append(sector)
+        self.sectors.append(sector)
     }
     func getSector()->[Sector]{
         return self.sectors

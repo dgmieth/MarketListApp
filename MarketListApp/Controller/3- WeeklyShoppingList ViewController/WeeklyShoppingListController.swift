@@ -77,7 +77,6 @@ class WeeklyShoppingListObjectController {
                 itemsCounter = itemsCounter + ary[m].getSector()[s].getItem().count
             }
         }
-        print(itemsCounter)
         if itemsCounter > 0 {
             return true
         } else {
@@ -199,8 +198,10 @@ class WeeklyShoppingListObjectController {
         return itemsArray
     }
     //UPDATE MAIN ARRAY
-    func updatingMainArrayForHomeVC(weeklyShoppingListMarketsArray ary: [Market]) {
+    func updatingMainArrayForHomeVC(weeklyShoppingListMarketsArray ary: [Market]) -> PurchasedItemsList?{
+        let boughtList = PurchasedItemsList()
         let itemsArray = createArrayOfItems(withMarketsArray: ary)
+        var hasItems = false
         for m in 0..<ary.count {
             for s in 0..<ary[m].getSector().count{
                 if ary[m].getSector()[s].getItem().count > 0 {
@@ -209,32 +210,56 @@ class WeeklyShoppingListObjectController {
                         for ni in 0..<itemsArray.count {
                             if item.getID() == itemsArray[ni].getID() {
                                 if itemsArray[ni].getPurchase() {
+                                    hasItems = true
                                     item.setPurchase(value: false)
                                     item.setAddToBuyList(changeBoolValue: false)
                                     var array = [String]()
                                     array.append(uObjCtrlWeeklyVC.returnFormattedCurrentSystemDate())
                                     if item.getFormOfSale().getUnitMeasure() == UnitMeasure.averageWeight.rawValue {
                                         array.append("\(Int(item.getFormOfSale().getItemQuantityInWeight())) unidade(s)")
+                                        array.append("\(item.getFormOfSale().getItemPrice()) por kilo/litro (peso medio)")
                                     } else {
                                         if uObjCtrlWeeklyVC.checkIfItemIsSoldInKiloOrLiter(withDescription: item.getFormOfSale().getUnitMeasure()) {
                                             array.append("\(item.getFormOfSale().getItemQuantityInWeight()) \(item.getFormOfSale().getUnitMeasure())(s)")
+                                            array.append("\(item.getFormOfSale().getItemPrice()) por \(Int(item.getFormOfSale().getStandarWeightValue())) \(item.getFormOfSale().getUnitMeasure())")
                                         } else {
                                             array.append("\(Int(item.getFormOfSale().getItemQuantityInWeight())) \(item.getFormOfSale().getUnitMeasure())(s)")
+                                            if item.getFormOfSale().getUnitMeasure() == UnitMeasure.single.rawValue {
+                                                array.append("\(item.getFormOfSale().getItemPrice()) por \(Int(item.getFormOfSale().getStandarWeightValue())) \(item.getFormOfSale().getUnitMeasure())")
+                                            } else {
+                                                array.append("\(item.getFormOfSale().getItemPrice()) por \(Int(item.getFormOfSale().getStandarWeightValue())) \(item.getFormOfSale().getUnitMeasure())(s)")
+                                            }
                                         }
                                     }
-                                    array.append(String(item.getFormOfSale().getItemPrice()))
                                     array.append(String(item.getFormOfSale().getFormattedFinalQuantityPrice()))
                                     item.setPurchaseHistory(withText: array)
+                                    let boughtItem = PurchasedItem(name: item.getName(), price: item.getFormOfSale().getItemPriceDouble(), priceDescription: item.getFormOfSale().getUnitMeasureNoRawValue(), boughtQ: item.getFormOfSale().getItemQuantityInWeight(), finalPaidPrice: item.getFormOfSale().getFinalQuantityPriceDouble(), market: ary[m].getName())
+                                    boughtList.addBoughtItem(item: boughtItem)
+                                    switch item.getFormOfSale().getUnitMeasureNoRawValue() {
+                                    case .averageWeight, .single:
+                                        boughtList.setBoughtItemsQtty(itemQtty: item.getFormOfSale().getItemQuantityInWeight())
+                                    case .kilogram, .liter, .mililiter, .gram:
+                                        boughtList.setBoughtItemsQtty(itemQtty: 1)
+                                    default:
+                                        print("ERROR | WeeklyShoppingListVCController || updatingMainArrayForHomeVC || found no item qtty for boughArray")
+                                    }
+                                    boughtList.setTotalAmountSpent(price: item.getFormOfSale().getFinalQuantityPriceDouble())
                                 } else {
                                     item.setPurchase(value: false)
                                     item.setAddToBuyList(changeBoolValue: false)
                                 }
+                            
                             }
                         }
                     }
                 }
             }
             
+        }
+        if hasItems {
+            return boughtList
+        } else {
+            return nil
         }
     }
     //getting cell

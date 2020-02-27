@@ -8,8 +8,11 @@
 
 import UIKit
 
-class HomeVC: UIViewController, updateMainItemsArray {
+class HomeVC: UIViewController, updateMainItemsArray, UpdateBoughItemsArrayFromWeeklyShoppingListVC {
+
+    
     var mainMarketsArray = [Market]()
+    var purchasedItemsArray = [PurchasedItemsList]()
     
     override func viewDidLoad() {
         if mainMarketsArray.isEmpty {
@@ -90,25 +93,40 @@ class HomeVC: UIViewController, updateMainItemsArray {
         mainMarketsArray.append(condor)
         mainMarketsArray.append(angeloni)
     }
-    //MARK: - segue for ItmesMercadoVC
+    //MARK: - BUTTONS
     @IBAction func goToItemsMercadoVC(_ sender: Any) {
         performSegue(withIdentifier: "goToItemsMercadoVC", sender: self)
     }
     @IBAction func goToWeeklyShoppingList(_ sender: Any) {
         performSegue(withIdentifier: "goToWeeklyShoppingListVC", sender: self)
     }
+    @IBAction func goToFinishedShoppingListsVC(_ sender: Any) {
+        performSegue(withIdentifier: "goToFinishedListsVC", sender: self)
+    }
     
+    //MARK:- SEGUEWAYS
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToWeeklyShoppingListVC" {
             let weeklyShoppingList = segue.destination as! WeeklyShoppingList
             weeklyShoppingList.weeklyVCMarketsArray = mainMarketsArray
+            weeklyShoppingList.purchasedItemsArrayWSLVC = purchasedItemsArray
+            weeklyShoppingList.delegate = self
         } else if segue.identifier == "goToItemsMercadoVC" {
             let itemsMercadoVCAsDestination = segue.destination as! ItemsMercadoVC
             itemsMercadoVCAsDestination.marketsArray = mainMarketsArray
             itemsMercadoVCAsDestination.delegateHomeVC = self
+        } else if segue.identifier == "goToFinishedListsVC" {
+            let finishedShoppingListsVC = segue.destination as! FinishedShoppingListsVC
+            finishedShoppingListsVC.purchasedItemsArrayFSLVC = purchasedItemsArray
         }
     }
+    
+    //MARK:- DELEGATE FUNC
     func updatingMainItemsArraySaveInHomeVC(withArray ary: [Market]) {
         mainMarketsArray = ary
+    }
+    func updateBoghtItemsArray(withArray ary: [PurchasedItemsList]) {
+        print("called 10000123")
+        purchasedItemsArray = ary
     }
 }

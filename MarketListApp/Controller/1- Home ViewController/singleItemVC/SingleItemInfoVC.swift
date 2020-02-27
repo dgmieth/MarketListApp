@@ -227,7 +227,6 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
             } else {
                 setStandardWeightTxtF.text = "\(Int((cell.getFormOfSale().getStandarWeightValue()*Double(cell.getFormOfSale().getDivisor()[.averageWeight]!)))) "
             }
-            print(cell.getFormOfSale().getStandarWeightValue())
         } else {
             userInterfaceUpdateFunction(giveUpdateIdentifier: 4, withBool: false)
             standardWeightLbl.text = "Peso/volume padrão: "
