@@ -11,7 +11,7 @@ import UIKit
 
 class SingleItemController {
 
-    var uObjCtrl = UniversalObjectController()
+    private var uObjCtrl = UniversalObjectController()
 
 //MARK:- LOADING/UNLOADING
     func getItemInfo(fromItem item: Item, inMakertsArray ary : [Market])->(Item, Int, Int, Int){
@@ -25,20 +25,12 @@ class SingleItemController {
             }
         }
         for s in 0..<ary[market].getSector().count {
-            print(ary[market].getName())
             if item.sector! == ary[market].getSector()[s] {
                 sector = s
-                print(sector)
-                print(ary[market].getSector()[s].getName())
                 break
             }
         }
         soldBy = item.getFormOfSale().getUnitMeasure()
-//        let market = Int(tag/uObjCtrl.getConstantForCellAddress())
-//        let index = Int(tag%uObjCtrl.getConstantForCellAddress())
-//        let rowAndSection = uObjCtrl.sectionSubsectionForItemInTableView(atSection: market, atRow: index, inMarketArray: ary)
-//        let cell = ary[market].getSector()[sector].getItem()[0]
-//        let unitMeasureIndex = cell.getFormOfSale().getUnitMeasure()
         return (item, market, sector, soldBy)
     }
 }
@@ -62,8 +54,6 @@ extension SingleItemController{
             genericLbl.textAlignment = .center
             genericLbl.textColor = .black
             genericLbl.font = UIFont(name: "Charter-Bold", size: retunrFontSizeForPickerViewViews())
-    //        pkr.subviews[1].backgroundColor = UIColor.darkGray
-    //        pkr.subviews[2].backgroundColor = UIColor.darkGray
             if pkr.tag == 1 {
                 let ary = aryT as! [Market]
                 genericLbl.text = ary[row].getName()
@@ -103,26 +93,6 @@ extension SingleItemController{
         } else if item.getFormOfSale().getUnitMeasure() != newSolBy.rawValue {
             item.getFormOfSale().setUnitMeasure(howItIsSold: newSolBy)
         }
-//            var returnArray = [Market]()
-//            for m in 0..<ary.count {
-//                let market = Market(marketName: ary[m].getName())
-//                for s in 0..<ary[m].getSector().count {
-//                    let sector = Sector(sectorName: ary[m].getSector()[s].getName())
-//                    var itemAry = [Item]()
-//                    for i in 0..<ary[m].getSector()[s].getItem().count {
-//                        if ary[m].getSector()[s].getItem()[i].getID() != cell.getID() {
-//                            itemAry.append(ary[m].getSector()[s].getItem()[i])
-//                        }
-//                    }
-//                    if itemAry.count > 0 {
-//                        for item in 0..<itemAry.count {
-//                            sector.setItem(item: itemAry[item])
-//                        }
-//                    }
-//                    market.setSector(sector: sector)
-//                }
-//                returnArray.append(market)
-//            }
         return (item, cell.1, cell.2, cell.3)
         }
         //picture resizing function

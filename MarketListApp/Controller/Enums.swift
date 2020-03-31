@@ -14,6 +14,11 @@ enum CellAddressDictionary {
     case marketAndSectorIndex
     case itemIndex
 }
+enum RowForPickerInNewItemVC{
+    case first
+    case last
+    case other
+}
 enum BottomInformationLabelsInWeeklyShoppingItemsVC{
     case toBuyItemsLbl1
     case boughItemsLbl1
@@ -23,5 +28,33 @@ enum BottomInformationLabelsInWeeklyShoppingItemsVC{
     case boughItemsLbl2
     case toBuyListPriceLbl2
     case boughtListPriceLbl2
-    
+}
+enum Divisors: Int{
+    case allOtherDivisors = 1
+    case gramMililiterDivisor = 100
+    case avgWeightDivisor = 1_000
+}
+enum Constants:Int{
+    case constantForCurrency = 100
+    case constantForQuantity = 1_000
+}
+//MARK:- enumeration for results in NEWITEMVC
+enum ValueFor {
+    case market
+    case sector
+    case name
+    case brand
+    case soldBy
+    case avgWeight
+    case price
+    case cold
+    case image
+}
+//MARK: - Table View Cell Type
+enum TVCellType{
+    case market
+    case sector
+    case item
+    case searchBar
+    case noItem
 }

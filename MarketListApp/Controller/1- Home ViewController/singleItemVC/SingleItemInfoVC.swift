@@ -9,10 +9,6 @@
 import UIKit
 import CoreData
 
-protocol updatingArrayOfItemSIVC {
-    func updatingArrayWithNewArrayFromSIVC(sendMarketsArray ary: Item?)
-}
-
 class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var passedItem : Item?
     var itemObj : (Item, Int, Int, Int)?
@@ -24,11 +20,9 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
     var it : Int = 0
     var itemTempSelectedValue : Bool?
     var itemImageSelectedImage : UIImage?
-    //delegate
-    var delegate : updatingArrayOfItemSIVC?
     //controller
     var objCtrlSIVC = SingleItemController()
-    var uObjCtrlSIVC = UniversalObjectController()
+    var uObjCtrl = UniversalObjectController()
     var dataController : DataController!
     //User interface elements
     @IBOutlet weak var nameLbl: UILabel!
@@ -79,9 +73,7 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
         settingTheDelegates()
     }
     override func viewWillDisappear(_ animated: Bool) {
-        print("viewWillDisappear")
         keyboardNotificationRegistration(registerTrueAndUnregisterFalse: false)
-//        delegate?.updatingArrayWithNewArrayFromSIVC(sendMarketsArray: nil)
     }
     //MARK:- PICKER VIEW
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -134,12 +126,12 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
             case .gram, .mililiter:
                 unitMeasureLbl.isHidden = false
                 setStandardWeightTxtF.isHidden = true
-                unitMeasureLbl.text = "\(String(Int(cell.getFormOfSale().getStandarWeightValue()))) \(uObjCtrlSIVC.returnUnitMeasureInString(forNumber: cell.getFormOfSale().getUnitMeasure()))s"
+                unitMeasureLbl.text = "\(String(Int(cell.getFormOfSale().getStandarWeightValue()))) \(uObjCtrl.returnUnitMeasureInString(forNumber: cell.getFormOfSale().getUnitMeasure()))s"
                 standardWeightLbl.text = "Peso/volume padrao:"
             default:
                 unitMeasureLbl.isHidden = false
                 setStandardWeightTxtF.isHidden = true
-                unitMeasureLbl.text = "\(Int(cell.getFormOfSale().getStandarWeightValue())) \(uObjCtrlSIVC.returnUnitMeasureInString(forNumber: cell.getFormOfSale().getUnitMeasure()))"
+                unitMeasureLbl.text = "\(Int(cell.getFormOfSale().getStandarWeightValue())) \(uObjCtrl.returnUnitMeasureInString(forNumber: cell.getFormOfSale().getUnitMeasure()))"
                 standardWeightLbl.text = "Peso/volume padrao:"
             }
             gettingRowNumberForPikers(fromCellInformation: itemObj!, animated: true)
@@ -242,11 +234,11 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
             standardWeightLbl.text = "Peso/volume padrão: "
             switch UnitMeasure.allCases[row] {
             case .gram, .mililiter:
-                unitMeasureLbl.text = "\(Int(cell.getFormOfSale().getDivisor()[.gram]!)) \(uObjCtrlSIVC.returnUnitMeasureInString(forNumber: row))s"
-                priceLbl.text = ("Preço (\(uObjCtrlSIVC.returnUnitMeasureInString(forNumber: row)))")
+                unitMeasureLbl.text = "\(Int(cell.getFormOfSale().getDivisor()[.gram]!)) \(uObjCtrl.returnUnitMeasureInString(forNumber: row))s"
+                priceLbl.text = ("Preço (\(uObjCtrl.returnUnitMeasureInString(forNumber: row)))")
             default:
-                unitMeasureLbl.text = "1 \(uObjCtrlSIVC.returnUnitMeasureInString(forNumber: row))"
-                priceLbl.text = ("Preço (\(uObjCtrlSIVC.returnUnitMeasureInString(forNumber: row))))")
+                unitMeasureLbl.text = "1 \(uObjCtrl.returnUnitMeasureInString(forNumber: row))"
+                priceLbl.text = ("Preço (\(uObjCtrl.returnUnitMeasureInString(forNumber: row))))")
             }
         }
     }
@@ -258,9 +250,9 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
     }
     //save changes
     @IBAction func savePressed(_ sender: Any) {
-        saveModel()
         checkNewInformation()
         userInterfaceUpdateFunction(giveUpdateIdentifier: 3)
+        saveModel()
     }
     //discaBrd changes
     @IBAction func cancelPressed(_ sender: Any) {
@@ -270,7 +262,6 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
     }
     //purchase history
     @IBAction func purchaseHistoryPressed(_ sender: Any) {
-        print("purchased pressed")
         performSegue(withIdentifier: "goToPurchaseHistoryVC", sender: self)
     }
     //take picture
@@ -292,12 +283,7 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
     }
     //delete item
     @IBAction func deleteBtnPressed(_ sender: Any) {
-        let item : Item? = itemObj!.0
-//       print("deletePressed")
-        delegate?.updatingArrayWithNewArrayFromSIVC(sendMarketsArray: item)
-        
-        navigationController?.popViewController(animated: true)
-//        deleteFromModel(item: itemObj!.0, goToItemsMercadoVC: true)
+        deleteFromModel(item: itemObj!.0, goToItemsMercadoVC: true)
     }
     //MARK:- TEXTFIELDS
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -437,8 +423,8 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
             }
         }
         //check if user change price
-        if uObjCtrlSIVC.isTherePrice(inTextField: priceTxtF.text).0 {
-            if uObjCtrlSIVC.isTherePrice(inTextField: priceTxtF.text).1 != cell.getFormOfSale().getItemPriceDoubleToString() {
+        if uObjCtrl.isTherePrice(inTextField: priceTxtF.text).0 {
+            if uObjCtrl.isTherePrice(inTextField: priceTxtF.text).1 != cell.getFormOfSale().getItemPriceDoubleToString() {
                 cell.getFormOfSale().setItemPriceStringToDouble(howMuchIsIt: priceTxtF.text!)
             }
         }
@@ -524,13 +510,8 @@ extension SingleItemInfoVC{
         }
     }
     func deleteFromModel(item: Item, goToItemsMercadoVC value: Bool = false){
-//        let itemDataController = DataController(modelName: "Item")
-//        itemDataController.viewContext.delete(item)
         dataController.viewContext.delete(item)
-        saveModel()
-        navigationController?.popViewController(animated: true)
-//        saveModel(goToItemsMercadoVC: value)
-//        updateArray()
+        saveModel(goToItemsMercadoVC: value)
     }
 }
 

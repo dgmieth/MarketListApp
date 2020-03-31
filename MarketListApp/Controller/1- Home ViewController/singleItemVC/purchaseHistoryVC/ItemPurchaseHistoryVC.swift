@@ -24,7 +24,6 @@ class ItemPurchaseHistoryVC: UIViewController, UITableViewDelegate, UITableViewD
     override func viewWillAppear(_ animated: Bool) {
         if let hasItem = passedItem {
             item = hasItem
-            print(item!.getName())
             itemNameLbl.text = item!.getName()
         } else {
             print("ERROR || ITEMPURCHASEDHISTORYVC || VIEWWILLAPPEAR || Foun nil while unwrapping passedItem")
@@ -42,11 +41,12 @@ class ItemPurchaseHistoryVC: UIViewController, UITableViewDelegate, UITableViewD
     }
     //MARK:- TABLEVIEW
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if item!.getPurchaseHistory().count > 0{
-            return item!.getPurchaseHistory().count
-        } else {
-            return 1
-        }
+        return item!.getPurchaseHistory().count > 0 ? item!.getPurchaseHistory().count : 1
+//        if item!.getPurchaseHistory().count > 0{
+//            return item!.getPurchaseHistory().count
+//        } else {
+//            return 1
+//        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 && item!.getPurchaseHistory().count == 0 {

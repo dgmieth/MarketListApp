@@ -7,23 +7,25 @@
 //
 
 import UIKit
+import CoreData
 
-protocol updateMainItemsArray {
-    func updatingMainItemsArraySaveInHomeVC(withArray ary: [Market])
-}
-
-class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, addingNewItemsToArray, updatingArrayOfItemSIVC {
+class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     
-    var marketsArray = [Market]()
+    var fullArray = [Market]()
+    var itemsOnlyArray = [Market]()
     var objCtrl = itemsMercadoObjectController()
     var uObjCtrl = UniversalObjectController()
-    var delegateHomeVC : updateMainItemsArray?
-    var checkmarkForCellAtRow : Int = 0
-    var chosenImageForItemImageExpandedVC = UIImage()
+    var dataController : DataController!
+//    var delegateHomeVC : ItemsMercadoDelegate?
+//    var checkmarkForCellAtRow : Int = 0
+    var itemImageForItemImageExpandedVC = UIImage()
+//    var indexPathForReloadSection = IndexPath()
+    @IBOutlet weak var addNewItemBtn: UIBarButtonItem!
     
     @IBOutlet weak var itemsMercadoTableView: UITableView!
-    @IBOutlet weak var marketItemsInformationLabel: UILabel!
     @IBOutlet weak var searchBarInTouched: UISearchBar!
+    var searchingOn : Bool = false
+    var searchBarArray = [Item]()
     
     //adding item to weekly shopping list
     @IBOutlet weak var qttyInfoScrollView: UIScrollView!
@@ -31,30 +33,28 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var priceLabel: UILabel!
     @IBOutlet weak var quantityDetailsLabel: UILabel!
     @IBOutlet weak var quantityValueTextField: UITextField!
-    var addressForSelectedItem = Int()
-    var itemIsSoldInKilosOrLitters : Bool = false
+//    var addressForSelectedItem = Int()
+//    var itemIsSoldInKilosOrLitters : Bool = false
     
     //decimal keyboard toolbar
     var decimalKeyTooblar : UIToolbar?
     var keyboardHeight = CGFloat()
     
     //variables for single item VC
-    var itemInformation : CellInformation?
-    
-    let marketCell = MarketItemMercadoVCCell()
-    let sectorCell = SectorItemMercadoVCCell()
-    let itemCell = ItemItemMercadoVCCell ()
-    
-    //MARK: - VIEWS LOADING
+    var itemObj : Item?
+//
+//    let sectorCell = CellForSectorInTableViews()
+//    let itemCell = CellForItemInTableViews ()
+}
+//MARK:- VC INATE FUNCTIONS
+extension ItemsMercadoVC{
     override func viewWillAppear(_ animated: Bool) {
-        if !objCtrl.canLoadItemsOntoTableView(inMarketsArray: marketsArray) {
-            goToNewItemVC()
-        } else {
-            itemsMercadoTableView.reloadData()
-        }
-        DispatchQueue.main.async {
-            self.registerToKeyboardNotifications(registerTrueAndUnregisterFalse: true)
-        }
+        loadData()
+        if let ary = objCtrl.getArrayWithItemsOnly(inMarketsArray: fullArray){
+            itemsOnlyArray = ary
+            reloadData()
+            searchBarInTouched.isHidden = false
+        } else { searchBarInTouched.isHidden = true }
     }
     override func viewDidLoad() {
         initialFunctions()
@@ -62,80 +62,152 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewWillDisappear(_ animated: Bool) {
         finalFunctions()
     }
-    //MARK:- TABLEVIEWS
+}
+//MARK:- TABLEVIEW METHODS
+extension ItemsMercadoVC{
     func numberOfSections(in tableView: UITableView) -> Int {
-        return objCtrl.getSectionsForTableView(inMarketsArray: marketsArray)
+       return searchingOn ? 1 : objCtrl.getSectionsForTableView(inMarketsArray: itemsOnlyArray)
+        
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return objCtrl.getRowsForTableView(inMarketsArray: marketsArray, inSection: section)
+        return searchingOn ? searchBarArray.count : objCtrl.getRowsForTableView(inMarketsArray: itemsOnlyArray, inSection: section)
+    }
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if !searchingOn {
+            if objCtrl.checkMarketHasItemsInHeaders(inArray: itemsOnlyArray, inSection: section) {
+                let mCell = tableView.dequeueReusableCell(withIdentifier: "marketHeaderCell") as! MarketHeaderCell
+                mCell.tappedBtn.addTarget(self, action: #selector(expandCollapseHeader(sender:)), for: .touchUpInside)
+                return objCtrl.returnCell(withCell: mCell, withCellType: .market, withArray: itemsOnlyArray, inMarket: section) as! MarketHeaderCell
+            }   }
+        return UIView()
+    }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if !searchingOn {
+            if objCtrl.checkMarketHasItemsInHeaders(inArray: itemsOnlyArray, inSection: section){
+                return objCtrl.returnHeighForHeader(inSection: section, usingMarketsArray: itemsOnlyArray)
+            }   }
+        return CGFloat(0)
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let rowAndSection = uObjCtrl.computeRowAndColum(atSection: indexPath.section, atRow: indexPath.row, inMarketArray: marketsArray)
-        let itemIndex = rowAndSection.row
-        
-        marketItemsInformationLabel.isHidden = false
-        marketItemsInformationLabel.text = objCtrl.updatedBottomLableInMercadoVC(atSection: indexPath.section, inMarketsArray: marketsArray)
-        
-        if itemIndex < 0 && indexPath.row == 0 {
-            let mCell = tableView.dequeueReusableCell(withIdentifier: "marketMarketListCell", for: indexPath) as! MarketItemMercadoVCCell
-            return objCtrl.returnMarketCell(withCell: mCell, inMarket: indexPath.section, inSector: rowAndSection.section, withMarketsArray: marketsArray)
-        } else if itemIndex < 0 {
-            let sCell = tableView.dequeueReusableCell(withIdentifier: "sectorMarketListCell", for: indexPath) as! SectorItemMercadoVCCell
-            return objCtrl.returnSectorCell(withCell: sCell, inMarket: indexPath.section, inSector: rowAndSection.section, withMarketsArray: marketsArray)
+        if searchingOn {
+            let iCell = tableView.dequeueReusableCell(withIdentifier: "cellForItemInTableViews", for: indexPath) as! CellForItemInTableViews
+            iCell.namLbl.text = searchBarArray[indexPath.row].name!
+            return iCell
         } else {
-            let iCell = tableView.dequeueReusableCell(withIdentifier: "itemMarketListCell", for: indexPath) as! ItemItemMercadoVCCell
-            itemsMercadoTableView.separatorStyle = .singleLine
-            iCell.checkmarkSign.addTarget(self, action: #selector(addItemToWeeklyShoppingList(sender:)), for: .touchUpInside)
-            iCell.itemImageButton.addTarget(self, action: #selector(checkTouchInsideImageView(sender:)), for: .touchUpInside)
-            iCell.itemNotes.addTarget(self, action: #selector(getItemNotesItemsVC(sender:)), for: .touchUpInside)
-            return objCtrl.returnItemCell(withCell: iCell, inMarket: indexPath.section, inSector: rowAndSection.section, itemIndex: rowAndSection.row, indexPathRow: indexPath.row, withMarketsArray: marketsArray)
+            if !objCtrl.checkMarketHasItemsInHeaders(inArray: itemsOnlyArray, inSection: indexPath.section){
+                let cellOne = tableView.dequeueReusableCell(withIdentifier: "cellOne", for: indexPath)
+                return cellOne
+            } else {
+                let rowAndSection = uObjCtrl.sectionSubsectionForItemInTableView(atSection: indexPath.section, atRow: indexPath.row, inMarketArray: itemsOnlyArray)
+                if itemsOnlyArray[indexPath.section].getSector()[rowAndSection.section].isOpened(){
+                    if rowAndSection.row < 0 {
+                        let sCell = tableView.dequeueReusableCell(withIdentifier: "cellForSectorInTableViews", for: indexPath) as! CellForSectorInTableViews
+                        return objCtrl.returnCell(withCell: sCell, withCellType: .sector, withArray: itemsOnlyArray, inMarket: indexPath.section, inSector: rowAndSection.section) as! CellForSectorInTableViews
+                    } else {
+                        let iCell = tableView.dequeueReusableCell(withIdentifier: "cellForItemInTableViews", for: indexPath) as! CellForItemInTableViews
+                        iCell.checkMarkBtn.addTarget(self, action: #selector(addToShoppingList(sender:)), for: .touchUpInside)
+                        iCell.imageBtn.addTarget(self, action: #selector(getItemImage(sender:)), for: .touchUpInside)
+                        iCell.notesBtn.addTarget(self, action: #selector(getItemNotesItemsVC(sender:)), for: .touchUpInside)
+                        return objCtrl.returnCell(withCell: iCell, withCellType: .item, withArray: itemsOnlyArray, inMarket: indexPath.section, inSector: rowAndSection.section, itemLocator: rowAndSection.row, rowForCellTag: indexPath.row) as! CellForItemInTableViews  }
+                } else {
+                    if rowAndSection.row < 0 {
+                        let sCell = tableView.dequeueReusableCell(withIdentifier: "cellForSectorInTableViews", for: indexPath) as! CellForSectorInTableViews
+                        return objCtrl.returnCell(withCell: sCell, withCellType: .sector, withArray: itemsOnlyArray, inMarket: indexPath.section, inSector: rowAndSection.section) as! CellForSectorInTableViews
+                    } else { return UITableViewCell()   }   }   }
         }
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return objCtrl.returnHeightForCell(atIndexPath: indexPath, usingMarketsArray: marketsArray)
+        if searchingOn {
+            return CGFloat(89)
+        }
+        if objCtrl.checkMarketHasItemsInHeaders(inArray: itemsOnlyArray, inSection: indexPath.section){
+            return objCtrl.returnHeightForCell(atIndexPath: indexPath, usingMarketsArray: itemsOnlyArray)   }
+        return CGFloat(tableView.bounds.height)
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        goToSingleItemVC(usingIndexPath: indexPath)
-        itemsMercadoTableView.deselectRow(at: indexPath, animated: true)
+        if searchingOn {
+
+        } else {
+            let rowAndSection = uObjCtrl.sectionSubsectionForItemInTableView(atSection: indexPath.section, atRow: indexPath.row, inMarketArray: itemsOnlyArray)
+            if rowAndSection.row < 0 {
+                itemsOnlyArray[indexPath.section].getSector()[rowAndSection.section].isOpened() ? itemsOnlyArray[indexPath.section].getSector()[rowAndSection.section].closeSubcell() : itemsOnlyArray[indexPath.section].getSector()[rowAndSection.section].openedSubcell()
+                itemsMercadoTableView.deselectRow(at: indexPath, animated: true)
+            } else {
+                itemObj = itemsOnlyArray[indexPath.section].getSector()[rowAndSection.section].getItem()[rowAndSection.row]
+                itemsMercadoTableView.deselectRow(at: indexPath, animated: true)
+                goToSingleItemVC()
+            }
+        }
+        itemsMercadoTableView.reloadData()
     }
-    //MARK:- TARGETS
+}
+//MARK:- CORE DATA
+extension ItemsMercadoVC{
+    func saveData(){
+        do {
+            try dataController.viewContext.save()
+            print("saved")
+        } catch { print("notSaved")     }
+    }
+    func loadData(){
+        let fetchRequest = NSFetchRequest<Market>(entityName: "Market")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "orderingID", ascending: true)]
+        if let results = try? dataController.viewContext.fetch(fetchRequest){
+            fullArray = results     }
+        let fetchRequest1 = NSFetchRequest<Item>(entityName: "Item")
+        fetchRequest1.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        if let results = try? dataController.viewContext.fetch(fetchRequest1){
+            searchBarArray = results     }
+    }
+    func delete(item: Item){
+        dataController.viewContext.delete(item)
+        saveData()
+        loadData()
+    }
+}
+//MARK:- TARGETS
+extension ItemsMercadoVC {
     //expand UIImage to expandedImageView
-    @objc func checkTouchInsideImageView(sender: UIImageView) {
-        uObjCtrl.setTagForCellAddressForOtherFunctionsOutsideTableView(atIndexPath: sender.tag)
-        chosenImageForItemImageExpandedVC = objCtrl.getItemImage(inCellAddress: uObjCtrl.getCellAdress(), inMarketsArray: marketsArray)
+    @objc func expandCollapseHeader(sender: UIButton) {
+        itemsOnlyArray[sender.tag].isOpened() ?  itemsOnlyArray[sender.tag].closeSubcell() : itemsOnlyArray[sender.tag].openSubcell()
+        itemsMercadoTableView.reloadData()
+    }
+    @objc func getItemImage(sender: UIImageView) {
+        itemImageForItemImageExpandedVC = objCtrl.getItemImage(usingTag: sender.tag, inMarketsArray: itemsOnlyArray)
         goToItemImageExpandedVC()
     }
     //tap gesture for Item CELL
-    @objc func addItemToWeeklyShoppingList(sender: UIButton) {
-        uObjCtrl.setTagForCellAddressForOtherFunctionsOutsideTableView(atIndexPath: sender.tag)
-        let cellIndex = uObjCtrl.computeRowAndColum(atSection: uObjCtrl.getCellAdress()[.marketAndSectorIndex]!, atRow: uObjCtrl.getCellAdress()[.itemIndex]!, inMarketArray: marketsArray)
-        let selectedCell = marketsArray[uObjCtrl.getCellAdress()[.marketAndSectorIndex]!].getSector()[cellIndex.section].getItem()[cellIndex.row]
-        if selectedCell.getAddToBuyList() {
-            selectedCell.setAddToBuyList(changeBoolValue: false)
+    @objc func addToShoppingList(sender: UIButton) {
+        uObjCtrl.setTagForObtainingItemObj(usingBtnTag: sender.tag)
+        let item = objCtrl.getItemObject(usingTag: sender.tag, inMarketsArray: itemsOnlyArray)
+        if item.getAddToBuyList() {
+            item.setAddToBuyList(changeBoolValue: false)
+            item.setIsAlreadyPurchased(value: false)
+            saveData()
             itemsMercadoTableView.reloadData()
         } else {
-            if uObjCtrl.checkIfItemIsSoldInKiloOrLiter(withDescription: selectedCell.getFormOfSale().getUnitMeasure()){
-                uObjCtrl.setItemsIsSoldInKilosOrLiters(value: true)
-            }
-            priceLabel.text = objCtrl.updatingQttyScrollViewInformationLabels(selectedCell: selectedCell)[0]
-            quantityDetailsLabel.text = objCtrl.updatingQttyScrollViewInformationLabels(selectedCell: selectedCell)[1]
-            scrollViewOutletShow()
+            uObjCtrl.registerDecimalFunctionInTextFieldIfItemSoldByInKiloOrLiter(withUnitMeasureRawValue: item.getFormOfSale().getUnitMeasure())
+            priceLabel.text = objCtrl.getTextForPopUpToAddItemToShoppingList(item: item)[0]
+            quantityDetailsLabel.text = objCtrl.getTextForPopUpToAddItemToShoppingList(item: item)[1]
+            showAlertAddToShoppingList()
         }
     }
     //get item notes
     @objc func getItemNotesItemsVC(sender: UIButton){
-        uObjCtrl.setTagForCellAddressForOtherFunctionsOutsideTableView(atIndexPath: sender.tag)
         present(itemInfoAlertIMVC(withSenderTag: sender.tag), animated: true, completion: nil)
+        itemsMercadoTableView.reloadData()
     }
-    //MARK:- TEXTFIELDS
+}
+//MARK:- TEXTFIELDS
+extension ItemsMercadoVC {
     //textfield delegate method
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .sentences
         enableScrolInScrollView()
         if textField == quantityValueTextField {
-            if uObjCtrl.getItemIsSoldInKilosOrLitters() {
-                registeringAndUnregisteringTargetForAddingToWeeklyShoppingListButton(registerTrueAndUnregisterFalse: true)
+            if uObjCtrl.isItemSoldByKiloOrLiter() {
+                setTextFieldForDecimalIfItemSoldByKiloOrLiter(setTrueUnsetFalse: true)
             }
         }
     }
@@ -145,9 +217,7 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             if decimalKeyTooblar == nil {
                 decimalKeyTooblar = UIToolbar(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 44))
             }
-            let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneBtn))
-            let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-            decimalKeyTooblar?.items = [spacer, doneButton]
+            decimalKeyTooblar!.items = [UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil), UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneBtn))]
             textField.inputAccessoryView = decimalKeyTooblar
             return true
         }
@@ -164,18 +234,21 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         qttyInfoScrollView.isScrollEnabled = false
         quantityValueTextField.resignFirstResponder()
     }
-    //MARK:- BUTTONS
+}
+//MARK:- BUTTONS
+extension ItemsMercadoVC{
     //button to add quantity and item to weekly shopping list
     @IBAction func addItemToWeeklyShoppingListPressed(_ sender: Any) {
-        let cellIndex = uObjCtrl.computeRowAndColum(atSection: uObjCtrl.getCellAdress()[.marketAndSectorIndex]!, atRow: uObjCtrl.getCellAdress()[.itemIndex]!, inMarketArray: marketsArray)
-        let selectedCell = marketsArray[uObjCtrl.getCellAdress()[.marketAndSectorIndex]!].getSector()[cellIndex.section].getItem()[cellIndex.row]
-        if !quantityValueTextField.text!.isEmpty && uObjCtrl.checkIfInputInformationIsNotZero(price: quantityValueTextField.text!) {
-            if uObjCtrl.getItemIsSoldInKilosOrLitters() {
-                selectedCell.getFormOfSale().setQuantityInDecimal(howMuchItWeighs: quantityValueTextField.text!)
+        let cell = objCtrl.getItemObject(usingTag: uObjCtrl.getTagForObtainingItemObj(), inMarketsArray: itemsOnlyArray)
+        if !quantityValueTextField.text!.isEmpty && uObjCtrl.isThereNumber(inTextField: quantityValueTextField.text).0 {
+            if uObjCtrl.isItemSoldByKiloOrLiter() {
+                cell.getFormOfSale().setQuantityStringToDouble(howManyUnits: quantityValueTextField.text!, kiloOrLiter: true)
             } else {
-                selectedCell.getFormOfSale().setQuantityInUnits(howManyUnits: quantityValueTextField.text!.numbersOnly.integerValue)
+                cell.getFormOfSale().setQuantityStringToDouble(howManyUnits: quantityValueTextField.text!, kiloOrLiter: false)
             }
-            selectedCell.setAddToBuyList(changeBoolValue: true)
+            cell.setAddToBuyList(changeBoolValue: true)
+            cell.setIsAlreadyPurchased(value: false)
+            saveData()
         } else {
             print("ERROR - NOTHING ADDED TO WEEKLY SHOPPING LIST")
         }
@@ -185,7 +258,9 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBAction func cancelAddItemToWeeklyListActionPressed(_ sender: Any) {
         dismissQttyInfoScrollView()
     }
-    //MARK:- KEYBOARD
+}
+//MARK:- KEYBOARD
+extension ItemsMercadoVC{
     //keyboard notification show
     @objc func keyboardWillShow(notification: Notification) {
         let info : NSDictionary = notification.userInfo! as NSDictionary
@@ -206,6 +281,10 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @objc func keyboardWillDisappear(notification: Notification) {
         print("keyboard will hide")
     }
+    //tap gesture for view
+    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
+        textFieldsResignFirstResponder()
+    }
     func registerToKeyboardNotifications(registerTrueAndUnregisterFalse value : Bool){
         if value {
             NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -217,52 +296,50 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
         }
     }
-    //adding keyboard dismissal upon touching screen
-    func addKeyboardDismissalUponTouchOnScreen(){
-        let tapToDimissKeyBoard = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard(_:)))
-              self.qttyInfoScrollView.addGestureRecognizer(tapToDimissKeyBoard)
-    }
-    //tap gesture for view
-    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
-        textFieldsResignFirstResponder()
-    }
-    //MARK:- ALERTS
+}
+//MARK:- ALERTS
+extension ItemsMercadoVC{
     func itemInfoAlertIMVC(withSenderTag tag: Int) -> UIAlertController {
-        let cell = objCtrl.getCellForTargets(inCellAddress: uObjCtrl.getCellAdress(), inTheArray: marketsArray)
+        let cell = objCtrl.getItemObject(usingTag: tag, inMarketsArray: itemsOnlyArray)
         var textField = UITextField()
-        let alert = UIAlertController(
-            title: "Item Information",
-            message: "\nOBSERVACOES:\n\(cell.getItemInformation())",
-            preferredStyle: .alert)
+        let alert = UIAlertController(title: "Item Information", message: "\nOBSERVACOES:\n\(cell.getItemInformation().value)", preferredStyle: .alert)
         let save = UIAlertAction(title: "Salvar", style: .default) { (action) in
-            if !textField.text!.isEmpty {
-                cell.setItemInformation(information: textField.text!)
-            } else {
-                print("ERROR | ItemsMercadoVC || itemInfoAlertIMVC || could no save item info")
-            }
+            !textField.text!.isEmpty ? cell.setItemInformation(information: textField.text!) : cell.setItemInformation(information: nil)
+            self.saveData()
+            self.reloadData()
         }
-        let cancel = UIAlertAction(title: "Cancelar", style: .cancel)
-        alert.addAction(cancel)
+        alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel))
         alert.addAction(save)
+
+        if cell.getItemInformation().hasValue {
+            let delete = UIAlertAction(title: "Deletar observação", style: .destructive) { (action) in
+                cell.setItemInformation(information: nil)
+                self.saveData()
+                self.reloadData()
+            }
+            alert.addAction(delete)
+        }
         alert.addTextField { (field) in
             field.placeholder = "Alterar: escreva e salve"
             textField = field
         }
         return alert
     }
-    //MARK:- LAYOUT
+}
+//MARK:- USER INTERFACE
+extension ItemsMercadoVC{
     //setting kilo decimal or other form of sales units in the textfield
-    func registeringAndUnregisteringTargetForAddingToWeeklyShoppingListButton(registerTrueAndUnregisterFalse value : Bool) {
+    func setTextFieldForDecimalIfItemSoldByKiloOrLiter(setTrueUnsetFalse value : Bool = false) {
         if value {
             quantityValueTextField.text = 0.threeDigits
             quantityValueTextField.addTarget(self, action: #selector(realTimePriceTextFieldUpdate), for: UIControl.Event.editingChanged)
-        } else if !value {
+        } else {
             quantityValueTextField.text = ""
             quantityValueTextField.removeTarget(self, action: #selector(realTimePriceTextFieldUpdate), for: UIControl.Event.editingChanged)
         }
     }
     //showing view for addin quatity and item to weekly shopping list
-    func scrollViewOutletShow() {
+    func showAlertAddToShoppingList() {
         qttyInfoScrollView.isHidden = false
         enableScrolInScrollView()
     }
@@ -272,11 +349,9 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     //dismissing view for addin quatity and item to weekly shopping list
     func dismissQttyInfoScrollView() {
-        registeringAndUnregisteringTargetForAddingToWeeklyShoppingListButton(registerTrueAndUnregisterFalse: false)
+        setTextFieldForDecimalIfItemSoldByKiloOrLiter()
         textFieldsResignFirstResponder()
         qttyInfoScrollView.isHidden = true
-        uObjCtrl.setItemsIsSoldInKilosOrLiters(value: false)
-        addressForSelectedItem = 0
         itemsMercadoTableView.reloadData()
     }
     //setting method as target for textfield
@@ -287,21 +362,35 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @objc func doneBtn() {
         textFieldsResignFirstResponder()
     }
-    //MARK: - SEGUEWAYS
+    func hideUserInterfaceInSearchBar(value: Bool){
+        addNewItemBtn.isEnabled = value
+    }
+}
+//MARK:- DATA HANDLING
+extension ItemsMercadoVC{
+    func reloadData(){
+        itemsMercadoTableView.reloadData()
+        DispatchQueue.main.async {
+            self.registerToKeyboardNotifications(registerTrueAndUnregisterFalse: true)
+        }
+    }
+}
+//MARK: - SEGUEWAYS
+extension ItemsMercadoVC{
     //prepare
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToItemImageExpandedVC" {
             let destinationVC = segue.destination as! ItemImageExpandedVC
-            destinationVC.selectedCellImage = chosenImageForItemImageExpandedVC
+            destinationVC.selectedCellImage = itemImageForItemImageExpandedVC
         } else if segue.identifier == "goToAddNewItem" {
             let destinationVC = segue.destination as! NewItemVC
-            destinationVC.marketsArray = self.marketsArray
-            destinationVC.delegate = self
+            destinationVC.marketsArray = self.fullArray
+            destinationVC.dataController = dataController
         } else if segue.identifier == "goToSingleItemVC" {
             let destinationVC = segue.destination as! SingleItemInfoVC
-            destinationVC.selectedCellInformation = itemInformation
-            destinationVC.marketsArraySingleVC = marketsArray
-            destinationVC.delegate = self
+            destinationVC.passedItem = itemObj
+            destinationVC.marketsArray = itemsOnlyArray
+            destinationVC.dataController = dataController
         }
     }
     //adding a new item
@@ -315,37 +404,41 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     func goToItemImageExpandedVC() {
         performSegue(withIdentifier: "goToItemImageExpandedVC", sender: self)
     }
-    func goToSingleItemVC(usingIndexPath indexPath: IndexPath){
-        itemInformation = CellInformation(
-            itemObj: objCtrl.getCellForDidSelectRowAt(withIndexPath: indexPath, withMarketsArray: marketsArray).selectedCell,
-            marketIndex: objCtrl.getCellForDidSelectRowAt(withIndexPath: indexPath, withMarketsArray: marketsArray).mktIndex,
-            sectorIndex: objCtrl.getCellForDidSelectRowAt(withIndexPath: indexPath, withMarketsArray: marketsArray).sctIndex,
-            itemIndex: objCtrl.getCellForDidSelectRowAt(withIndexPath: indexPath, withMarketsArray: marketsArray).itemIndex,
-            formOfSaleIndex: objCtrl.getCellForDidSelectRowAt(withIndexPath: indexPath, withMarketsArray: marketsArray).formOfSaleIndex
-        )
+    func goToSingleItemVC(){
         performSegue(withIdentifier: "goToSingleItemVC", sender: self)
     }
-    //MARK:- DELEGATE METHODS
-    //from newItem VC
-    func passingNewArraysOfElements(sendMarketsArray ary: [Market]) {
-        marketsArray = ary
-    }
-    //from singleItem VC
-    func updatingArrayWithNewArrayFromSIVC(sendMarketsArray ary: [Market]) {
-        marketsArray = ary
-    }
-    //MARK:- START/END
+}
+//MARK:- DELEGATE METHODS
+//extension ItemsMercadoVC {
+//    func updatingArrayWithNewArrayFromSIVC(sendMarketsArray ary: Item?) {
+//        print("delegate called")
+//        if let hasItem = ary {
+//            let sector = hasItem.sector!
+//            hasItem.subtractItemFromMarketAndSectorCounter()
+//            delete(item: hasItem)
+//            sector.resetItemOrdering()
+//            itemsMercadoTableView.reloadData()
+//        } else { print("doesnt have value") } }
+//}
+//MARK:- START/END
+extension ItemsMercadoVC{
     func initialFunctions(){
         itemsMercadoTableView.delegate = self
         itemsMercadoTableView.dataSource = self
         
-        itemsMercadoTableView.register(UINib(nibName: "MarketItemMercadoVCCell", bundle: nil), forCellReuseIdentifier: "marketMarketListCell")
-        itemsMercadoTableView.register(UINib(nibName: "SectorItemMercadoVCCell", bundle: nil), forCellReuseIdentifier: "sectorMarketListCell")
-        itemsMercadoTableView.register(UINib(nibName: "ItemItemMercadoVCCell", bundle: nil), forCellReuseIdentifier: "itemMarketListCell")
+        itemsMercadoTableView.register(UINib(nibName: "MarketHeaderCell", bundle: nil), forCellReuseIdentifier: "marketHeaderCell")
+        itemsMercadoTableView.register(UINib(nibName: "CellForSectorInTableViews", bundle: nil), forCellReuseIdentifier: "cellForSectorInTableViews")
+        itemsMercadoTableView.register(UINib(nibName: "CellForItemInTableViews", bundle: nil), forCellReuseIdentifier: "cellForItemInTableViews")
+        itemsMercadoTableView.separatorStyle = .singleLine
+        itemsMercadoTableView.separatorColor = .black
+        
+        itemsMercadoTableView.tableFooterView = UIView()
         
         quantityValueTextField.delegate = self
+        searchBarInTouched.delegate = self
         
-        addKeyboardDismissalUponTouchOnScreen()
+        qttyInfoScrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard(_:))))
+        searchBarInTouched.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard(_:))))
         
         if let textfield = searchBarInTouched.value(forKey: "searchField") as? UITextField {
             textfield.backgroundColor = UIColor.white
@@ -357,11 +450,43 @@ class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 leftView.tintColor = UIColor.black
             }
         }
+        let cancel = searchBarInTouched.value(forKey: "cancelButton") as! UIButton
+        cancel.tintColor = .white
         
         registerToKeyboardNotifications(registerTrueAndUnregisterFalse: true)
     }
     func finalFunctions(){
-        delegateHomeVC?.updatingMainItemsArraySaveInHomeVC(withArray: marketsArray)
         registerToKeyboardNotifications(registerTrueAndUnregisterFalse: false)
+    }
+}
+//MARK:- SEARCH BAR
+extension ItemsMercadoVC: UISearchBarDelegate{
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        loadData()
+        searchingOn = true
+        if searchText.isEmpty {
+            itemsMercadoTableView.reloadData()
+            return
+        } else {
+            let myFilter = searchText.lowercased()
+            searchBarArray = searchBarArray.filter({ $0.name?.lowercased().range(of: myFilter, options: [.diacriticInsensitive]) != nil})
+        }
+        itemsMercadoTableView.reloadData()
+    }
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchingOn = true
+        hideUserInterfaceInSearchBar(value: false)
+        itemsMercadoTableView.reloadData()
+    }
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+        searchBar.text = ""
+        searchingOn = false
+        loadData()
+        hideUserInterfaceInSearchBar(value: true)
+        itemsMercadoTableView.reloadData()
+    }
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
     }
 }

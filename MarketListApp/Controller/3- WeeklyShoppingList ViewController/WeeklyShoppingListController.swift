@@ -1,374 +1,350 @@
+////
+////  WeeklyShoppingListController.swift
+////  MarketListApp
+////
+////  Created by Diego Mieth on 19/11/19.
+////  Copyright © 2019 dgmieth. All rights reserved.
+////
 //
-//  WeeklyShoppingListController.swift
-//  MarketListApp
-//
-//  Created by Diego Mieth on 19/11/19.
-//  Copyright © 2019 dgmieth. All rights reserved.
-//
-
 import UIKit
+import CoreData
 
 class WeeklyShoppingListObjectController {
-    private var rowForTableView : Int = 0
-    private var sectionForTableView : Int = 0
-    private var marketsCounter : Int = 0
-    private var sectorsCounter : Int = 0
-    private var itemsCounter : Int = 0
-    let marketCell = MarketItemWeeklyShoppingList()
-    let sectorCell = SectorItemWeeklyShoppingList()
-    let itemCell = ItemItemWeeklyShoppingListVC ()
+    private var mIndex : [Int] = []
+    private let marketCell = MarketHeaderCell()
+    private let sectorCell = CellForSectorInTableViews()
+    private let itemCell = CellForItemInTableViews ()
     //variables for getting cell address outside tableview functions
-    private let constantForCellAddress: Int = 10000
-    private var cellAddress : Int = -1
+    private let constantForCellAddress: Int = 1_0000
     //univesarlObjectController
-    private var uObjCtrlWeeklyVC = UniversalObjectController()
+    private var uObjCtrl = UniversalObjectController()
     //bottom price and item quantity labels
-    private var returnString = [BottomInformationLabelsInWeeklyShoppingItemsVC : String]()
-    private var toBuyPrice = 0.0
-    private var toBuyQtty = 0.0
-    private var boughtPrice = 0.0
-    private var boughtQtty = 0.0
+//    private var returnString = [BottomInformationLabelsInWeeklyShoppingItemsVC : String]()
     
-    //MARK:- START UP/END
-    func getOnlyToBuyItems(withMarketsArray ary : [Market]) -> [Market] {
-        var newMarketArray = [Market]()
-        for m in 0..<ary.count {
-            var sectorArray = [Sector]()
-            for s in 0..<ary[m].getSector().count {
-                var itemArrays = [Item]()
-                if ary[m].getSector()[s].getItem().count > 0 {
-                    for i in 0..<ary[m].getSector()[s].getItem().count {
-                        if ary[m].getSector()[s].getItem()[i].getAddToBuyList() {
-                            itemArrays.append(ary[m].getSector()[s].getItem()[i])
-                        }
-                    }
-                }
-                if itemArrays.count > 0 {
-                    let sector = Sector(sectorName: ary[m].getSector()[s].getName())
-                    for item in 0..<itemArrays.count {
-                        sector.setItem(item: itemArrays[item])
-                    }
-                    sectorArray.append(sector)
-                }
-            }
-            if sectorArray.count > 0 {
-                let market = Market(marketName: ary[m].getName())
-                for sector in 0..<sectorArray.count {
-                    market.setSector(sector: sectorArray[sector])
-                }
-                newMarketArray.append(market)
-            }
-        }
-        return newMarketArray
-    }
-    func emptyOnlyToBuyArray(usingMarketsArray ary : [Market]) -> [Market]{
-        let emptyArray = [Market]()
-        toBuyQtty = 0
-        toBuyPrice = 0
-        boughtPrice = 0
-        boughtQtty = 0
-        return emptyArray
-    }
-    //function for viewWillAppear
-    func canLoadItemsOntoTableView(inMarketsArray ary : [Market]) -> Bool {
-        itemsCounter = 0
-        for m in 0..<ary.count {
-            for s in 0..<ary[m].getSector().count {
-                itemsCounter = itemsCounter + ary[m].getSector()[s].getItem().count
-            }
-        }
-        if itemsCounter > 0 {
-            return true
-        } else {
-            return false
-        }
-    }
-    //MARK:- TABLEVIEW
-    //sections
-    func getSectionsForTableView(inMarketsArray ary : [Market]) -> Int {
-        if self.itemsCounter > 0 {
-            return ary.count
-        } else {
-            return 0
-        }
-    }
-    //rows
-    func getRowsForTableView(inMarketsArray ary : [Market], inSection section : Int ) -> Int {
-        let sectionsInMarket = ary[section].getSector()
-        var numberOfRows = 0
-        
-        for s in 0 ..< sectionsInMarket.count {
-            if sectionsInMarket[s].getItem().count > 0 {
-                numberOfRows = numberOfRows + sectionsInMarket[s].getItem().count
-                numberOfRows = numberOfRows + 1
-            }
-        }
-        
-        if itemsCounter == 0 {
-            return 0
-        } else {
-            return numberOfRows
-        }
-    }
-    //return cell height
-    func returnHeightForCell(atIndexPath indexPath : IndexPath, usingMarketsArray ary: [Market]) -> CGFloat {
-        let rowAndSection = uObjCtrlWeeklyVC.computeRowAndColum(atSection: indexPath.section, atRow: indexPath.row, inMarketArray: ary)
-        let itemIndex = rowAndSection.row
-        if itemIndex < 0 && indexPath.row == 0 {
-            return CGFloat(marketCell.hValue)
-        } else if itemIndex < 0 {
-            return CGFloat(sectorCell.hValue)
-        } else {
-            return CGFloat(itemCell.hValue)
-        }
-    }
-    //CELL VIEWS
-    func returnMarketCell(withCell cell: MarketItemWeeklyShoppingList, inMarket mkt: Int, inSector str: Int, withMarketsArray ary : [Market]) ->
-        MarketItemWeeklyShoppingList {
-            cell.marketName.text = ary[mkt].getName()
-            cell.sectorName1stCell.text = ary[mkt].getSector()[str].getName()
-            return cell
-    }
-    //cell for sector
-    func returnSectorCell(withCell cell: SectorItemWeeklyShoppingList, inMarket mkt: Int, inSector str: Int, withMarketsArray ary : [Market]) -> SectorItemWeeklyShoppingList {
-        cell.sectorName.text = ary[mkt].getSector()[str].getName()
-        return cell
-    }
-    //cell for item
-    func returnItemCell(withCell cell: ItemItemWeeklyShoppingListVC, inMarket mkt: Int, inSector str: Int, itemIndex item: Int, indexPathRow row: Int, withMarketsArray ary : [Market]) -> ItemItemWeeklyShoppingListVC {
-        let itemsInfo = ary[mkt].getSector()[str].getItem()[item]
-        
-        cell.itemNameLbl.text = itemsInfo.getName()
-        cell.quantityLbl.text = "Comprar:"
-        if itemsInfo.getFormOfSale().getUnitMeasure() == UnitMeasure.allCases[1].rawValue {
-            cell.quantityTxtField.text = "\(Int(itemsInfo.getFormOfSale().getItemQuantityInWeight())) unidade(s)"
-        } else {
-            if uObjCtrlWeeklyVC.checkIfItemIsSoldInKiloOrLiter(withDescription: itemsInfo.getFormOfSale().getUnitMeasure()) {
-                cell.quantityTxtField.text = "\( uObjCtrlWeeklyVC.returnDecimalNumberFormattedAccordingToLocality(valueToFormat: itemsInfo.getFormOfSale().getItemQuantityInWeight())) \(itemsInfo.getFormOfSale().getUnitMeasure())(s)"
-            } else {
-                cell.quantityTxtField.text = "\(Int(itemsInfo.getFormOfSale().getItemQuantityInWeight())) \(itemsInfo.getFormOfSale().getUnitMeasure())(s)"
-            }
-        }
-        if !itemsInfo.getPurchase() {
-            cell.cellView.backgroundColor = nil
-            cell.purchasedButton.setImage(nil, for: .normal)
-        } else {
-            cell.purchasedButton.setImage(UIImage(named: "checkMarkAppAdded"), for: .normal)
-            cell.cellView.backgroundColor = uObjCtrlWeeklyVC.getUIColorForSelectedTableViewCells()
-        }
-        cell.singleItemPriceTxtField.text = itemsInfo.getFormOfSale().getItemPrice()
-        switch itemsInfo.getFormOfSale().getUnitMeasure() {
-        case UnitMeasure.averageWeight.rawValue:
-            cell.singleItemPriceLbl.text = ("Preço de 1 kilo/litro:")
-        case UnitMeasure.gram.rawValue, UnitMeasure.mililiter.rawValue:
-            cell.singleItemPriceLbl.text = ("Preço de \(Int(itemsInfo.getFormOfSale().getStandarWeightValue())) \(itemsInfo.getFormOfSale().getUnitMeasure())s:")
-        default:
-            cell.singleItemPriceLbl.text = ("Preço de 1 \(itemsInfo.getFormOfSale().getUnitMeasure()):")
-        }
-        cell.priceTimesQuantityLbl.text = "Total:"
-        cell.priceTimesQuantityTxtField.text = "\(itemsInfo.getFormOfSale().getFormattedFinalQuantityPrice())"
-        cell.itemImageView.image = itemsInfo.getImage()
-        if itemsInfo.getItemTemp() {
-            cell.coldSingImageView.isHidden = false
-            cell.itemNotes.imageEdgeInsets.left = 1
-        } else {
-            cell.coldSingImageView.isHidden = true
-            cell.itemNotes.imageEdgeInsets.left = -35
-        }
-        let tagNumber = mkt*uObjCtrlWeeklyVC.getCellAdress()[.constantForCellAddress]!+row
-        cell.purchasedButton.tag = tagNumber
-        cell.seeImageButton.tag = tagNumber
-        cell.itemNotes.tag = tagNumber
-        return cell
-    }
-    //MARK:- DATA MANIPULATION
-    //create array of items
-    func createArrayOfItems(withMarketsArray ary: [Market]) -> [Item] {
-        var itemsArray = [Item]()
-        for m in 0..<ary.count{
-            for s in 0..<ary[m].getSector().count {
-                let counter = ary[m].getSector()[s].getItem().count
-                if counter > 0 {
-                    for i in 0..<ary[m].getSector()[s].getItem().count {
-                        itemsArray.append(ary[m].getSector()[s].getItem()[i])
-                    }
-                }
-            }
-        }
-        return itemsArray
-    }
-    //UPDATE MAIN ARRAY
-    func updatingMainArrayForHomeVC(weeklyShoppingListMarketsArray ary: [Market]) -> PurchasedItemsList?{
-        let boughtList = PurchasedItemsList()
-        let itemsArray = createArrayOfItems(withMarketsArray: ary)
-        var hasItems = false
-        for m in 0..<ary.count {
-            for s in 0..<ary[m].getSector().count{
-                if ary[m].getSector()[s].getItem().count > 0 {
-                    for i in 0..<ary[m].getSector()[s].getItem().count {
-                        let item = ary[m].getSector()[s].getItem()[i]
-                        for ni in 0..<itemsArray.count {
-                            if item.getID() == itemsArray[ni].getID() {
-                                if itemsArray[ni].getPurchase() {
-                                    hasItems = true
-                                    item.setPurchase(value: false)
-                                    item.setAddToBuyList(changeBoolValue: false)
-                                    var array = [String]()
-                                    array.append(uObjCtrlWeeklyVC.returnFormattedCurrentSystemDate())
-                                    if item.getFormOfSale().getUnitMeasure() == UnitMeasure.averageWeight.rawValue {
-                                        array.append("\(Int(item.getFormOfSale().getItemQuantityInWeight())) unidade(s)")
-                                        array.append("\(item.getFormOfSale().getItemPrice()) por kilo/litro (peso medio)")
-                                    } else {
-                                        if uObjCtrlWeeklyVC.checkIfItemIsSoldInKiloOrLiter(withDescription: item.getFormOfSale().getUnitMeasure()) {
-                                            array.append("\(item.getFormOfSale().getItemQuantityInWeight()) \(item.getFormOfSale().getUnitMeasure())(s)")
-                                            array.append("\(item.getFormOfSale().getItemPrice()) por \(Int(item.getFormOfSale().getStandarWeightValue())) \(item.getFormOfSale().getUnitMeasure())")
-                                        } else {
-                                            array.append("\(Int(item.getFormOfSale().getItemQuantityInWeight())) \(item.getFormOfSale().getUnitMeasure())(s)")
-                                            if item.getFormOfSale().getUnitMeasure() == UnitMeasure.single.rawValue {
-                                                array.append("\(item.getFormOfSale().getItemPrice()) por \(Int(item.getFormOfSale().getStandarWeightValue())) \(item.getFormOfSale().getUnitMeasure())")
-                                            } else {
-                                                array.append("\(item.getFormOfSale().getItemPrice()) por \(Int(item.getFormOfSale().getStandarWeightValue())) \(item.getFormOfSale().getUnitMeasure())(s)")
-                                            }
-                                        }
-                                    }
-                                    array.append(String(item.getFormOfSale().getFormattedFinalQuantityPrice()))
-                                    item.setPurchaseHistory(withText: array)
-                                    let boughtItem = PurchasedItem(name: item.getName(), price: item.getFormOfSale().getItemPriceDouble(), priceDescription: item.getFormOfSale().getUnitMeasureNoRawValue(), boughtQ: item.getFormOfSale().getItemQuantityInWeight(), finalPaidPrice: item.getFormOfSale().getFinalQuantityPriceDouble(), market: ary[m].getName())
-                                    boughtList.addBoughtItem(item: boughtItem)
-                                    switch item.getFormOfSale().getUnitMeasureNoRawValue() {
-                                    case .averageWeight, .single:
-                                        boughtList.setBoughtItemsQtty(itemQtty: item.getFormOfSale().getItemQuantityInWeight())
-                                    case .kilogram, .liter, .mililiter, .gram:
-                                        boughtList.setBoughtItemsQtty(itemQtty: 1)
-                                    default:
-                                        print("ERROR | WeeklyShoppingListVCController || updatingMainArrayForHomeVC || found no item qtty for boughArray")
-                                    }
-                                    boughtList.setTotalAmountSpent(price: item.getFormOfSale().getFinalQuantityPriceDouble())
-                                } else {
-                                    item.setPurchase(value: false)
-                                    item.setAddToBuyList(changeBoolValue: false)
-                                }
-                            
-                            }
-                        }
-                    }
-                }
-            }
-            
-        }
-        if hasItems {
-            return boughtList
-        } else {
-            return nil
-        }
-    }
-    //getting cell
-    func getCell(inCellAddress index : [CellAddressDictionary : Int], inTheArray ary: [Market])-> Item {
-        let cellIndex = uObjCtrlWeeklyVC.computeRowAndColum(atSection: index[.marketAndSectorIndex]!, atRow: index[.itemIndex]!, inMarketArray: ary)
-        let selectedCell = ary[index[.marketAndSectorIndex]!].getSector()[cellIndex.section].getItem()[cellIndex.row]
-        return selectedCell
-    }
-    //update bottom lable when view will appear
-    func setResetBottomLableVariables(usingArray ary: [Market]) -> [BottomInformationLabelsInWeeklyShoppingItemsVC : String]{
-        returnVariablesToZero()
-        let itemsaArray = self.createArrayOfItems(withMarketsArray: ary)
-        for ni in 0..<itemsaArray.count {
-            switch itemsaArray[ni].getFormOfSale().getUnitMeasureNoRawValue() {
-            case .averageWeight, .single:
-                if itemsaArray[ni].getPurchase() {
-                    boughtQtty += itemsaArray[ni].getFormOfSale().getItemQuantityInWeight()
-                    boughtPrice += itemsaArray[ni].getFormOfSale().getFinalQuantityPrice()
-                }
-                toBuyQtty += itemsaArray[ni].getFormOfSale().getItemQuantityInWeight()
-            case .gram, .kilogram, .liter, .mililiter:
-                if itemsaArray[ni].getPurchase() {
-                    boughtQtty += 1
-                    boughtPrice += itemsaArray[ni].getFormOfSale().getFinalQuantityPrice()
-                }
-                toBuyQtty += 1
-            }
-            toBuyPrice += itemsaArray[ni].getFormOfSale().getFinalQuantityPrice()
-        }
-        return updateStrinForBottomLableInformation()
-    }
-    //set varibales back to zero
-    func returnVariablesToZero(){
-        toBuyPrice = 0.0
-        toBuyQtty = 0.0
-        boughtPrice = 0.0
-        boughtQtty = 0.0
-    }
-    //update bottom lable when target method for button is triggered
-    func updateBottomLableInsideTargetForButton(inCellAddress index : [CellAddressDictionary : Int], withMarketsArray ary: [Market]) -> [BottomInformationLabelsInWeeklyShoppingItemsVC : String] {
-        let selectedCell = self.getCell(inCellAddress: index, inTheArray: ary)
-        if selectedCell.getPurchase() {
-            switch selectedCell.getFormOfSale().getUnitMeasureNoRawValue() {
-            case .averageWeight, .single:
-                boughtQtty += selectedCell.getFormOfSale().getItemQuantityInWeight()
-            default:
-                boughtQtty += 1
-            }
-            boughtPrice += selectedCell.getFormOfSale().getFinalQuantityPrice()
-        } else {
-            switch selectedCell.getFormOfSale().getUnitMeasureNoRawValue() {
-            case .averageWeight, .single:
-                boughtQtty -= selectedCell.getFormOfSale().getItemQuantityInWeight()
-            default:
-                boughtQtty -= 1
-            }
-            boughtPrice -= selectedCell.getFormOfSale().getFinalQuantityPrice()
-        }
-        return updateStrinForBottomLableInformation()
-    }
-    //update bottomLable texts
-    private func updateStrinForBottomLableInformation() -> [BottomInformationLabelsInWeeklyShoppingItemsVC : String] {
-        returnString[.toBuyItemsLbl1] = "Lista contém:"
-        returnString[.boughItemsLbl1] = "Já foram comprados:"
-        returnString[.toBuyListPriceLbl1] = "Lista custa:"
-        returnString[.boughtListPriceLbl1] = "Items comprados custam:"
-        returnString[.toBuyItemsLbl2] = "\(String(uObjCtrlWeeklyVC.returnFormattedQttyInInt(formatQtty: toBuyQtty))) item(s)"
-        returnString[.boughItemsLbl2] = "\(String(uObjCtrlWeeklyVC.returnFormattedQttyInInt(formatQtty: boughtQtty))) item(s)"
-        returnString[.toBuyListPriceLbl2] = uObjCtrlWeeklyVC.returnFormattedCurrency(usingNumber: toBuyPrice)
-        returnString[.boughtListPriceLbl2] = uObjCtrlWeeklyVC.returnFormattedCurrency(usingNumber: boughtPrice)
-        return returnString
-    }
-    //MARK:- LAYOUT
-    func updatingEditingInformationLbls(selectedCell: Item) -> [String] {
-        var priceLabel = String()
-        var quantityDetailsLabel = String()
-        if selectedCell.getFormOfSale().getUnitMeasure() == UnitMeasure.allCases[4].rawValue ||
-            selectedCell.getFormOfSale().getUnitMeasure() == UnitMeasure.allCases[5].rawValue {
-//            itemIsSoldInKilosOrLitters = true
-            priceLabel = "Preço por \(selectedCell.getFormOfSale().getUnitMeasure())"
-            quantityDetailsLabel = "Informe quantos \(selectedCell.getFormOfSale().getUnitMeasure())s comprar"
-        } else if selectedCell.getFormOfSale().getUnitMeasure() == UnitMeasure.allCases[0].rawValue {
-            priceLabel = "Preço por \(selectedCell.getFormOfSale().getUnitMeasure())"
-            quantityDetailsLabel = "Informe quantas \(selectedCell.getFormOfSale().getUnitMeasure())s comprar"
-        } else if selectedCell.getFormOfSale().getUnitMeasure() == UnitMeasure.allCases[1].rawValue {
-            priceLabel = "Preço por kilo/litro"
-            quantityDetailsLabel = "Cada unidade pesa: \n \(Int(selectedCell.getFormOfSale().getStandarWeightValue()*Double(selectedCell.getFormOfSale().getDivisor()[.averageWeight]!))) grama(s)/ml(s). Informe \nquantas unidades comprar"
-        } else {
-            priceLabel = "Preço por \(selectedCell.getFormOfSale().getUnitMeasure())"
-            quantityDetailsLabel = "Informe quantos \(selectedCell.getFormOfSale().getUnitMeasure())s comprar"
-        }
-        var ary = [String]()
-        ary.append(priceLabel)
-        ary.append(quantityDetailsLabel)
-        return ary
-    }
-    //MARK:- TARGET METHODS
-    //get image for itemImageExpandedVC
-    func getItemImage(inCellAddress index : [CellAddressDictionary : Int], inMarketsArray ary: [Market]) -> UIImage {
-        let selectedCell = self.getCell(inCellAddress: index, inTheArray: ary)
-        return selectedCell.getImage()
-    }
-    //set cell as purchased
-    func setOrUnsetCellAsPurhcase(inCellAddress index : [CellAddressDictionary : Int], withMarketsArray ary: [Market]) {
-        let selectedCell = self.getCell(inCellAddress: index, inTheArray: ary)
-        if selectedCell.getPurchase() {
-            selectedCell.setPurchase(value: false)
-        } else {
-            selectedCell.setPurchase(value: true)
-        }
+    private var totalQttyBought = 0.00
+    private var totalPriceBought = 0.00
+}
+//MARK:- START UP/END
+extension WeeklyShoppingListObjectController {
+    func hasItemsToBuy(lookInArray ary : [Market])->Bool{
+        var itemsCounter = 0
+        for m in ary {
+            for s in m.getSector() {
+                for i in s.getItem() { itemsCounter += i.getAddToBuyList() ? 1 : 0
+                }       }       }
+        return itemsCounter > 0 ? true : false
     }
 }
+//MARK:- LOADING MARKETS IDEXES WITH TO BUY ITEMS
+extension WeeklyShoppingListObjectController{
+    func fillMIndex(withArray ary: [Market]) {
+        var index = [Int]()
+        for m in 0..<ary.count {
+            var itemCounter = 0
+            for s in 0..<ary[m].getSector().count {
+                for i in 0..<ary[m].getSector()[s].getItem().count {
+                    itemCounter += ary[m].getSector()[s].getItem()[i].getAddToBuyList() ? 1 : 0   }
+            }
+            itemCounter > 0 ? index.append(m) : nil
+        }
+        mIndex = index
+    }
+    func returnMarketIndex(inSection section : Int)->(Bool, Int){
+        return mIndex.count > 0 ? (true, mIndex[section]) : (false, 0)
+    }
+}
+//MARK:- TABLEVIEW
+extension WeeklyShoppingListObjectController {
+    func returnNumberOfSections(inMarketsArray ary: [Market])-> Int{
+        return mIndex.count > 0 ? mIndex.count : 1
+    }
+    func returnNumberOfRows(inMarketsArray ary : [Market], inSection section: Int)-> Int{
+        var counter = 0
+        if mIndex.count > 0 {
+            for s in ary[mIndex[section]].getSector() {
+                var hasItems = false
+                for i in s.getItem() {
+                    if i.getAddToBuyList() {
+                        counter += 1
+                        hasItems = true
+                    }       }
+                counter += hasItems ? 1 : 0
+            }
+            if counter > 0 {      return ary[mIndex[section]].isOpened() ? counter : 0
+            }
+        }
+        return 1
+    }
+    //return cell height and header
+    func returnHeightForCell(atIndexPath indexPath : IndexPath, usingMarketsArray ary: [Market]) -> CGFloat {
+        let rowAndSection = returnItemObjIndexPath(inMarketsArray: ary, inSection: indexPath.section, inRow: indexPath.row)
+        if ary[indexPath.section].getSector()[rowAndSection.section].isOpened(){
+            return rowAndSection.row < 0 ? sectorCell.hValue : itemCell.hValue
+        } else {
+            return rowAndSection.row < 0 ? sectorCell.hValue+10 : CGFloat(0)    }
+    }
+    func returnHeighForHeader(inSection section : Int, usingMarketsArray ary : [Market])->CGFloat {
+        return ary[section].isOpened() ? marketCell.hValue : marketCell.hValue + 10
+    }
+    //CELL VIEWS
+    func returnCell(withCell cell : Any, cellType type : TVCellType, itemInArray ary: [Market], inIndexPath indexPath: IndexPath, itemIndexPath: IndexPath)->Any {
+        if type == .market {
+            let mCell = cell as! MarketHeaderCell
+            mCell.marketNameLbl.text = ary[indexPath.section].getName()
+            mCell.itemsQttLbl.text = "\(totalAmountAndQttyToBuy(marketOrSector: .market, usingArray: ary, atIndexPath: indexPath).qtty) item(s) \n Total: \(totalAmountAndQttyToBuy(marketOrSector: .market, usingArray: ary, atIndexPath: indexPath).amount)"
+            mCell.tappedBtn.tag = indexPath.section
+            return mCell
+        } else if type == .sector {
+            let sCell = cell as! CellForSectorInTableViews
+            sCell.sectorNameLbl.text = ary[indexPath.section].getSector()[itemIndexPath.section].getName()
+            let sectorIndexPath = IndexPath(row: itemIndexPath.section, section: indexPath.section)
+            sCell.sideLable.text = "\(totalAmountAndQttyToBuy(marketOrSector: .sector, usingArray: ary, atIndexPath: sectorIndexPath).qtty) item(s) \n Total: \(totalAmountAndQttyToBuy(marketOrSector: .sector, usingArray: ary, atIndexPath: sectorIndexPath).amount)"
+            sCell.sideLable.textAlignment = .right
+            return sCell
+        } else if type == .item {
+            let iCell = cell as! CellForItemInTableViews
+            let item = ary[indexPath.section].getSector()[itemIndexPath.section].getItem()[itemIndexPath.row]
+            let soldBy = uObjCtrl.returnUnitMeasureInString(forNumber: Int(item.getFormOfSale().getUnitMeasure()))
+            
+            iCell.namLbl.text = item.getName()
+            if item.getBrand().hasValue {
+                iCell.brandLblInfo.text = item.getBrand().Value
+                iCell.brandLblInfo.font = UIFont(name: "Charter", size: 15)
+            } else {
+                iCell.brandLblInfo.text = "nao informada"
+                iCell.brandLblInfo.font = UIFont(name: "Charter-Italic", size: 15)
+            }
+            iCell.priceValueLbl.text = item.getFormOfSale().getItemPriceDoubleToString()
+            iCell.soldByValueLbl.text = String(soldBy)
+            iCell.imageImgView.image = item.getImage()
+            switch item.getFormOfSale().getUnitMeasure() {
+            case UnitMeasure.averageWeight.rawValue:
+                iCell.priceLbl.text = ("Preço de 1 kilo/litro:")
+            case UnitMeasure.gram.rawValue, UnitMeasure.mililiter.rawValue:
+                iCell.priceLbl.text = ("Preço de \(Int(item.getFormOfSale().getStandarWeightValue())) \(soldBy)s:")
+            default:
+                iCell.priceLbl.text = ("Preço de 1 \(soldBy):")
+            }
+            if !item.getIsAlreadyPurchased() {
+                iCell.cellViewView.backgroundColor = nil
+                iCell.checkMarkBtn.setImage(nil, for: .normal)
+            } else {
+                iCell.checkMarkBtn.setImage(UIImage(named: "checkMarkAppAdded"), for: .normal)
+                iCell.cellViewView.backgroundColor = uObjCtrl.getUIColorForSelectedTableViewCells()
+            }
+            iCell.coldImg.isHidden = item.getItemTemp() ? false : true
+            if item.getItemInformation().hasValue {
+                iCell.notesBtn.isHidden = false
+                iCell.notesBtn.setImage(UIImage(systemName: "info.circle.fill"), for: .normal)
+            } else {
+                iCell.notesBtn.isHidden = true
+            }
+            iCell.toBuyLbl.isHidden = false
+            iCell.qttyToByLbl.isHidden = false
+            if item.getFormOfSale().getUnitMeasure() == UnitMeasure.averageWeight.rawValue {
+                iCell.qttyToByLbl.text = "\(Int(item.getFormOfSale().getItemQtty())) unidade(s)"
+            } else {
+                iCell.qttyToByLbl.text = (item.getFormOfSale().getUnitMeasure() == 4 || item.getFormOfSale().getUnitMeasure() == 5) ? "\(uObjCtrl.numberByLocalityDoubleToString(valueToFormat: item.getFormOfSale().getItemQtty())) \(soldBy)(s)" : "\(Int(item.getFormOfSale().getItemQtty())) \(soldBy)(s)"
+            }
+            let tagNumber = indexPath.section*uObjCtrl.getConstantForCellAddress()+indexPath.row
+            iCell.checkMarkBtn.tag = tagNumber
+            iCell.imageBtn.tag = tagNumber
+            iCell.notesBtn.tag = tagNumber
+            return iCell
+        }
+        return cell
+    }
+}
+//MARK:- LAYOUT
+extension WeeklyShoppingListObjectController{
+    func qttyAndPriceStandardTextForAlerts(selectedCell: Item) -> [String] {
+        var priceLabel = String()
+        var quantityDetailsLabel = String()
+        let soldBy = uObjCtrl.returnUnitMeasureInString(forNumber: selectedCell.getFormOfSale().getUnitMeasure())
+        if selectedCell.getFormOfSale().getUnitMeasure() == UnitMeasure.allCases[4].rawValue ||
+            selectedCell.getFormOfSale().getUnitMeasure() == UnitMeasure.allCases[5].rawValue {
+            priceLabel = "Vendido em \(soldBy)"
+            quantityDetailsLabel = "Informe quantos \(soldBy)s comprar"
+        } else if selectedCell.getFormOfSale().getUnitMeasure() == UnitMeasure.allCases[0].rawValue {
+            priceLabel = "Vendido emunidade"
+            quantityDetailsLabel = "Informe quantas unidades comprar"
+        } else if selectedCell.getFormOfSale().getUnitMeasure() == UnitMeasure.allCases[1].rawValue {
+            priceLabel = "Vendido em kilo/litro"
+            quantityDetailsLabel = "Cada unidade pesa: \n \(Int(selectedCell.getFormOfSale().getStandarWeightValue()*Double(selectedCell.getFormOfSale().getDivisor()[.averageWeight]!))) grama(s)/ml(s). Informe \nquantas unidades comprar"
+        } else {
+            priceLabel = "Preço por \(soldBy)"
+            quantityDetailsLabel = "Informe quantos \(soldBy)s comprar"
+        }
+        return [priceLabel, quantityDetailsLabel]
+    }
+}
+//MARK:- TARGET METHODS
+extension WeeklyShoppingListObjectController{
+    //    //set cell as purchased
+    func setOrUnsetCellAsPurhcase(withTagForCell tag : Int, withMarketsArray ary: [Market]) {
+        let section = Int(tag/uObjCtrl.getConstantForCellAddress())
+        let row = Int(tag%uObjCtrl.getConstantForCellAddress())
+        let cellIndex = returnItemObjIndexPath(inMarketsArray: ary, inSection: section, inRow: row)
+        ary[section].getSector()[cellIndex.section].getItem()[cellIndex.row].getPurchase() ? ary[section].getSector()[cellIndex.section].getItem()[cellIndex.row].setPurchase(value: false) : ary[section].getSector()[cellIndex.section].getItem()[cellIndex.row].setPurchase(value: true)
+    }
+    func getItemImage(usingTag tag : Int, inMarketsArray ary: [Market]) -> UIImage {
+        let section = Int(tag/uObjCtrl.getConstantForCellAddress())
+        let row = Int(tag%uObjCtrl.getConstantForCellAddress())
+        let cellIndex = returnItemObjIndexPath(inMarketsArray: ary, inSection: section, inRow: row)
+        return ary[section].getSector()[cellIndex.section].getItem()[cellIndex.row].getImage()
+    }
+}
+//MARK:- DATA MANIPULTAION
+extension WeeklyShoppingListObjectController{
+    func getItemObj(usingTag tag : Int = -1, indexPath: IndexPath = IndexPath(row: -1, section: -1), inMarketsArray ary: [Market], dataControler : DataController) -> Item {
+        if tag > -1 {
+            let section = Int(tag/uObjCtrl.getConstantForCellAddress())
+            let row = Int(tag%uObjCtrl.getConstantForCellAddress())
+            let cellIndex = returnItemObjIndexPath(inMarketsArray: ary, inSection: section, inRow: row)
+            return ary[section].getSector()[cellIndex.section].getItem()[cellIndex.row]
+        } else if indexPath.row > -1 {
+            let cellIndex = returnItemObjIndexPath(inMarketsArray: ary, inSection: indexPath.section, inRow: indexPath.row)
+            return ary[indexPath.section].getSector()[cellIndex.section].getItem()[cellIndex.row]
+        }
+        return Item(context: dataControler.viewContext)
+    }
+    func checkMarketHasItemsInHeaders(inMarketsArray ary: [Market], inSection section: Int)->Bool{
+        var counter = 0
+        if ary.count == 0 {
+            return false
+        }
+        for s in ary[section].getSector() {
+            for i in s.getItem() {
+                counter += i.getAddToBuyList() ? 1 : 0
+            }       }
+        return counter > 0 ? true : false
+    }
+    func returnItemObjIndexPath(inMarketsArray ary: [Market], inSection section: Int, inRow x : Int)->IndexPath{
+        let sectors = ary[section].getSector()
+        var section = 0
+        var row = x
+        for s in 0..<sectors.count {
+            row -= 1
+            var hasItems = false
+            for i in 0..<sectors[s].getItem().count {
+                if sectors[s].getItem()[i].getAddToBuyList() {  hasItems = true     }
+            }
+            if hasItems {
+                if row < 0 {
+                    section = s
+                    break
+                } else {
+                    var itemsToBuy = [Int]()
+                    for i in 0..<sectors[s].getItem().count {
+                        if sectors[s].getItem()[i].getAddToBuyList() {  itemsToBuy.append(i)    }
+                    }
+                    if row < itemsToBuy.count {
+                        section = s
+                        row = itemsToBuy[row]
+                        break
+                    } else {    row -= itemsToBuy.count     }
+                }
+            } else {        row += 1        }
+        }
+        return IndexPath(row: row, section: section)
+    }
+    func totalAmountAndQttyToBuy(marketOrSector value : TVCellType, usingArray ary: [Market], atIndexPath indexPath: IndexPath) -> (amount: String, qtty: String){
+        var amount = Double()
+        var quantity = Double()
+        if value == .market {
+            for s in 0..<ary[indexPath.section].getSector().count {
+                for i in 0..<ary[indexPath.section].getSector()[s].getItem().count{
+                    let item = ary[indexPath.section].getSector()[s].getItem()[i]
+                    if item.getAddToBuyList() {
+                        switch item.getFormOfSale().getUnitMeasureNoRawValue() {
+                        case .single, .averageWeight:
+                            quantity += item.getFormOfSale().getItemQtty()
+                        default:
+                            quantity += 1
+                        }
+                        amount += item.getFormOfSale().getFinalQuantityPrice()
+                    }       }       }
+        } else if value == .sector {
+            for i in 0..<ary[indexPath.section].getSector()[indexPath.row].getItem().count{
+                let item = ary[indexPath.section].getSector()[indexPath.row].getItem()[i]
+                if item.getAddToBuyList() {
+                    switch item.getFormOfSale().getUnitMeasureNoRawValue() {
+                    case .single, .averageWeight:
+                        quantity += item.getFormOfSale().getItemQtty()
+                    default:
+                        quantity += 1
+                    }
+                    amount += item.getFormOfSale().getFinalQuantityPrice()
+                }       }
+        }
+        return (amount: uObjCtrl.currencyDoubleToString(usingNumber: amount), qtty: "\(Int(quantity))")
+    }
+    func totalAmountAndQttyBought(withArray ary: [Market]) -> (amount: String, qtty: String, amountDouble: Double, qttyDouble: Double){
+        var amount = 0.00
+        var quantity = 0.00
+        for m in ary {
+            for s in m.getSector() {
+                for i in s.getItem() {
+                    if i.getIsAlreadyPurchased(){
+                        switch i.getFormOfSale().getUnitMeasureNoRawValue() {
+                        case .single, .averageWeight:
+                            quantity += i.getFormOfSale().getItemQtty()
+                        default:
+                            quantity += 1
+                        }
+                        amount += i.getFormOfSale().getFinalQuantityPrice()
+                        totalPriceBought = amount
+                        totalQttyBought = quantity
+                    }       }       }       }
+        return (uObjCtrl.currencyDoubleToString(usingNumber: amount), qtty: "\(Int(quantity))", totalPriceBought, totalQttyBought)
+    }
+    func finishLists(withMarketsArray marketsArray: [Market], withDataController dataController: DataController, withFinishedListsArray ary: [PurchasedList])->PurchasedList? {
+        let purchasedItems = PurchasedList(context: dataController.viewContext)
+        purchasedItems.setListFinishedDate(date: Date())
+        purchasedItems.setTotalAmountSpent(price: totalPriceBought)
+        purchasedItems.setBoughtItemsQtty(itemQtty: totalQttyBought)
+        for m in 0..<marketsArray.count {
+            for s in 0..<marketsArray[m].getSector().count {
+                for i in 0..<marketsArray[m].getSector()[s].getItem().count {
+                    if marketsArray[m].getSector()[s].getItem()[i].getAddToBuyList(){
+                        if marketsArray[m].getSector()[s].getItem()[i].getIsAlreadyPurchased() {
+                            let hItem = PurchasedItem(context: dataController.viewContext)
+                            let item = marketsArray[m].getSector()[s].getItem()[i]
+                            hItem.setItemName(name: item.getName())
+                            hItem.setItemPrice(price: item.getFormOfSale().getItemPriceDouble())
+                            hItem.setItemFormOfSale(rawValue: item.getFormOfSale().getUnitMeasure())
+                            hItem.setBoughtQtty(qtty: item.getFormOfSale().getItemQtty())
+                            hItem.setMarket(market: item.sector!.market!.getName())
+                            hItem.setTotalAmmount(value: item.getFormOfSale().getFinalQuantityPrice())
+                            var array = [String]()
+                            array.append(uObjCtrl.currentSystemDate())
+                            let soldBy = item.getFormOfSale()
+                            switch soldBy.getUnitMeasureNoRawValue() {
+                            case .kilogram, .liter:
+                                array.append("\(soldBy.getItemPriceDoubleToString())")
+                                array.append("\(soldBy.getItemQtty())")
+                                array.append(uObjCtrl.returnUnitMeasureInString(forNumber: soldBy.getUnitMeasure()))
+                            default:
+                                array.append("\(soldBy.getItemPriceDoubleToString())")
+                                array.append("\(Int(soldBy.getItemQtty()))")
+                                array.append(uObjCtrl.returnUnitMeasureInString(forNumber: soldBy.getUnitMeasure()))
+                            }
+                            array.append("\(uObjCtrl.currencyDoubleToString(usingNumber: soldBy.getFinalQuantityPrice()))")
+                            item.setPurchaseHistory(withText: array)
+                            hItem.purchasedList = purchasedItems
+                            item.setAddToBuyList(changeBoolValue: false)
+                            item.setIsAlreadyPurchased(value: false)
+                        }   }   }   }
+        }
+        if purchasedItems.getBoughItems().count > 0 {
+            return purchasedItems
+        } else {
+            dataController.viewContext.delete(purchasedItems)
+        }
+        return nil
+    }
+}
+
+
+
+

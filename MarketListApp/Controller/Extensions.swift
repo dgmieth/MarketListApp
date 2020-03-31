@@ -37,3 +37,4 @@ extension String {
         return NSDecimalNumber(string: self)
     }
 }
+

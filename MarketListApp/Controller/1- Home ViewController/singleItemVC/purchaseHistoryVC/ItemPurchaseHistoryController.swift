@@ -12,11 +12,11 @@ class ItemPurchaseHistoryController {
     let tableViewCell = ItemPurchaseHistoryVCCell()
     
     func returnCellHeightForCellForRowAT(isItCustomTableViewCell value : Bool)->CGFloat {
-        if value {
-            return CGFloat(tableViewCell.hValue)
-        } else {
-            return 21
-        }
-        
+        return value ? CGFloat(tableViewCell.hValue) : 21
+//        if value {
+//            return CGFloat(tableViewCell.hValue)
+//        } else {
+//            return 21
+//        }
     }
 }

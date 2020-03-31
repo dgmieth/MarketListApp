@@ -7,10 +7,7 @@
 //
 
 import UIKit
-
-protocol addingNewItemsToArray {
-    func passingNewArraysOfElements(sendMarketsArray ary: [Market])
-}
+import CoreData
 
 class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -18,62 +15,50 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
     var sectorsArray = [Sector]()
     var chosenMarketIndex : Int = -1
     var chosenSectorIndex : Int = -1
-    var viewHeight : CGFloat = 0
-    var refrigeratedItem : Bool = false
-    var gramOrMlSelected : Bool = false
-    let emptyItemCell = Item()
+    var pickerTag = Int()
+    let fontSizePkrView : CGFloat = 23
+    let uObjCtrl = UniversalObjectController()
+    var dataController:DataController!
+    let imagePicker = UIImagePickerController()
     //decimal keyboard toolbar
     var decimalKeyTooblar : UIToolbar?
     var keyboardHeight = CGFloat()
-    
-    //New Market and New Sector View
+ 
+    @IBOutlet weak var scrolViewOutlet: UIScrollView!
     @IBOutlet weak var newMarketAndSectorSuperView: UIView!
     @IBOutlet weak var newMarketandNewSectorLabel: UILabel!
     @IBOutlet weak var newMarketAndNewSectorTextField: UITextField!
-    var pickerTag = Int()
-    var saveSectorInMarket = Int()
     @IBOutlet weak var saveNewMarketAndSectorButton: UIButton!
-    
-    var delegate : addingNewItemsToArray?
-    
-    let imagePicker = UIImagePickerController()
-    
-    @IBOutlet weak var scrolViewOutlet: UIScrollView!
-    
     @IBOutlet weak var marketPicker: UIPickerView!
     @IBOutlet weak var sectorPicker: UIPickerView!
     @IBOutlet weak var formOfSalePicker: UIPickerView!
-    
     @IBOutlet weak var sectorLbl: UILabel!
     @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var brandLbl: UILabel!
     @IBOutlet weak var brandTextField: UITextField!
-    
     @IBOutlet weak var formOfSaleLbl: UILabel!
     @IBOutlet weak var standardQttyLbl: UILabel!
     @IBOutlet weak var standarWeightTextField: UITextField!
     @IBOutlet weak var fixedUnitMeasureLbl: UILabel!
     @IBOutlet weak var itemPriceLabel: UILabel!
     @IBOutlet weak var priceTextField: UITextField!
-    
     @IBOutlet weak var coldItemLbl: UILabel!
     @IBOutlet weak var coldItemChooser: UISwitch!
     @IBOutlet weak var addImageButton: UIButton!
-    
     @IBOutlet weak var itemImageView: UIImageView!
-    
-    //MARK:- VEIW LOADING
-    override func viewWillAppear(_ animated: Bool) {
-        registerToKeyboardNotificationsInNewItemVC(registerTrueAndUnregisterFalse: true)
-    }
+}
+//MARK:- VC INATE FUNCTIONS
+extension NewItemVC{
     override func viewDidLoad() {
-        initializationProcedures()
+        loadFunction()
     }
     override func viewDidDisappear(_ animated: Bool) {
         beforeViewDisappearFunctions()
     }
-    //MARK:- PICKER VIEW
+}
+//MARK:- PICKER VIEW
+extension NewItemVC{
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
@@ -88,17 +73,128 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
         } else if pickerView.tag == 3 {
             return retunrViewForRow(inPicker: pickerView, atRow: row, usingTextFromAry: UnitMeasure.allCases)
         } else {
-            let lable = UILabel()
-            return lable
+            return UILabel()
         }
     }
     func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
-        return retunrFontSizeForPickerViewViews()
+        return fontSizePkrView
     }
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         actionsForDidSelectRowAt(withPicker: pickerView, atRow: row)
     }
-    //MARK:- BUTTONS
+}
+//MARK: PICKERVIEW SUBFUNCTIONS
+extension NewItemVC {
+    //number of row in component
+    func returnNumberOfRowsForComponent(inPicker picker : UIPickerView) -> Int {
+        if picker.tag == 1 {
+            return marketsArray.count + 2
+        } else if picker.tag == 2 {
+            return sectorsArray.count + 2
+        } else if picker.tag == 3{
+            return UnitMeasure.allCases.count
+        } else {
+            return 0
+        }
+    }
+    //return views
+    func retunrViewForRow<T>(inPicker picker: UIPickerView, atRow row: Int, usingTextFromAry ary: [T]) -> UILabel {
+        if picker.tag == 1 {
+            let ary = ary as! [Market]
+            switch row {
+            case 0:
+                return lblForPickerRows(forPkrRow: .first, inPkr: picker, withText: "mercado")
+            case ary.count + 1:
+                return lblForPickerRows(forPkrRow: .last, inPkr: picker, withText: "mercado")
+            default:
+                return lblForPickerRows(forPkrRow:.other, inPkr: picker, withText: ary[row - 1].getName())
+            }
+        } else if picker.tag == 2 {
+            let ary = ary as! [Sector]
+            switch row {
+            case 0:
+                return lblForPickerRows(forPkrRow: .first, inPkr: picker, withText: "setor")
+            case ary.count + 1:
+                return lblForPickerRows(forPkrRow: .last, inPkr: picker, withText: "setor")
+            default:
+                return lblForPickerRows(forPkrRow: .other, inPkr: picker, withText: ary[row - 1].getName())
+            }
+        } else /*if picker.tag == 3*/ {
+            return lblForPickerRows(forPkrRow: .other, inPkr: picker, withText: uObjCtrl.returnUnitMeasureInString(forNumber: UnitMeasure.allCases[row].rawValue), atRow: row)
+        }
+    }
+    //return lable for picker view rows
+    func lblForPickerRows(forPkrRow row : RowForPickerInNewItemVC, inPkr pkr: UIPickerView, withText text: String, atRow rowPkr3 : Int = 0) -> UILabel {
+        let genericLbl = UILabel()
+        genericLbl.textAlignment = .center
+        genericLbl.textColor = .black
+        genericLbl.font = UIFont(name: "Charter-Italic", size: fontSizePkrView)
+        switch row {
+        case .first:
+            genericLbl.text = "Escolha um \(text)"
+        case .last:
+            genericLbl.text = "Novo \(text)"
+        case .other:
+            if pkr.tag == 3 && rowPkr3 == 1 {
+                genericLbl.font = UIFont(name: "Charter-Bold", size: fontSizePkrView-3)
+                genericLbl.text = text
+            } else {
+                genericLbl.font = UIFont(name: "Charter-Bold", size: fontSizePkrView)
+                genericLbl.text = text
+            }
+        }
+        return genericLbl
+    }
+    //return selected row at
+    func actionsForDidSelectRowAt(withPicker pickerView: UIPickerView, atRow row: Int){
+        if pickerView.tag == 1 {
+            if row == 0 {
+                hideUserLayoutIfPickerRowIsZero(inPicker: pickerView)
+            } else if row == marketsArray.count + 1 {
+                newMarketNewSector(informarMarketOrSector: "market")
+                hideUserLayoutIfPickerRowIsZero(inPicker: pickerView)
+            } else {
+                reloadPicker(informMarketOrPicker: "sector", withRow: row)
+                updateUserInferface(atCase: 2)
+            }
+        } else if pickerView.tag == 2 {
+            if row == 0 {
+                hideUserLayoutIfPickerRowIsZero(inPicker: pickerView)
+            } else if row == sectorsArray.count + 1 {
+                newMarketNewSector(informarMarketOrSector: "sector")
+                hideUserLayoutIfPickerRowIsZero(inPicker: pickerView)
+            } else {
+                chosenSectorIndex = row - 1
+                updatePriceAndQuantityLblInfo()
+                updateUserInferface(atCase: 4)
+            }
+        } else if pickerView.tag == 3{
+            updatePriceAndQuantityLblInfo(atRow: row)
+            if row == 1 {
+                updateUserInferface(atCase: 6)
+            } else {
+                updateUserInferface(atCase: 5)
+            }
+        }
+    }
+    //reload market picker
+    func reloadPicker(informMarketOrPicker info : String, withRow row : Int = 0) {
+        if info == "market" {
+            marketPicker.reloadAllComponents()
+            marketPicker.selectRow(0, inComponent: 0, animated: true)
+        }else if info == "sector" {
+            if row > 0 {
+                sectorsArray = marketsArray[row - 1].getSector()
+                chosenMarketIndex = row - 1
+                updateUserInferface(atCase: 8)
+            }
+            sectorPicker.reloadAllComponents()
+            sectorPicker.selectRow(0, inComponent: 0, animated: true)
+        }
+    }
+}
+//MARK:- BUTTONS
+extension NewItemVC {
     //canceling add market/sector call and dimissing superview
     @IBAction func cancelNewMarketAndNewSectorPressed(_ sender: Any) {
         newMarketAndSectorSuperView.isHidden = true
@@ -114,62 +210,56 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
     //saving add market/sector call and dimissing superview
     @IBAction func saveNewMarketAndNewSectorPressed(_ sender: Any) {
         newMarketAndSectorSuperView.isHidden = true
-        if pickerTag == 1 {
-            if !newMarketAndNewSectorTextField.text!.isEmpty {
-                let newMarket = Market(marketName: newMarketAndNewSectorTextField.text!)
-                marketsArray.append(newMarket)
-                reloadMarketPickerView()
-            } else {
-                emptyTextField()
-            }
-            pickerTag = 0
-        } else if pickerTag == 2 {
-            if !newMarketAndNewSectorTextField.text!.isEmpty {
-                let newSector = Sector(sectorName: newMarketAndNewSectorTextField.text!)
-                marketsArray[chosenMarketIndex].setSector(sector: newSector)
+        if !newMarketAndNewSectorTextField.text!.isEmpty {
+            if pickerTag == 1 {
+                let newMarket = Market(context: dataController.viewContext)
+                newMarket.name = newMarketAndNewSectorTextField.text!
+                newMarket.setOredringId(setAt: marketsArray.count)
+                saveModel()
+                reloadPicker(informMarketOrPicker: "market")
+            }  else if pickerTag == 2 {
+                let newSector = Sector(context: dataController.viewContext)
+                newSector.name = newMarketAndNewSectorTextField.text!
+                newSector.market = marketsArray[chosenMarketIndex]
+                newSector.setOredringId(setAt: marketsArray[chosenMarketIndex].getSector().count)
+                saveModel()
                 sectorsArray = marketsArray[chosenMarketIndex].getSector()
-                reloadSectorPickerView()
-            } else {
-                emptyTextField()
+                reloadPicker(informMarketOrPicker: "sector")
             }
-            pickerTag = 0
+        }   else {
+            emptyTextFieldAlert()
         }
+        pickerTag = 0
         newMarketAndNewSectorTextField.text = ""
         newMarketAndNewSectorTextField.resignFirstResponder()
     }
     //adding new item in array
     @IBAction func addButtonPressed(_ sender: Any) {
-        if returnCanSaveItem() {
-            //item name
-            let newItem = Item(itemName: nameTextField.text!)
-            //item brand
-            if let brand = brandTextField.text {
-                newItem.setBrand(itsBrandIs: brand)
-            }
-            //item form of sale
-            newItem.getFormOfSale().setUnitMeasure(howItIsSold: UnitMeasure.allCases[formOfSalePicker.selectedRow(inComponent: 0)])
-            newItem.getFormOfSale().setItemPrice(howMuchIsIt: priceTextField.text!)
-            if formOfSalePicker.selectedRow(inComponent: 0) == 1 {
-                let decimaValue = NSDecimalNumber(string: standarWeightTextField.text!)
-                newItem.getFormOfSale().setStandarWeightValue(standarWeightIs: Double(decimaValue.intValue))
-            } else {
-                newItem.getFormOfSale().setStandarWeightValue()
-            }
-            newItem.setItemTemp(isItCold: refrigeratedItem)
+        if returnCanSaveItem().canSave {
+            let ary = returnCanSaveItem().ary
+            let newItem = Item(context: dataController.viewContext)
+            newItem.sector = marketsArray[chosenMarketIndex].getSector()[chosenSectorIndex]
+            newItem.setOredringId(setAt: marketsArray[chosenMarketIndex].getSector()[chosenSectorIndex].getItem().count)
+            newItem.setName(itsNameIs: ary[.name]!.value)
+            newItem.brand = ary[.brand]!.hasValue ? ary[.brand]!.value : ""
+            let newFormOfSale = FormOfSale(context: dataController.viewContext)
+            newFormOfSale.item = newItem
+            newFormOfSale.setUnitMeasure(howItIsSold: UnitMeasure.allCases[Int(ary[.soldBy]!.value)!])
+            newFormOfSale.setItemPriceStringToDouble(howMuchIsIt: ary[.price]!.value)
+            newFormOfSale.setStandardWeight(standarWeightIs: ary[.avgWeight]!.value)
+            newItem.setItemTemp(isItCold: coldItemChooser.isOn)
             if let image = itemImageView.image {
                 newItem.setImage(useImage: image)
             }
-            marketsArray[chosenMarketIndex].getSector()[chosenSectorIndex].setItem(item: newItem)
-            self.delegate?.passingNewArraysOfElements(sendMarketsArray: marketsArray)
-            navigationController?.popViewController(animated: true)
+            newItem.addOneitemInMarketAndSectorCounter()
+            saveModel(goToItemsMercadoVC: true)
         } else {
             print("ERROR in addButtonPressed code")
         }
     }
     //cancelling new item and dimissing newItemVC
     @IBAction func cancelButtonPressed(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
-        self.delegate?.passingNewArraysOfElements(sendMarketsArray: marketsArray)
+        saveModel(goToItemsMercadoVC: true)
     }
     //button to add picture to item
     @IBAction func addImagePressed(_ sender: Any) {
@@ -181,10 +271,86 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
     }
     //refrigerated itens switch
     @IBAction func refrigeratedItemTick(_ sender: Any) {
-        refrigeratedItem = !refrigeratedItem
-        print(refrigeratedItem.self)
+        
     }
-    //MARK:- TEXTFIELD
+}
+//MARK:- BUTTONS SUBFUNCTIONS
+extension NewItemVC{
+    //creating new sector
+    func newMarketNewSector(informarMarketOrSector value : String){
+        updateUserInferface(atCase: 9)
+        if value == "sector" {
+            pickerTag = 2
+            textForPopUpWindowNewMarketSector(withText: "setor")
+        } else if value == "market" {
+            pickerTag = 1
+            textForPopUpWindowNewMarketSector(withText: "mercado")
+        }
+    }
+    //creating new item
+    func returnCanSaveItem() -> (canSave: Bool, ary: [ValueFor : (hasValue: Bool, value: String)]) {
+        let results = getInformationFromFields()
+        if !results[.market]!.hasValue {
+            alertForEmptyNecessaryTextFields(title: "Mercado não selecionado", message: "Selecione o mercado")
+            return (false, results)
+        } else if !results[.sector]!.hasValue {
+            alertForEmptyNecessaryTextFields(title: "Setor não selecionado", message: "Selecione o setor")
+            return (false, results)
+        } else if !results[.name]!.hasValue {
+            alertForEmptyNecessaryTextFields(title: "Item sem nome", message: "Informe o nome do item")
+            return (false, results)
+        } else if !results[.sector]!.hasValue {
+            alertForEmptyNecessaryTextFields(title: "Setor não selecionado", message: "Selecione o setor")
+            return (false, results)
+        } else if formOfSalePicker.selectedRow(inComponent: 0) == 1 {
+            if !results[.avgWeight]!.hasValue {
+                alertForEmptyNecessaryTextFields(title: "Item sem peso médio", message: "Informe o peso médio por unidade")
+                return (false, results)
+            }
+        } else if !results[.price]!.hasValue {
+            alertForEmptyNecessaryTextFields(title: "Item sem preço", message: "Informe o preço do item")
+            return (false, results)
+        }
+            return (true, results)
+    }
+    func getInformationFromFields()->[ValueFor : (hasValue: Bool, value: String)]{
+        var ary = [ValueFor : (hasValue: Bool, value: String)]()
+        ary[.market] = marketPicker.selectedRow(inComponent: 0) > 0 ? (true, "\(marketPicker.selectedRow(inComponent: 0)-1)") :(false, "")
+        ary[.sector] = sectorPicker.selectedRow(inComponent: 0) > 0 ? (true, "\(sectorPicker.selectedRow(inComponent: 0)-1)") :(false, "")
+        ary[.name] = uObjCtrl.isThereText(inTextField: nameTextField.text)
+        ary[.brand] = uObjCtrl.isThereText(inTextField: brandTextField.text)
+        ary[.soldBy] = formOfSalePicker.selectedRow(inComponent: 0) >= 0 ? (true, "\(formOfSalePicker.selectedRow(inComponent: 0))") :(false, "")
+        ary[.avgWeight] = uObjCtrl.isThereText(inTextField: standarWeightTextField.text)
+        ary[.price] = uObjCtrl.isTherePrice(inTextField: priceTextField.text).0 ? (true, priceTextField.text!) : (false, "")
+        print(ary[.price])
+        ary[.cold] = coldItemChooser.isOn ? (true, "") : (false, "")
+        return ary
+    }
+}
+//MARK:- CORE DATA
+extension NewItemVC{
+    func saveModel(goToItemsMercadoVC value: Bool = false){
+        do{
+            try dataController.viewContext.save()
+            print("saved")
+        } catch {
+            print("notsaved")
+        }
+        updateArray()
+        if value {
+            navigationController?.popViewController(animated: true)
+        }
+    }
+    func updateArray(){
+        let fetchRequest = NSFetchRequest<Market>(entityName: "Market")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "orderingID", ascending: true)]
+        if let results = try? dataController.viewContext.fetch(fetchRequest){
+            marketsArray = results
+        }
+    }
+}
+//MARK:- TEXTFIELD
+extension NewItemVC{
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .sentences
@@ -230,9 +396,9 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
             textField.resignFirstResponder()
             newMarketAndSectorSuperView.isHidden = true
             if chosenMarketIndex == -1 {
-                reloadMarketPickerView()
+                reloadPicker(informMarketOrPicker: "market")
             } else if chosenSectorIndex == -1 {
-                reloadSectorPickerView()
+                reloadPicker(informMarketOrPicker: "sector")
             }
         }
         return true
@@ -244,183 +410,77 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
         priceTextField.resignFirstResponder()
         newMarketAndNewSectorTextField.resignFirstResponder()
     }
-    //MARK:- CONTROLLERS
-    
-    
-    
-    //MARK:... FOR PICKERS
-    //number of row in component
-    func returnNumberOfRowsForComponent(inPicker picker : UIPickerView) -> Int {
-        if picker.tag == 1 {
-            return marketsArray.count + 2
-        } else if picker.tag == 2 {
-            return sectorsArray.count + 2
-        } else if picker.tag == 3{
-            return UnitMeasure.allCases.count
-        } else {
-            return 0
-        }
+}
+//MARK:- ALERTS CONTROLLER
+extension NewItemVC{
+    //standard alert for missing information in the new item
+    func alertForEmptyNecessaryTextFields(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Confirmar", style: .cancel, handler: nil)
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
     }
-    //return views
-    func retunrViewForRow<T>(inPicker picker: UIPickerView, atRow row: Int, usingTextFromAry ary: [T]) -> UILabel {
-        let genericLbl = UILabel()
-        genericLbl.textAlignment = .center
-        genericLbl.textColor = .black
-        
-        if picker.tag == 1 {
-            let marketsTempAry = ary as! [Market]
-            switch row {
-            case let x where x==0:
-                return lableForFirstRowInMarketsAndSectorPicker(withLbl: genericLbl, withText: "mercado")
-            case let x where x == marketsTempAry.count + 1:
-                return lableForNewMarketOrSector(withLbl: genericLbl, withText: "mercado")
-            default:
-                return lableForAllOtherRowsInPicker(withLbl: genericLbl, atRow: row, withText: marketsTempAry[row - 1].getName(), forPicker: picker)
-            }
-        } else if picker.tag == 2 {
-            let sectorsTempAry = ary as! [Sector]
-            switch row {
-            case let x where x==0:
-                return lableForFirstRowInMarketsAndSectorPicker(withLbl: genericLbl, withText: "setor")
-            case let x where x == sectorsTempAry.count + 1:
-                return lableForNewMarketOrSector(withLbl: genericLbl, withText: "setor")
-            default:
-                return lableForAllOtherRowsInPicker(withLbl: genericLbl, atRow: row, withText: sectorsTempAry[row - 1].getName(), forPicker: picker)
-            }
-        } else if picker.tag == 3 {
-            print(picker.selectedRow(inComponent: 0))
-            return lableForAllOtherRowsInPicker(withLbl: genericLbl, atRow: row, withText: UnitMeasure.allCases[row].rawValue, forPicker: picker)
-        }
-        return genericLbl
+}
+//MARK:- KEYBOARD
+extension NewItemVC {
+    @objc func keyboardWillShow(notification: Notification) {
+        scrolViewOutlet.isScrollEnabled = true
+        scrolViewOutlet.bounces = false
+        let info : NSDictionary = notification.userInfo! as NSDictionary
+        let keyboardSize = (info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size
+        self.keyboardHeight = keyboardSize!.height*(keyboardSize!.height/self.view.frame.height)
+        let contentInsets : UIEdgeInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardSize!.height, right: 0.0)
+        self.scrolViewOutlet.contentInset = contentInsets
     }
-    //return font size for text in pickerView
-    func retunrFontSizeForPickerViewViews() -> CGFloat {
-        return 23
-    }
-    //return lable for picker view rows
-    func lableForFirstRowInMarketsAndSectorPicker(withLbl useLbl : UILabel, withText text: String) -> UILabel {
-        useLbl.font = UIFont(name: "Charter-Italic", size: self.retunrFontSizeForPickerViewViews())
-        useLbl.text = "Escolha um \(text)"
-        return useLbl
-    }
-    func lableForNewMarketOrSector(withLbl useLbl : UILabel, withText text: String) -> UILabel {
-        useLbl.font = UIFont(name: "Charter-Italic", size: self.retunrFontSizeForPickerViewViews())
-        useLbl.text = "Novo \(text)"
-        return useLbl
-    }
-    func lableForAllOtherRowsInPicker(withLbl useLabl: UILabel, atRow row : Int, withText text: String, forPicker picker: UIPickerView) -> UILabel {
-        if picker.tag == 3 && row == 1 {
-            useLabl.font = UIFont(name: "Charter-Bold", size: self.retunrFontSizeForPickerViewViews()-3)
-            useLabl.text = text
-            return useLabl
-        }
-        useLabl.font = UIFont(name: "Charter-Bold", size: self.retunrFontSizeForPickerViewViews())
-        useLabl.text = text
-        return useLabl
-    }
-    //return selected row at
-    func actionsForDidSelectRowAt(withPicker pickerView: UIPickerView, atRow row: Int){
-        if pickerView.tag == 1 {
-            if row == 0 {
-                hideUserLayoutIfPickerRowIsZero(inPicker: pickerView)
-            } else if row == marketsArray.count + 1 {
-                creatingNewMarket()
-                hideUserLayoutIfPickerRowIsZero(inPicker: pickerView)
+    @objc func keyboadFrame(notification: Notification) {
+        DispatchQueue.main.async {
+            if self.priceTextField.isFirstResponder || self.standarWeightTextField.isFirstResponder || self.newMarketAndNewSectorTextField.isFirstResponder {
+                self.scrolViewOutlet.setContentOffset(CGPoint(x: 0, y: self.keyboardHeight), animated: true)
             } else {
-                prepareSectorsPickerViewForShowing(atRow: row)
-                updateUserInferface(atCase: 2)
-            }
-        } else if pickerView.tag == 2 {
-            if row == 0 {
-                hideUserLayoutIfPickerRowIsZero(inPicker: pickerView)
-            } else if row == sectorsArray.count + 1 {
-                creatingNewSector(inMarketAtRow: chosenMarketIndex)
-                hideUserLayoutIfPickerRowIsZero(inPicker: pickerView)
-            } else {
-                chosenSectorIndex = row - 1
-                updatePriceAndQuantityLblInfo()
-                updateUserInferface(atCase: 4)
-            }
-        } else if pickerView.tag == 3{
-            updatePriceAndQuantityLblInfo(atRow: row)
-            switch row {
-            case 1:
-                updateUserInferface(atCase: 6)
-            default:
-                updateUserInferface(atCase: 5)
+                self.scrolViewOutlet.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
             }
         }
     }
-    //updating sectors array after new market created
-    func prepareSectorsPickerViewForShowing(atRow row : Int){
-        sectorsArray = marketsArray[row - 1].getSector()
-        chosenMarketIndex = row - 1
-        updateUserInferface(atCase: 8)
-        reloadSectorPickerView()
+    @objc func keyboardWillDisappear(notification: Notification) {
+        self.scrolViewOutlet.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        scrolViewOutlet.isScrollEnabled = false
     }
-    //reload market picker
-    func reloadMarketPickerView(){
-        marketPicker.reloadAllComponents()
-        marketPicker.selectRow(0, inComponent: 0, animated: true)
-    }
-    //reload sectors picker
-    func reloadSectorPickerView(){
-        sectorPicker.reloadAllComponents()
-        sectorPicker.selectRow(0, inComponent: 0, animated: true)
-    }
-    //MARK:... NEW MARKET/SECTOR
-    //creating new sector
-    func creatingNewSector(inMarketAtRow row : Int){
-        updateUserInferface(atCase: 9)
-        pickerTag = 2
-        preparingLabelInNewMarketNewSectorView(withText: "setor")
-    }
-    //creating new Market
-    func creatingNewMarket(){
-        updateUserInferface(atCase: 9)
-        pickerTag = 1
-        preparingLabelInNewMarketNewSectorView(withText: "mercado")
-    }
-    //MARK:... FOR NEW ITEM
-    func returnCanSaveItem() -> Bool {
-        var counter : Int = 0
-        if chosenMarketIndex <= -1 {
-            alertForEmptyNecessaryTextFields(title: "Mercado não selecionado", message: "Selecione o mercado")
+}
+//MARK:- NOTIFICATIONS REGISTRATION
+extension NewItemVC{
+    func registerToKeyboardNotificationsInNewItemVC(registerTrueAndUnregisterFalse value : Bool){
+        if value {
+            NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(self.keyboadFrame(notification:)), name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        } else if !value {
+            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
         }
-        if chosenSectorIndex <= -1 {
-            alertForEmptyNecessaryTextFields(title: "Setor não selecionado", message: "Selecione o setor")
-        }
-        
-        if !nameTextField.text!.isEmpty {
-            let letter = NSCharacterSet.letters
-            let range = nameTextField.text!.rangeOfCharacter(from: letter)
-            if range != nil {
-                counter = counter + 1
-            }
+    }
+}
+//MARK:- @OBJ METHODS
+extension NewItemVC{
+    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
+        textFieldsResignFirstResponder()
+    }
+    //button for top bar in decimal keyboard
+    @objc func doneBtn() {
+        if standarWeightTextField.isFirstResponder {
+            standarWeightTextField.resignFirstResponder()
+            priceTextField.becomeFirstResponder()
         } else {
-            alertForEmptyNecessaryTextFields(title: "Item sem nome", message: "Informe o nome do item")
-        }
-        if formOfSalePicker.selectedRow(inComponent: 0) == 1 {
-            if !standarWeightTextField.text!.isEmpty {
-                counter = counter + 1
-            } else {
-                alertForEmptyNecessaryTextFields(title: "Item sem peso médio", message: "Informe o peso médio de cada unidade")
-            }
-        }
-        let price = (Double(priceTextField.text!.numbersOnly.integerValue))
-        if price > 0 {
-            counter = counter + 1
-        } else {
-            alertForEmptyNecessaryTextFields(title: "Item sem preço", message: "Informe o preço do item")
-        }
-        if counter >= 2 {
-            return true
-        } else {
-            return false
+            textFieldsResignFirstResponder()
         }
     }
-
-    //MARK:... FOR IMAGE PICKER
+    //upadting price textField in realTime
+    @objc func realTimePriceTextFieldUpdateDoubleDigitisNewItemVC(){
+        priceTextField.text = (Double(priceTextField.text!.numbersOnly.integerValue)/100).twoDigits
+    }
+}
+//MARK:- IMAGE PICKER CONTROLLER
+extension NewItemVC{
     //did finish picking imagem and image resizing and imagepicker dismissal
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let x = info[UIImagePickerController.InfoKey.originalImage] {
@@ -462,7 +522,36 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
         UIGraphicsEndImageContext()
         return imageData
     }
-    //MARK:- LAYOUT
+}
+//MARK:- LOADING/UNLOADING FUNCTIONS
+extension NewItemVC{
+    func loadFunction(){
+        imagePicker.delegate = self
+        marketPicker.dataSource = self
+        marketPicker.delegate = self
+        sectorPicker.dataSource = self
+        sectorPicker.delegate = self
+        formOfSalePicker.dataSource = self
+        formOfSalePicker.delegate = self
+        nameTextField.delegate = self
+        brandTextField.delegate = self
+        standarWeightTextField.delegate = self
+        priceTextField.delegate = self
+        newMarketAndNewSectorTextField.delegate = self
+        
+        registerToKeyboardNotificationsInNewItemVC(registerTrueAndUnregisterFalse: true)
+        
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard(_:))))
+        updateUserInferface(atCase: 1)
+    }
+    func beforeViewDisappearFunctions() {
+        saveModel()
+//        saveAndCallDelegate()
+        registerToKeyboardNotificationsInNewItemVC(registerTrueAndUnregisterFalse: false)
+    }
+}
+//MARK:- LAYOUT
+extension NewItemVC{
     //upadting lables: standardQttyLbl and itemPriceLabel
     func updatePriceAndQuantityLblInfo(atRow row : Int = 0) {
         if row == 1 {
@@ -470,17 +559,14 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
             itemPriceLabel.text = ("Preço (em kilo/litro)")
         } else {
             standardQttyLbl.text = "Peso/volume padrão: "
+            let text = uObjCtrl.returnUnitMeasureInString(forNumber: row)
             switch UnitMeasure.allCases[row] {
-            case .gram:
-                fixedUnitMeasureLbl.text = "\(Int(emptyItemCell.getFormOfSale().getDivisor()[.gram]!)) \(UnitMeasure.allCases[row].rawValue)s"
-                itemPriceLabel.text = ("Preço (\(UnitMeasure.allCases[row].rawValue))")
-            case .mililiter:
-                fixedUnitMeasureLbl.text = "\(Int(emptyItemCell.getFormOfSale().getDivisor()[.mililiter]!)) \(UnitMeasure.allCases[row].rawValue)s"
-                itemPriceLabel.text = ("Preço (\(UnitMeasure.allCases[row].rawValue))")
+            case .gram, .mililiter:
+                fixedUnitMeasureLbl.text = "\(Int(Divisors.gramMililiterDivisor.rawValue)) \(text)s"
             default:
-                fixedUnitMeasureLbl.text = "1 \(UnitMeasure.allCases[row].rawValue)"
-                itemPriceLabel.text = ("Preço (\(UnitMeasure.allCases[row].rawValue))")
+                fixedUnitMeasureLbl.text = "1 \(text)"
             }
+            itemPriceLabel.text = ("Preço (\(text))")
         }
     }
     //first row of market and sector pickerView - message displaying "select market/sector"
@@ -494,14 +580,14 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
         }
     }
     //updating lable for creating new market/sector
-    func preparingLabelInNewMarketNewSectorView(withText text: String) {
+    func textForPopUpWindowNewMarketSector(withText text: String) {
         newMarketandNewSectorLabel.text = "Informe o nome do \(text)"
         newMarketandNewSectorLabel.textColor = .black
         newMarketandNewSectorLabel.font = UIFont(name: "Charter-Bold", size: 20)
         newMarketAndNewSectorTextField.textAlignment = .center
     }
     //message when save button is hit, but textfield is empty
-    func emptyTextField () {
+    func emptyTextFieldAlert () {
         let alert = UIAlertController(title: "Cadastramento cancelado", message: "Nada foi cadastrado", preferredStyle: .alert)
         let action = UIAlertAction(title: "Confirmar", style: .cancel, handler: nil)
         
@@ -509,7 +595,7 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
         present(alert, animated: true)
     }
     //hide/unhide elements
-    func updateUserInferface(atCase index: Int){
+    func updateUserInferface(atCase index: Int, withPiker pkr : UIPickerView = UIPickerView()){
         switch index {
         case 1:
             sectorLbl.isHidden = true
@@ -607,92 +693,5 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
         priceTextField.text = 0.twoDigits
         itemImageView.image = nil
         newMarketAndNewSectorTextField.text = ""
-    }
-    //button for top bar in decimal keyboard
-    @objc func doneBtn() {
-        if standarWeightTextField.isFirstResponder {
-            standarWeightTextField.resignFirstResponder()
-            priceTextField.becomeFirstResponder()
-        } else {
-            textFieldsResignFirstResponder()
-        }
-    }
-    //upadting price textField in realTime
-    @objc func realTimePriceTextFieldUpdateDoubleDigitisNewItemVC(){
-        priceTextField.text = (Double(priceTextField.text!.numbersOnly.integerValue)/100).twoDigits
-    }
-    //standard alert for missing information in the new item
-    func alertForEmptyNecessaryTextFields(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "Confirmar", style: .cancel, handler: nil)
-        alert.addAction(action)
-        present(alert, animated: true, completion: nil)
-    }
-    //MARK:- KEYBOARD
-    @objc func keyboardWillShow(notification: Notification) {
-        scrolViewOutlet.isScrollEnabled = true
-        scrolViewOutlet.bounces = false
-        let info : NSDictionary = notification.userInfo! as NSDictionary
-        let keyboardSize = (info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size
-        self.keyboardHeight = keyboardSize!.height*(keyboardSize!.height/self.view.frame.height)
-        let contentInsets : UIEdgeInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardSize!.height, right: 0.0)
-        self.scrolViewOutlet.contentInset = contentInsets
-    }
-    @objc func keyboadFrame(notification: Notification) {
-        DispatchQueue.main.async {
-            if self.priceTextField.isFirstResponder || self.standarWeightTextField.isFirstResponder || self.newMarketAndNewSectorTextField.isFirstResponder {
-                self.scrolViewOutlet.setContentOffset(CGPoint(x: 0, y: self.keyboardHeight), animated: true)
-            } else {
-                self.scrolViewOutlet.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
-            }
-        }
-    }
-    @objc func keyboardWillDisappear(notification: Notification) {
-        self.scrolViewOutlet.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
-        scrolViewOutlet.isScrollEnabled = false
-    }
-    func registerToKeyboardNotificationsInNewItemVC(registerTrueAndUnregisterFalse value : Bool){
-        if value {
-            NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(self.keyboadFrame(notification:)), name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillDisappear(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        } else if !value {
-            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
-            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-        }
-    }
-    func addKeyboardDismissalUponTouchOnScreen(){
-        let tapToDimissKeyBoard = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard(_:)))
-        self.view.addGestureRecognizer(tapToDimissKeyBoard)
-    }
-    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
-        textFieldsResignFirstResponder()
-    }
-    //MARK:- START UP/END
-    func initializationProcedures(){
-        imagePicker.delegate = self
-        
-        marketPicker.dataSource = self
-        marketPicker.delegate = self
-        sectorPicker.dataSource = self
-        sectorPicker.delegate = self
-        formOfSalePicker.dataSource = self
-        formOfSalePicker.delegate = self
-        nameTextField.delegate = self
-        brandTextField.delegate = self
-        standarWeightTextField.delegate = self
-        
-        priceTextField.delegate = self
-        
-        newMarketAndNewSectorTextField.delegate = self
-        
-        addKeyboardDismissalUponTouchOnScreen()
-        
-        updateUserInferface(atCase: 1)
-    }
-    func beforeViewDisappearFunctions() {
-        self.delegate?.passingNewArraysOfElements(sendMarketsArray: marketsArray)
-        registerToKeyboardNotificationsInNewItemVC(registerTrueAndUnregisterFalse: false)
     }
 }
