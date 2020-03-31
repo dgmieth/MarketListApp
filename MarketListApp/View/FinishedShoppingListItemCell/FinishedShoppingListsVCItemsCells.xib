@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -20,95 +20,95 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="itemName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8hR-Yb-z4m" userLabel="itemNameLbl">
-                                <rect key="frame" x="15" y="1" width="86" height="22"/>
-                                <fontDescription key="fontDescription" name="Charter-Bold" family="Charter" pointSize="18"/>
+                                <rect key="frame" x="15" y="0.0" width="81.5" height="21"/>
+                                <fontDescription key="fontDescription" name="Charter-Bold" family="Charter" pointSize="17"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Preco:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fkf-d8-WJ7" userLabel="itemPriceLbl">
-                                <rect key="frame" x="30" y="23" width="41" height="18"/>
-                                <fontDescription key="fontDescription" name="Charter-Bold" family="Charter" pointSize="14"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="II7-Ui-ayf" userLabel="itemFinalPriceLbl">
-                                <rect key="frame" x="30" y="41" width="37" height="18"/>
+                                <rect key="frame" x="30" y="39" width="41" height="18"/>
                                 <fontDescription key="fontDescription" name="Charter-Bold" family="Charter" pointSize="14"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mercado:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xOs-3m-9pS" userLabel="itemMarketLbl">
-                                <rect key="frame" x="30" y="59" width="62" height="18"/>
+                                <rect key="frame" x="257" y="1.5" width="62" height="18"/>
                                 <fontDescription key="fontDescription" name="Charter-Bold" family="Charter" pointSize="14"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="R$ 0.00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q8c-HY-4MP" userLabel="itemPriceInfoLbl">
-                                <rect key="frame" x="76" y="23" width="48" height="18"/>
-                                <fontDescription key="fontDescription" name="Charter-Roman" family="Charter" pointSize="14"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="R$ 00.00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TxT-mc-DQa" userLabel="itemFinalPriceInfoLbl">
-                                <rect key="frame" x="72" y="41" width="56" height="18"/>
+                                <rect key="frame" x="76" y="39" width="48" height="18"/>
                                 <fontDescription key="fontDescription" name="Charter-Roman" family="Charter" pointSize="14"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Condor" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dfX-fy-D5y" userLabel="itemMarketInfoLbl">
-                                <rect key="frame" x="97" y="59" width="46" height="18"/>
+                                <rect key="frame" x="324" y="1.5" width="46" height="18"/>
                                 <fontDescription key="fontDescription" name="Charter-Roman" family="Charter" pointSize="14"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Qtde:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rgA-kr-adL" userLabel="itemQttyLbl">
-                                <rect key="frame" x="139" y="23" width="36" height="18"/>
+                                <rect key="frame" x="30" y="57" width="36" height="18"/>
                                 <fontDescription key="fontDescription" name="Charter-Bold" family="Charter" pointSize="14"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 unidade" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VhD-kx-Veh" userLabel="itemQttyInfoLbl">
-                                <rect key="frame" x="180" y="23" width="61.5" height="18"/>
+                                <rect key="frame" x="71" y="57" width="61.5" height="18"/>
                                 <fontDescription key="fontDescription" name="Charter-Roman" family="Charter" pointSize="14"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vendido em:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gya-b5-AIe" userLabel="itemFormOfSaleLbl">
-                                <rect key="frame" x="173" y="41" width="81" height="18"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vendido por:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gya-b5-AIe" userLabel="itemFormOfSaleLbl">
+                                <rect key="frame" x="30" y="21" width="83.5" height="18"/>
                                 <fontDescription key="fontDescription" name="Charter-Bold" family="Charter" pointSize="14"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="kilo" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b4F-rt-xH9" userLabel="itemFormOfSaleInfoLbl">
-                                <rect key="frame" x="259" y="41" width="23" height="18"/>
+                                <rect key="frame" x="118.5" y="21" width="23" height="18"/>
+                                <fontDescription key="fontDescription" name="Charter-Roman" family="Charter" pointSize="14"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="II7-Ui-ayf" userLabel="itemFinalPriceLbl">
+                                <rect key="frame" x="147.5" y="57" width="37" height="18"/>
+                                <fontDescription key="fontDescription" name="Charter-Bold" family="Charter" pointSize="14"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="R$ 00.00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TxT-mc-DQa" userLabel="itemFinalPriceInfoLbl">
+                                <rect key="frame" x="189.5" y="57" width="56" height="18"/>
                                 <fontDescription key="fontDescription" name="Charter-Roman" family="Charter" pointSize="14"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="rgA-kr-adL" firstAttribute="leading" secondItem="q8c-HY-4MP" secondAttribute="trailing" constant="15" id="1KT-3B-bal"/>
-                            <constraint firstItem="rgA-kr-adL" firstAttribute="centerY" secondItem="q8c-HY-4MP" secondAttribute="centerY" id="4B3-96-FsV"/>
+                            <constraint firstItem="xOs-3m-9pS" firstAttribute="centerY" secondItem="8hR-Yb-z4m" secondAttribute="centerY" id="6Md-FH-bvu"/>
                             <constraint firstItem="q8c-HY-4MP" firstAttribute="leading" secondItem="Fkf-d8-WJ7" secondAttribute="trailing" constant="5" id="74A-AT-oUW"/>
-                            <constraint firstItem="gya-b5-AIe" firstAttribute="leading" secondItem="TxT-mc-DQa" secondAttribute="trailing" constant="45" id="8zR-Pj-iPA"/>
-                            <constraint firstItem="8hR-Yb-z4m" firstAttribute="top" secondItem="yS1-0o-rig" secondAttribute="top" constant="1" id="97p-vo-7qW"/>
+                            <constraint firstItem="xOs-3m-9pS" firstAttribute="centerY" secondItem="dfX-fy-D5y" secondAttribute="centerY" id="973-e0-jnu"/>
+                            <constraint firstItem="8hR-Yb-z4m" firstAttribute="top" secondItem="yS1-0o-rig" secondAttribute="top" id="97p-vo-7qW"/>
+                            <constraint firstItem="Fkf-d8-WJ7" firstAttribute="top" secondItem="gya-b5-AIe" secondAttribute="bottom" id="DGY-MX-0ty"/>
                             <constraint firstItem="b4F-rt-xH9" firstAttribute="leading" secondItem="gya-b5-AIe" secondAttribute="trailing" constant="5" id="Eah-90-YzX"/>
                             <constraint firstItem="q8c-HY-4MP" firstAttribute="centerY" secondItem="Fkf-d8-WJ7" secondAttribute="centerY" id="Ebs-lH-KcR"/>
                             <constraint firstItem="Fkf-d8-WJ7" firstAttribute="leading" secondItem="yS1-0o-rig" secondAttribute="leading" constant="30" id="I7f-vg-UtE"/>
                             <constraint firstItem="TxT-mc-DQa" firstAttribute="centerY" secondItem="II7-Ui-ayf" secondAttribute="centerY" id="IRg-c8-yBT"/>
-                            <constraint firstItem="xOs-3m-9pS" firstAttribute="top" secondItem="II7-Ui-ayf" secondAttribute="bottom" id="O4A-Ik-ryX"/>
+                            <constraint firstItem="rgA-kr-adL" firstAttribute="top" secondItem="Fkf-d8-WJ7" secondAttribute="bottom" id="Ned-TZ-o2y"/>
                             <constraint firstItem="b4F-rt-xH9" firstAttribute="centerY" secondItem="gya-b5-AIe" secondAttribute="centerY" id="OvM-dz-ED8"/>
-                            <constraint firstItem="gya-b5-AIe" firstAttribute="centerY" secondItem="TxT-mc-DQa" secondAttribute="centerY" id="Pic-6p-vNZ"/>
-                            <constraint firstItem="II7-Ui-ayf" firstAttribute="top" secondItem="Fkf-d8-WJ7" secondAttribute="bottom" id="Puc-X6-Ctf"/>
                             <constraint firstItem="VhD-kx-Veh" firstAttribute="leading" secondItem="rgA-kr-adL" secondAttribute="trailing" constant="5" id="QnH-ov-dOb"/>
                             <constraint firstItem="VhD-kx-Veh" firstAttribute="centerY" secondItem="rgA-kr-adL" secondAttribute="centerY" id="R4Y-fk-Iiq"/>
                             <constraint firstItem="TxT-mc-DQa" firstAttribute="leading" secondItem="II7-Ui-ayf" secondAttribute="trailing" constant="5" id="T8V-JH-Kr2"/>
-                            <constraint firstItem="Fkf-d8-WJ7" firstAttribute="top" secondItem="8hR-Yb-z4m" secondAttribute="bottom" id="UeP-qP-OsC"/>
-                            <constraint firstItem="II7-Ui-ayf" firstAttribute="leading" secondItem="yS1-0o-rig" secondAttribute="leading" constant="30" id="X7G-BQ-VmI"/>
+                            <constraint firstItem="VhD-kx-Veh" firstAttribute="centerY" secondItem="II7-Ui-ayf" secondAttribute="centerY" id="WCa-vA-KLg"/>
+                            <constraint firstItem="gya-b5-AIe" firstAttribute="leading" secondItem="yS1-0o-rig" secondAttribute="leading" constant="30" id="X8y-m1-5Yd"/>
+                            <constraint firstItem="II7-Ui-ayf" firstAttribute="leading" secondItem="VhD-kx-Veh" secondAttribute="trailing" constant="15" id="XvV-ps-7AI"/>
+                            <constraint firstItem="dfX-fy-D5y" firstAttribute="leading" secondItem="xOs-3m-9pS" secondAttribute="trailing" constant="5" id="chi-nH-mzO"/>
                             <constraint firstItem="8hR-Yb-z4m" firstAttribute="leading" secondItem="yS1-0o-rig" secondAttribute="leading" constant="15" id="e1B-rQ-VuE"/>
-                            <constraint firstItem="xOs-3m-9pS" firstAttribute="leading" secondItem="yS1-0o-rig" secondAttribute="leading" constant="30" id="qsM-U4-2Oj"/>
-                            <constraint firstItem="dfX-fy-D5y" firstAttribute="centerY" secondItem="xOs-3m-9pS" secondAttribute="centerY" id="rFw-01-1yX"/>
-                            <constraint firstItem="dfX-fy-D5y" firstAttribute="leading" secondItem="xOs-3m-9pS" secondAttribute="trailing" constant="5" id="uT3-ta-Y7L"/>
+                            <constraint firstItem="gya-b5-AIe" firstAttribute="top" secondItem="8hR-Yb-z4m" secondAttribute="bottom" id="eOg-mU-fWe"/>
+                            <constraint firstItem="rgA-kr-adL" firstAttribute="leading" secondItem="yS1-0o-rig" secondAttribute="leading" constant="30" id="naz-UF-esV"/>
+                            <constraint firstAttribute="trailing" secondItem="dfX-fy-D5y" secondAttribute="trailing" constant="5" id="z1k-cJ-NZh"/>
                         </constraints>
                     </view>
                 </subviews>

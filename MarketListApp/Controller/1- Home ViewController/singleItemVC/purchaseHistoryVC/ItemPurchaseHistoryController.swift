@@ -11,7 +11,6 @@ import UIKit
 class ItemPurchaseHistoryController {
     let tableViewCell = ItemPurchaseHistoryVCCell()
     
-    
     func returnCellHeightForCellForRowAT(isItCustomTableViewCell value : Bool)->CGFloat {
         if value {
             return CGFloat(tableViewCell.hValue)

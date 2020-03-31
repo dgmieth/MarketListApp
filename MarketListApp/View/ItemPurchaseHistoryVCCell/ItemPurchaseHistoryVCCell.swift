@@ -9,7 +9,7 @@
 import UIKit
 
 class ItemPurchaseHistoryVCCell: UITableViewCell {
-    let hValue = 80
+    let hValue = 60
     
     
     @IBOutlet weak var dateLbl: UILabel!
@@ -20,5 +20,7 @@ class ItemPurchaseHistoryVCCell: UITableViewCell {
     @IBOutlet weak var itemQuantityLbl: UILabel!
     @IBOutlet weak var ItemFinalVlLbl: UILabel!
     @IBOutlet weak var finalVlLbl: UILabel!
+    @IBOutlet weak var soldByLbl: UILabel!
+    @IBOutlet weak var soldByInfoLbl: UILabel!
     
 }

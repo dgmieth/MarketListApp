@@ -8,10 +8,11 @@
 
 import UIKit
 
-class MarketItemWeeklyShoppingList: UITableViewCell {
+class CellHeaderForMarket: UITableViewCell {
 
-    let hValue = 64
+    let hValue = 30
     @IBOutlet weak var marketName: UILabel!
-    @IBOutlet weak var sectorName1stCell: UILabel!
+
+    @IBOutlet weak var itemsInMarketLbl: UILabel!
     
 }
