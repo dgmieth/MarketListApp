@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19D76" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="FormOfSale" representedClassName="FormOfSale" syncable="YES" codeGenerationType="class">
+        <attribute name="allOtherDivisors" attributeType="Double" defaultValueString="1" usesScalarValueType="YES"/>
+        <attribute name="avgWeightDivisor" attributeType="Double" defaultValueString="1000" usesScalarValueType="YES"/>
+        <attribute name="constantForCurrency" attributeType="Double" defaultValueString="100" usesScalarValueType="YES"/>
+        <attribute name="constantForQuantity" attributeType="Double" defaultValueString="1000" usesScalarValueType="YES"/>
+        <attribute name="formOfSaleID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="gramMililiterDivisor" attributeType="Double" defaultValueString="100" usesScalarValueType="YES"/>
+        <attribute name="price" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="quantity" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="soldBy" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES" customClassName="[UnitMeasure]">
+            <userInfo>
+                <entry key="key" value="value"/>
+            </userInfo>
+        </attribute>
+        <attribute name="standardWeight" attributeType="Double" defaultValueString="1" usesScalarValueType="YES"/>
+        <relationship name="item" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="formOfSale" inverseEntity="Item"/>
+    </entity>
+    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
+        <attribute name="addToList" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="alreadyPurchased" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="brand" optional="YES" attributeType="String"/>
+        <attribute name="coldItem" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="image" optional="YES" attributeType="Binary"/>
+        <attribute name="information" optional="YES" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="orderingID" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="purchased" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="purchasedArrayLength" optional="YES" attributeType="Integer 16" defaultValueString="30" usesScalarValueType="YES" customClassName="Int"/>
+        <attribute name="purchasingHistory" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[[String]]"/>
+        <relationship name="formOfSale" maxCount="1" deletionRule="Cascade" destinationEntity="FormOfSale" inverseName="item" inverseEntity="FormOfSale"/>
+        <relationship name="sector" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Sector" inverseName="items" inverseEntity="Sector"/>
+    </entity>
+    <entity name="Market" representedClassName="Market" syncable="YES" codeGenerationType="class">
+        <attribute name="hasItems" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="opened" transient="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="orderingID" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="qttOfItems" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="sectors" toMany="YES" deletionRule="Cascade" destinationEntity="Sector" inverseName="market" inverseEntity="Sector"/>
+    </entity>
+    <entity name="PurchasedItem" representedClassName="PurchasedItem" syncable="YES" codeGenerationType="class">
+        <attribute name="finalAmount" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="formOfSale" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="market" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="price" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="qttBought" attributeType="Double" usesScalarValueType="YES"/>
+        <relationship name="purchasedList" maxCount="1" deletionRule="Nullify" destinationEntity="PurchasedList" inverseName="purchasedItems" inverseEntity="PurchasedList"/>
+    </entity>
+    <entity name="PurchasedList" representedClassName="PurchasedList" syncable="YES" codeGenerationType="class">
+        <attribute name="boughDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="opened" transient="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="totalAmount" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="totalQttItems" attributeType="Double" usesScalarValueType="YES"/>
+        <relationship name="purchasedItems" toMany="YES" deletionRule="Cascade" destinationEntity="PurchasedItem" inverseName="purchasedList" inverseEntity="PurchasedItem"/>
+    </entity>
+    <entity name="Sector" representedClassName="Sector" syncable="YES" codeGenerationType="class">
+        <attribute name="hasItems" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="opened" transient="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="orderingID" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="qttyOfItems" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="items" toMany="YES" deletionRule="Cascade" destinationEntity="Item" inverseName="sector" inverseEntity="Item"/>
+        <relationship name="market" maxCount="1" deletionRule="Nullify" destinationEntity="Market" inverseName="sectors" inverseEntity="Market"/>
+    </entity>
+    <elements>
+        <element name="FormOfSale" positionX="-27" positionY="117" width="128" height="208"/>
+        <element name="Item" positionX="-36" positionY="27" width="128" height="238"/>
+        <element name="Market" positionX="-63" positionY="-18" width="128" height="133"/>
+        <element name="PurchasedItem" positionX="-18" positionY="171" width="128" height="148"/>
+        <element name="PurchasedList" positionX="0" positionY="180" width="128" height="118"/>
+        <element name="Sector" positionX="-54" positionY="9" width="128" height="148"/>
+    </elements>
+</model>
