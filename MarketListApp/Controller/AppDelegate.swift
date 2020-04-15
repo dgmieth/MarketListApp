@@ -25,6 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let home = navigationController.topViewController as! HomeVC
         home.dataController = dataController
         
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)
+        
         return true
     }
 

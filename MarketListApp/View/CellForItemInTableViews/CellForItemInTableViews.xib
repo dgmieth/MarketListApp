@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellForItemInTableViews" rowHeight="89" id="KGk-i7-Jjw" customClass="CellForItemInTableViews" customModule="MarketListApp" customModuleProvider="target">
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="cellForItemInTableViews" rowHeight="89" id="KGk-i7-Jjw" customClass="CellForItemInTableViews" customModule="MarketListApp" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="320" height="89"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
@@ -32,8 +32,8 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GBD-L8-2yj">
                         <rect key="frame" x="80" y="0.0" width="240" height="89"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="15" translatesAutoresizingMaskIntoConstraints="NO" id="yMb-gE-el7">
-                                <rect key="frame" x="2" y="2" width="86" height="22"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yMb-gE-el7">
+                                <rect key="frame" x="2" y="2" width="118" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="lrN-Bl-RGn"/>
                                 </constraints>
@@ -119,16 +119,16 @@
                                 <color key="textColor" red="0.14901960780000001" green="0.1960784314" blue="0.21960784310000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TsK-fD-Zav" userLabel="checkMarkBtn">
-                                <rect key="frame" x="174" y="0.0" width="66" height="80"/>
+                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TsK-fD-Zav" userLabel="checkMarkBtn">
+                                <rect key="frame" x="174" y="0.0" width="66" height="89"/>
                                 <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="80" id="3c3-4L-Chh"/>
                                     <constraint firstAttribute="width" constant="66" id="gZv-XQ-TbW"/>
                                 </constraints>
+                                <state key="normal" image="checkmark"/>
                             </button>
                             <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="airConditioningUnit" translatesAutoresizingMaskIntoConstraints="NO" id="hKb-yi-loG" userLabel="coldSingImageView">
-                                <rect key="frame" x="89" y="4" width="18" height="18"/>
+                                <rect key="frame" x="121" y="4" width="18" height="18"/>
                                 <color key="backgroundColor" red="0.13652637370000001" green="0.2055374371" blue="0.57460787849999995" alpha="0.5" colorSpace="custom" customColorSpace="displayP3"/>
                                 <color key="tintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <constraints>
@@ -146,6 +146,7 @@
                             </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="XUn-ey-m0E" firstAttribute="leading" secondItem="hKb-yi-loG" secondAttribute="trailing" id="1O2-vW-37v"/>
                             <constraint firstItem="tUN-Yh-NAT" firstAttribute="leading" secondItem="jK1-VE-41b" secondAttribute="trailing" constant="3" id="4nf-jD-YGg"/>
                             <constraint firstItem="jK1-VE-41b" firstAttribute="top" secondItem="dia-Vn-FM2" secondAttribute="bottom" constant="-1" id="7JW-qv-AsP"/>
                             <constraint firstItem="TsK-fD-Zav" firstAttribute="top" secondItem="GBD-L8-2yj" secondAttribute="top" id="9o0-AD-q7Z"/>
@@ -156,6 +157,7 @@
                             <constraint firstItem="VsM-Ba-mML" firstAttribute="leading" secondItem="GBD-L8-2yj" secondAttribute="leading" constant="5" id="K8h-pj-D3B"/>
                             <constraint firstItem="ZkW-ZP-HzE" firstAttribute="leading" secondItem="GBD-L8-2yj" secondAttribute="leading" constant="5" id="Mr9-FH-3Ch"/>
                             <constraint firstItem="TsK-fD-Zav" firstAttribute="leading" secondItem="XUn-ey-m0E" secondAttribute="trailing" id="QVj-p1-1F4"/>
+                            <constraint firstAttribute="bottom" secondItem="TsK-fD-Zav" secondAttribute="bottom" id="Qkp-gw-ens"/>
                             <constraint firstItem="vk0-7r-2TB" firstAttribute="leading" secondItem="VsM-Ba-mML" secondAttribute="trailing" constant="5" id="TPS-wp-6lP"/>
                             <constraint firstItem="VsM-Ba-mML" firstAttribute="centerY" secondItem="vk0-7r-2TB" secondAttribute="centerY" id="bbI-HY-DaE"/>
                             <constraint firstItem="yMb-gE-el7" firstAttribute="top" secondItem="GBD-L8-2yj" secondAttribute="top" constant="2" id="btP-v6-LeA"/>
@@ -169,6 +171,7 @@
                             <constraint firstItem="hKb-yi-loG" firstAttribute="top" secondItem="GBD-L8-2yj" secondAttribute="top" constant="4" id="orJ-lp-qcW"/>
                             <constraint firstAttribute="trailing" secondItem="TsK-fD-Zav" secondAttribute="trailing" id="uyC-qV-8Ax"/>
                             <constraint firstItem="ZkW-ZP-HzE" firstAttribute="top" secondItem="yMb-gE-el7" secondAttribute="bottom" constant="-1" id="weW-bn-N2A"/>
+                            <constraint firstItem="hKb-yi-loG" firstAttribute="leading" secondItem="yMb-gE-el7" secondAttribute="trailing" constant="1" id="whe-9m-Y8a"/>
                             <constraint firstItem="hKb-yi-loG" firstAttribute="leading" secondItem="yMb-gE-el7" secondAttribute="trailing" constant="1" id="x6M-5Z-AEm"/>
                         </constraints>
                     </view>
@@ -189,27 +192,28 @@
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="brandLbl" destination="ZkW-ZP-HzE" id="0D4-CH-csh"/>
-                <outlet property="brandLblInfo" destination="KeQ-07-kEV" id="WlO-t0-Ho7"/>
                 <outlet property="cellViewView" destination="GBD-L8-2yj" id="sHT-h8-Zbz"/>
                 <outlet property="checkMarkBtn" destination="TsK-fD-Zav" id="mpb-CO-aWC"/>
                 <outlet property="coldImg" destination="hKb-yi-loG" id="MKU-fQ-0EL"/>
                 <outlet property="imageBtn" destination="Lfg-vK-ZJa" id="XoW-1Y-XeO"/>
                 <outlet property="imageImgView" destination="ydN-de-00A" id="hds-46-ZPp"/>
+                <outlet property="information1InfoLbl" destination="KeQ-07-kEV" id="WlO-t0-Ho7"/>
+                <outlet property="information1Lbl" destination="ZkW-ZP-HzE" id="0D4-CH-csh"/>
+                <outlet property="information2InfoLbl" destination="vk0-7r-2TB" id="tCo-xZ-S62"/>
+                <outlet property="information2Lbl" destination="VsM-Ba-mML" id="xQA-Gp-k9h"/>
+                <outlet property="information3InfoLbl" destination="91b-gn-j5v" id="NZ5-Fh-a8f"/>
+                <outlet property="information3Lbl" destination="dia-Vn-FM2" id="yo6-bg-Eck"/>
+                <outlet property="information4InfoLbl" destination="tUN-Yh-NAT" id="Qdl-vk-sGf"/>
+                <outlet property="information4Lbl" destination="jK1-VE-41b" id="Pap-5e-EPF"/>
                 <outlet property="namLbl" destination="yMb-gE-el7" id="aMR-Dw-Nkj"/>
                 <outlet property="notesBtn" destination="XUn-ey-m0E" id="ZoO-Vb-XmX"/>
-                <outlet property="priceLbl" destination="dia-Vn-FM2" id="yo6-bg-Eck"/>
-                <outlet property="priceValueLbl" destination="91b-gn-j5v" id="NZ5-Fh-a8f"/>
-                <outlet property="qttyToByLbl" destination="tUN-Yh-NAT" id="Qdl-vk-sGf"/>
-                <outlet property="soldByLbl" destination="VsM-Ba-mML" id="xQA-Gp-k9h"/>
-                <outlet property="soldByValueLbl" destination="vk0-7r-2TB" id="tCo-xZ-S62"/>
-                <outlet property="toBuyLbl" destination="jK1-VE-41b" id="Pap-5e-EPF"/>
             </connections>
             <point key="canvasLocation" x="135" y="110"/>
         </tableViewCell>
     </objects>
     <resources>
         <image name="airConditioningUnit" width="18" height="18"/>
-        <image name="info.circle.fill" catalog="system" width="64" height="60"/>
+        <image name="checkmark" width="35" height="36"/>
+        <image name="info.circle.fill" catalog="system" width="128" height="121"/>
     </resources>
 </document>

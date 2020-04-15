@@ -10,17 +10,11 @@ import CoreData
 import UIKit
 
 class itemsMercadoObjectController {
-//    private var rowForTableView : Int = 0
-//    private var sectionForTableView : Int = 0
-//    private var marketsCounter : Int = 0
-//    private var sectorsCounter : Int = 0
-    //    private var itemsCounter : Int = 0
     private var uObjCtrl = UniversalObjectController()
     private let marketCell = MarketHeaderCell()
     private let sectorCell = CellForSectorInTableViews()
     private let itemCell = CellForItemInTableViews ()
     //universal object Controller
-//    var uObjCtrl = UniversalObjectController()
     private var dataController : DataController?
     
     
@@ -55,7 +49,7 @@ extension itemsMercadoObjectController{
         return 1
     }
     
-    func returnCell(withCell cell: Any, withCellType type: TVCellType, withArray ary : [Market], inMarket market: Int = 0, inSector sector: Int = 0, itemLocator item: Int = 0, rowForCellTag row: Int = 0) -> Any {
+    func returnCell(withCell cell: Any, withCellType type: TVCellType, withArray ary : [Market] = [Market](), searchBarArray searchAry: [Item] = [Item](), inMarket market: Int = 0, inSector sector: Int = 0, itemLocator item: Int = 0, rowForCellTag row: Int = 0) -> Any {
         if type == .market {
             let mCell = cell as! MarketHeaderCell
             mCell.marketNameLbl.text = ary[market].getName()
@@ -74,45 +68,93 @@ extension itemsMercadoObjectController{
             
             iCell.namLbl.text = item.getName()
             if item.getBrand().hasValue {
-                iCell.brandLblInfo.text = item.getBrand().Value
-                iCell.brandLblInfo.font = UIFont(name: "Charter", size: 15)
+                iCell.information1InfoLbl.text = item.getBrand().Value
+                iCell.information1InfoLbl.font = UIFont(name: "Charter", size: 15)
             } else {
-                iCell.brandLblInfo.text = "nao informada"
-                iCell.brandLblInfo.font = UIFont(name: "Charter-Italic", size: 15)
+                iCell.information1InfoLbl.text = "nao informada"
+                iCell.information1InfoLbl.font = UIFont(name: "Charter-Italic", size: 15)
             }
-            iCell.brandLblInfo.text = item.getBrand().hasValue ? item.getBrand().Value : "nao informada"
-            iCell.brandLblInfo.font = UIFont(name: "Charter-Italic", size: 15)
-            iCell.priceValueLbl.text = item.getFormOfSale().getItemPriceDoubleToString()
-            iCell.soldByValueLbl.text = String(soldBy)
+            iCell.information1InfoLbl.text = item.getBrand().hasValue ? item.getBrand().Value : "nao informada"
+            iCell.information1InfoLbl.font = UIFont(name: "Charter-Italic", size: 15)
+            iCell.information3InfoLbl.text = item.getFormOfSale().getItemPriceDoubleToString()
+            iCell.information2InfoLbl.text = String(soldBy)
             iCell.imageImgView.image = item.getImage()
             switch item.getFormOfSale().getUnitMeasure() {
             case UnitMeasure.averageWeight.rawValue:
-                iCell.priceLbl.text = ("Preço de 1 kilo/litro:")
+                iCell.information3Lbl.text = ("Preço de 1 kilo/litro:")
             case UnitMeasure.gram.rawValue, UnitMeasure.mililiter.rawValue:
-                iCell.priceLbl.text = ("Preço de \(Int(item.getFormOfSale().getStandarWeightValue())) \(soldBy)s:")
+                iCell.information3Lbl.text = ("Preço de \(Int(item.getFormOfSale().getStandarWeightValue())) \(soldBy)s:")
             default:
-                iCell.priceLbl.text = ("Preço de 1 \(soldBy):")
+                iCell.information3Lbl.text = ("Preço de 1 \(soldBy):")
             }
             iCell.coldImg.isHidden = item.getItemTemp() ? false : true
             if item.getAddToBuyList() {
-                iCell.checkMarkBtn.setImage(UIImage(named: "checkMarkAppAdded"), for: .normal)
-                iCell.toBuyLbl.isHidden = false
-                iCell.qttyToByLbl.isHidden = false
+                iCell.checkMarkBtn.setImage(UIImage(named: "checkmark"), for: .normal)
+                iCell.information4Lbl.isHidden = false
+                iCell.information4InfoLbl.isHidden = false
                 if item.getFormOfSale().getUnitMeasure() == UnitMeasure.averageWeight.rawValue {
-                    iCell.qttyToByLbl.text = "\(Int(item.getFormOfSale().getItemQtty())) unidade(s)"
+                    iCell.information4InfoLbl.text = "\(Int(item.getFormOfSale().getItemQtty())) unidade(s)"
                 } else {
-                    iCell.qttyToByLbl.text = (item.getFormOfSale().getUnitMeasure() == 4 || item.getFormOfSale().getUnitMeasure() == 5) ? "\(uObjCtrl.numberByLocalityDoubleToString(valueToFormat: item.getFormOfSale().getItemQtty())) \(soldBy)(s)" : "\(Int(item.getFormOfSale().getItemQtty())) \(soldBy)(s)"
+                    iCell.information4InfoLbl.text = (item.getFormOfSale().getUnitMeasure() == 4 || item.getFormOfSale().getUnitMeasure() == 5) ? "\(uObjCtrl.numberByLocalityDoubleToString(valueToFormat: item.getFormOfSale().getItemQtty())) \(soldBy)(s)" : "\(Int(item.getFormOfSale().getItemQtty())) \(soldBy)(s)"
                 }
                 iCell.cellViewView.backgroundColor = uObjCtrl.getUIColorForSelectedTableViewCells()
             } else {
-                iCell.toBuyLbl.isHidden = true
-                iCell.qttyToByLbl.isHidden = true
+                iCell.information4Lbl.isHidden = true
+                iCell.information4InfoLbl.isHidden = true
                 iCell.checkMarkBtn.setImage(nil, for: .normal)
                 iCell.cellViewView.backgroundColor = nil
             }
             item.getItemInformation().hasValue ? iCell.notesBtn.setImage(UIImage(systemName: "info.circle.fill"), for: .normal) : iCell.notesBtn.setImage(UIImage(systemName: "info.circle"), for: .normal)
-//            iCell.checkMarkBtn. = item.getItemInformation().hasValue ?  : UIImage(systemName: "info.circle")
             let tagNumber = market*uObjCtrl.getConstantForCellAddress()+row
+            iCell.checkMarkBtn.tag = tagNumber
+            iCell.imageBtn.tag = tagNumber
+            iCell.notesBtn.tag = tagNumber
+            return iCell
+        } else if type == .searchBar {
+            let tagNumber = item
+            let iCell = cell as! CellForItemInTableViews
+            let item = searchAry[item]
+            let soldBy = uObjCtrl.returnUnitMeasureInString(forNumber: Int(item.getFormOfSale().getUnitMeasure()))
+            
+            iCell.namLbl.text = item.getName()
+            if item.getBrand().hasValue {
+                iCell.information1InfoLbl.text = item.getBrand().Value
+                iCell.information1InfoLbl.font = UIFont(name: "Charter", size: 15)
+            } else {
+                iCell.information1InfoLbl.text = "nao informada"
+                iCell.information1InfoLbl.font = UIFont(name: "Charter-Italic", size: 15)
+            }
+            iCell.information1InfoLbl.text = item.getBrand().hasValue ? item.getBrand().Value : "nao informada"
+            iCell.information1InfoLbl.font = UIFont(name: "Charter-Italic", size: 15)
+            iCell.information3InfoLbl.text = item.getFormOfSale().getItemPriceDoubleToString()
+            iCell.information2InfoLbl.text = String(soldBy)
+            iCell.imageImgView.image = item.getImage()
+            switch item.getFormOfSale().getUnitMeasure() {
+            case UnitMeasure.averageWeight.rawValue:
+                iCell.information3Lbl.text = ("Preço de 1 kilo/litro:")
+            case UnitMeasure.gram.rawValue, UnitMeasure.mililiter.rawValue:
+                iCell.information3Lbl.text = ("Preço de \(Int(item.getFormOfSale().getStandarWeightValue())) \(soldBy)s:")
+            default:
+                iCell.information3Lbl.text = ("Preço de 1 \(soldBy):")
+            }
+            iCell.coldImg.isHidden = item.getItemTemp() ? false : true
+            if item.getAddToBuyList() {
+                iCell.checkMarkBtn.setImage(UIImage(named: "checkmark"), for: .normal)
+                iCell.information4Lbl.isHidden = false
+                iCell.information4InfoLbl.isHidden = false
+                if item.getFormOfSale().getUnitMeasure() == UnitMeasure.averageWeight.rawValue {
+                    iCell.information4InfoLbl.text = "\(Int(item.getFormOfSale().getItemQtty())) unidade(s)"
+                } else {
+                    iCell.information4InfoLbl.text = (item.getFormOfSale().getUnitMeasure() == 4 || item.getFormOfSale().getUnitMeasure() == 5) ? "\(uObjCtrl.numberByLocalityDoubleToString(valueToFormat: item.getFormOfSale().getItemQtty())) \(soldBy)(s)" : "\(Int(item.getFormOfSale().getItemQtty())) \(soldBy)(s)"
+                }
+                iCell.cellViewView.backgroundColor = uObjCtrl.getUIColorForSelectedTableViewCells()
+            } else {
+                iCell.information4Lbl.isHidden = true
+                iCell.information4InfoLbl.isHidden = true
+                iCell.checkMarkBtn.setImage(nil, for: .normal)
+                iCell.cellViewView.backgroundColor = nil
+            }
+            item.getItemInformation().hasValue ? iCell.notesBtn.setImage(UIImage(systemName: "info.circle.fill"), for: .normal) : iCell.notesBtn.setImage(UIImage(systemName: "info.circle"), for: .normal)
             iCell.checkMarkBtn.tag = tagNumber
             iCell.imageBtn.tag = tagNumber
             iCell.notesBtn.tag = tagNumber

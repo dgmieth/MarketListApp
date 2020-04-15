@@ -42,11 +42,6 @@ class ItemPurchaseHistoryVC: UIViewController, UITableViewDelegate, UITableViewD
     //MARK:- TABLEVIEW
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return item!.getPurchaseHistory().count > 0 ? item!.getPurchaseHistory().count : 1
-//        if item!.getPurchaseHistory().count > 0{
-//            return item!.getPurchaseHistory().count
-//        } else {
-//            return 1
-//        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 && item!.getPurchaseHistory().count == 0 {

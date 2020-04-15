@@ -42,10 +42,18 @@
 		3880B6A3231DFB66008A11D0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3880B6A1231DFB66008A11D0 /* LaunchScreen.storyboard */; };
 		388D4F822407611000266DC3 /* MarketListAppDatabase.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 388D4F7F240757ED00266DC3 /* MarketListAppDatabase.xcdatamodeld */; };
 		388D4F842407679800266DC3 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388D4F832407679800266DC3 /* DataController.swift */; };
+		388E043F2441FA7200D516C6 /* ListOfMarketsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388E043E2441FA7200D516C6 /* ListOfMarketsViewController.swift */; };
+		388E04412442195D00D516C6 /* ListOfMarketsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388E04402442195D00D516C6 /* ListOfMarketsTableViewCell.swift */; };
+		388E0444244219DC00D516C6 /* SearchListOfMarketsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388E0443244219DC00D516C6 /* SearchListOfMarketsTableViewCell.swift */; };
+		388E04472442200000D516C6 /* ListOfSectorsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388E04462442200000D516C6 /* ListOfSectorsViewController.swift */; };
+		388E044A2442D7D300D516C6 /* ListOfSectorsMainCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388E04492442D7D300D516C6 /* ListOfSectorsMainCell.swift */; };
 		389AF58823AC0D2400AEBE92 /* FinishedShoppingListsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389AF58723AC0D2400AEBE92 /* FinishedShoppingListsVC.swift */; };
+		38AC0BAE243A9E2B003C1ADC /* FinishedShoppingListsSearchCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38AC0BAC243A9E2B003C1ADC /* FinishedShoppingListsSearchCells.swift */; };
+		38AC0BAF243A9E2B003C1ADC /* FinishedShoppingListsSearchCells.xib in Resources */ = {isa = PBXBuildFile; fileRef = 38AC0BAD243A9E2B003C1ADC /* FinishedShoppingListsSearchCells.xib */; };
 		38B0DBD82373AB4200F7EA9D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38B0DBD72373AB4200F7EA9D /* Extensions.swift */; };
 		38BFACA523AB152D0026BEBE /* PurchasedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BFACA423AB152D0026BEBE /* PurchasedItem.swift */; };
 		38D9A2C22331E2FC0010E2EE /* NewItemVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D9A2C12331E2FC0010E2EE /* NewItemVC.swift */; };
+		38E47DC8244756E5007BE936 /* ListOfSectorsSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E47DC7244756E5007BE936 /* ListOfSectorsSearchCell.swift */; };
 		38F3D7EA2384FE6400C90281 /* UniversalObjectController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38F3D7E92384FE6400C90281 /* UniversalObjectController.swift */; };
 /* End PBXBuildFile section */
 
@@ -87,11 +95,19 @@
 		3880B6A4231DFB66008A11D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		388D4F80240757ED00266DC3 /* MarketListAppDatabase.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MarketListAppDatabase.xcdatamodel; sourceTree = "<group>"; };
 		388D4F832407679800266DC3 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		388E043E2441FA7200D516C6 /* ListOfMarketsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListOfMarketsViewController.swift; sourceTree = "<group>"; };
+		388E04402442195D00D516C6 /* ListOfMarketsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListOfMarketsTableViewCell.swift; sourceTree = "<group>"; };
+		388E0443244219DC00D516C6 /* SearchListOfMarketsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchListOfMarketsTableViewCell.swift; sourceTree = "<group>"; };
+		388E04462442200000D516C6 /* ListOfSectorsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListOfSectorsViewController.swift; sourceTree = "<group>"; };
+		388E04492442D7D300D516C6 /* ListOfSectorsMainCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListOfSectorsMainCell.swift; sourceTree = "<group>"; };
 		389AF58723AC0D2400AEBE92 /* FinishedShoppingListsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedShoppingListsVC.swift; sourceTree = "<group>"; };
 		38AB7E44234ED1A800C2E88B /* MarketListApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MarketListApp.entitlements; sourceTree = "<group>"; };
+		38AC0BAC243A9E2B003C1ADC /* FinishedShoppingListsSearchCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedShoppingListsSearchCells.swift; sourceTree = "<group>"; };
+		38AC0BAD243A9E2B003C1ADC /* FinishedShoppingListsSearchCells.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FinishedShoppingListsSearchCells.xib; sourceTree = "<group>"; };
 		38B0DBD72373AB4200F7EA9D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		38BFACA423AB152D0026BEBE /* PurchasedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasedItem.swift; sourceTree = "<group>"; };
 		38D9A2C12331E2FC0010E2EE /* NewItemVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewItemVC.swift; sourceTree = "<group>"; };
+		38E47DC7244756E5007BE936 /* ListOfSectorsSearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListOfSectorsSearchCell.swift; sourceTree = "<group>"; };
 		38F3D7E92384FE6400C90281 /* UniversalObjectController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalObjectController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -201,6 +217,7 @@
 		38686C1523AE8D63005901C0 /* FinishedShoppingListItemCell */ = {
 			isa = PBXGroup;
 			children = (
+				38AC0BAB243A9DC5003C1ADC /* searchCells */,
 				38686C1623AE8D88005901C0 /* FinishedShoppingListsVCItemsCells.swift */,
 				38686C1723AE8D88005901C0 /* FinishedShoppingListsVCItemsCells.xib */,
 			);
@@ -269,6 +286,8 @@
 				3809FEB4239603E900B82E16 /* 2- ItemMercado ViewControllers */,
 				3809FEB3239603AA00B82E16 /* 3- WeeklyShoppingList ViewController */,
 				389AF58223AC0CC200AEBE92 /* 4- FinishedShoppingListsVC */,
+				388E043D2441FA4300D516C6 /* 5- ListOfMarketsViewController */,
+				388E044524421FDC00D516C6 /* 6- ListOfSectorsViewController */,
 				382A5E9C23800B22008F3B83 /* ItemImageExpandedVC.swift */,
 				38B0DBD72373AB4200F7EA9D /* Extensions.swift */,
 				38F3D7E92384FE6400C90281 /* UniversalObjectController.swift */,
@@ -276,6 +295,42 @@
 				382004F52398923500B7E913 /* Structs.swift */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		388E043D2441FA4300D516C6 /* 5- ListOfMarketsViewController */ = {
+			isa = PBXGroup;
+			children = (
+				388E0442244219B100D516C6 /* TableViewCells */,
+				388E043E2441FA7200D516C6 /* ListOfMarketsViewController.swift */,
+			);
+			path = "5- ListOfMarketsViewController";
+			sourceTree = "<group>";
+		};
+		388E0442244219B100D516C6 /* TableViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				388E04402442195D00D516C6 /* ListOfMarketsTableViewCell.swift */,
+				388E0443244219DC00D516C6 /* SearchListOfMarketsTableViewCell.swift */,
+			);
+			path = TableViewCells;
+			sourceTree = "<group>";
+		};
+		388E044524421FDC00D516C6 /* 6- ListOfSectorsViewController */ = {
+			isa = PBXGroup;
+			children = (
+				388E04482442D7B800D516C6 /* TableViewCells */,
+				388E04462442200000D516C6 /* ListOfSectorsViewController.swift */,
+			);
+			path = "6- ListOfSectorsViewController";
+			sourceTree = "<group>";
+		};
+		388E04482442D7B800D516C6 /* TableViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				388E04492442D7D300D516C6 /* ListOfSectorsMainCell.swift */,
+				38E47DC7244756E5007BE936 /* ListOfSectorsSearchCell.swift */,
+			);
+			path = TableViewCells;
 			sourceTree = "<group>";
 		};
 		3898DCBD240EECC800440898 /* MarketListAppDatabse+Extensions */ = {
@@ -305,6 +360,15 @@
 				389AF58723AC0D2400AEBE92 /* FinishedShoppingListsVC.swift */,
 			);
 			path = "4- FinishedShoppingListsVC";
+			sourceTree = "<group>";
+		};
+		38AC0BAB243A9DC5003C1ADC /* searchCells */ = {
+			isa = PBXGroup;
+			children = (
+				38AC0BAC243A9E2B003C1ADC /* FinishedShoppingListsSearchCells.swift */,
+				38AC0BAD243A9E2B003C1ADC /* FinishedShoppingListsSearchCells.xib */,
+			);
+			path = searchCells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -368,6 +432,7 @@
 				38686C1923AE8D88005901C0 /* FinishedShoppingListsVCItemsCells.xib in Resources */,
 				38686C1423AE84ED005901C0 /* FinishedShoppingListsVCHeaderCellTableViewCell.xib in Resources */,
 				3847D563240DFD080055BE90 /* MarketHeaderCell.xib in Resources */,
+				38AC0BAF243A9E2B003C1ADC /* FinishedShoppingListsSearchCells.xib in Resources */,
 				386792042411ED41006E24B3 /* CellForSectorInTableViews.xib in Resources */,
 				385B3CEB24147C1C006C06AF /* CellForItemInTableViews.xib in Resources */,
 				3880B6A3231DFB66008A11D0 /* LaunchScreen.storyboard in Resources */,
@@ -392,10 +457,15 @@
 				38F3D7EA2384FE6400C90281 /* UniversalObjectController.swift in Sources */,
 				38D9A2C22331E2FC0010E2EE /* NewItemVC.swift in Sources */,
 				385B3CEA24147C1C006C06AF /* CellForItemInTableViews.swift in Sources */,
+				388E0444244219DC00D516C6 /* SearchListOfMarketsTableViewCell.swift in Sources */,
+				388E04472442200000D516C6 /* ListOfSectorsViewController.swift in Sources */,
 				388D4F842407679800266DC3 /* DataController.swift in Sources */,
 				387D3FF52384B9DB00567B95 /* WeeklyShoppingList.swift in Sources */,
+				388E04412442195D00D516C6 /* ListOfMarketsTableViewCell.swift in Sources */,
 				382A5E9D23800B22008F3B83 /* ItemImageExpandedVC.swift in Sources */,
+				38AC0BAE243A9E2B003C1ADC /* FinishedShoppingListsSearchCells.swift in Sources */,
 				38BFACA523AB152D0026BEBE /* PurchasedItem.swift in Sources */,
+				38E47DC8244756E5007BE936 /* ListOfSectorsSearchCell.swift in Sources */,
 				388D4F822407611000266DC3 /* MarketListAppDatabase.xcdatamodeld in Sources */,
 				3880B699231DFB65008A11D0 /* AppDelegate.swift in Sources */,
 				389AF58823AC0D2400AEBE92 /* FinishedShoppingListsVC.swift in Sources */,
@@ -408,8 +478,10 @@
 				38B0DBD82373AB4200F7EA9D /* Extensions.swift in Sources */,
 				38686C1823AE8D88005901C0 /* FinishedShoppingListsVCItemsCells.swift in Sources */,
 				38306192232DFA04003725FB /* ItemsMercadoVC.swift in Sources */,
+				388E044A2442D7D300D516C6 /* ListOfSectorsMainCell.swift in Sources */,
 				381FC2452324064800C484C2 /* Item.swift in Sources */,
 				382651DD23A85B8A006261C3 /* ItemPurchaseHistoryController.swift in Sources */,
+				388E043F2441FA7200D516C6 /* ListOfMarketsViewController.swift in Sources */,
 				381FC2412324059800C484C2 /* Sector.swift in Sources */,
 				387D3FF32384AFFD00567B95 /* Enums.swift in Sources */,
 				387D3FF72384BE2D00567B95 /* WeeklyShoppingListController.swift in Sources */,
@@ -491,7 +563,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -546,7 +618,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -561,11 +633,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = MarketListApp/MarketListApp.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = Q2UDAMQ287;
 				INFOPLIST_FILE = MarketListApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -583,11 +656,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = MarketListApp/MarketListApp.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = Q2UDAMQ287;
 				INFOPLIST_FILE = MarketListApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

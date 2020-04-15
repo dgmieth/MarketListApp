@@ -44,10 +44,10 @@ extension Sector {
     }
     func subtractOneItem(){
         self.qttyOfItems -= 1
-        self.market!.subtractOneItem()
         if self.qttyOfItems == 0 {
             self.setHasItems(value: false)
         }
+        self.market!.subtractOneItem()
     }
     func getQttOfItems()-> Int{
         return Int(self.qttyOfItems)

@@ -9,7 +9,7 @@
 import UIKit
 
 class FinishedShoppingListsVCItemsCells: UITableViewCell {
-    let cellHeigh = 80
+    let cellHeigh: CGFloat = 80
     @IBOutlet weak var itemNameLbl: UILabel!
     @IBOutlet weak var itemPriceLbl: UILabel!
     @IBOutlet weak var itemFinalPriceLbl: UILabel!
@@ -21,4 +21,18 @@ class FinishedShoppingListsVCItemsCells: UITableViewCell {
     @IBOutlet weak var itemQttyInfoLbl: UILabel!
     @IBOutlet weak var itemFormOfSaleLbl: UILabel!
     @IBOutlet weak var itemFormOfSaleInfoLbl: UILabel!
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        initViews()
+
+    }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        initViews()
+    }
+    func initViews() {
+        selectedBackgroundView = UIView(frame: frame)
+        selectedBackgroundView?.backgroundColor = UIColor(red: 0.161, green: 0.136, blue: 0.127, alpha: 0.1)
+    }
 }

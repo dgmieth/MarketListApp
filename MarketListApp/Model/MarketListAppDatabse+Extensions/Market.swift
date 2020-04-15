@@ -13,6 +13,7 @@ extension Market {
     //getter&setters
     func setName(marketName name: String){
         self.name = name
+        
     }
     func getName()->String{
         return self.name!

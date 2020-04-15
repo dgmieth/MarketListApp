@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -20,8 +20,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="itemName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8hR-Yb-z4m" userLabel="itemNameLbl">
-                                <rect key="frame" x="15" y="0.0" width="81.5" height="21"/>
+                                <rect key="frame" x="15" y="0.0" width="296.5" height="21"/>
                                 <fontDescription key="fontDescription" name="Charter-Bold" family="Charter" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Condor" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dfX-fy-D5y" userLabel="itemMarketInfoLbl">
+                                <rect key="frame" x="326.5" y="1.5" width="43.5" height="18"/>
+                                <fontDescription key="fontDescription" name="Charter-Italic" family="Charter" pointSize="14"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -31,20 +37,8 @@
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mercado:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xOs-3m-9pS" userLabel="itemMarketLbl">
-                                <rect key="frame" x="257" y="1.5" width="62" height="18"/>
-                                <fontDescription key="fontDescription" name="Charter-Bold" family="Charter" pointSize="14"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="R$ 0.00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q8c-HY-4MP" userLabel="itemPriceInfoLbl">
                                 <rect key="frame" x="76" y="39" width="48" height="18"/>
-                                <fontDescription key="fontDescription" name="Charter-Roman" family="Charter" pointSize="14"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Condor" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dfX-fy-D5y" userLabel="itemMarketInfoLbl">
-                                <rect key="frame" x="324" y="1.5" width="46" height="18"/>
                                 <fontDescription key="fontDescription" name="Charter-Roman" family="Charter" pointSize="14"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -87,10 +81,9 @@
                             </label>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="xOs-3m-9pS" firstAttribute="centerY" secondItem="8hR-Yb-z4m" secondAttribute="centerY" id="6Md-FH-bvu"/>
                             <constraint firstItem="q8c-HY-4MP" firstAttribute="leading" secondItem="Fkf-d8-WJ7" secondAttribute="trailing" constant="5" id="74A-AT-oUW"/>
-                            <constraint firstItem="xOs-3m-9pS" firstAttribute="centerY" secondItem="dfX-fy-D5y" secondAttribute="centerY" id="973-e0-jnu"/>
                             <constraint firstItem="8hR-Yb-z4m" firstAttribute="top" secondItem="yS1-0o-rig" secondAttribute="top" id="97p-vo-7qW"/>
+                            <constraint firstItem="dfX-fy-D5y" firstAttribute="leading" secondItem="8hR-Yb-z4m" secondAttribute="trailing" constant="15" id="CvG-Tt-CTf"/>
                             <constraint firstItem="Fkf-d8-WJ7" firstAttribute="top" secondItem="gya-b5-AIe" secondAttribute="bottom" id="DGY-MX-0ty"/>
                             <constraint firstItem="b4F-rt-xH9" firstAttribute="leading" secondItem="gya-b5-AIe" secondAttribute="trailing" constant="5" id="Eah-90-YzX"/>
                             <constraint firstItem="q8c-HY-4MP" firstAttribute="centerY" secondItem="Fkf-d8-WJ7" secondAttribute="centerY" id="Ebs-lH-KcR"/>
@@ -104,15 +97,14 @@
                             <constraint firstItem="VhD-kx-Veh" firstAttribute="centerY" secondItem="II7-Ui-ayf" secondAttribute="centerY" id="WCa-vA-KLg"/>
                             <constraint firstItem="gya-b5-AIe" firstAttribute="leading" secondItem="yS1-0o-rig" secondAttribute="leading" constant="30" id="X8y-m1-5Yd"/>
                             <constraint firstItem="II7-Ui-ayf" firstAttribute="leading" secondItem="VhD-kx-Veh" secondAttribute="trailing" constant="15" id="XvV-ps-7AI"/>
-                            <constraint firstItem="dfX-fy-D5y" firstAttribute="leading" secondItem="xOs-3m-9pS" secondAttribute="trailing" constant="5" id="chi-nH-mzO"/>
                             <constraint firstItem="8hR-Yb-z4m" firstAttribute="leading" secondItem="yS1-0o-rig" secondAttribute="leading" constant="15" id="e1B-rQ-VuE"/>
                             <constraint firstItem="gya-b5-AIe" firstAttribute="top" secondItem="8hR-Yb-z4m" secondAttribute="bottom" id="eOg-mU-fWe"/>
                             <constraint firstItem="rgA-kr-adL" firstAttribute="leading" secondItem="yS1-0o-rig" secondAttribute="leading" constant="30" id="naz-UF-esV"/>
+                            <constraint firstItem="8hR-Yb-z4m" firstAttribute="centerY" secondItem="dfX-fy-D5y" secondAttribute="centerY" id="xDs-34-rGz"/>
                             <constraint firstAttribute="trailing" secondItem="dfX-fy-D5y" secondAttribute="trailing" constant="5" id="z1k-cJ-NZh"/>
                         </constraints>
                     </view>
                 </subviews>
-                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="yS1-0o-rig" secondAttribute="trailing" id="1Ot-XF-V35"/>
                     <constraint firstItem="yS1-0o-rig" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="2eS-2w-Dtu"/>
@@ -120,6 +112,7 @@
                     <constraint firstItem="yS1-0o-rig" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="M7E-Rf-WL6"/>
                 </constraints>
             </tableViewCellContentView>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="itemFinalPriceInfoLbl" destination="TxT-mc-DQa" id="hvO-ux-DKs"/>
@@ -127,14 +120,13 @@
                 <outlet property="itemFormOfSaleInfoLbl" destination="b4F-rt-xH9" id="veR-uU-ZAF"/>
                 <outlet property="itemFormOfSaleLbl" destination="gya-b5-AIe" id="3h2-ZW-ZaW"/>
                 <outlet property="itemMarketInfoLbl" destination="dfX-fy-D5y" id="qhg-z3-hNd"/>
-                <outlet property="itemMarketLbl" destination="xOs-3m-9pS" id="c48-iB-SEo"/>
                 <outlet property="itemNameLbl" destination="8hR-Yb-z4m" id="2vr-tM-grF"/>
                 <outlet property="itemPriceInfoLbl" destination="q8c-HY-4MP" id="0Wo-GU-ELo"/>
                 <outlet property="itemPriceLbl" destination="Fkf-d8-WJ7" id="t48-P2-5TU"/>
                 <outlet property="itemQttyInfoLbl" destination="VhD-kx-Veh" id="PHb-WL-q3D"/>
                 <outlet property="itemQttyLbl" destination="rgA-kr-adL" id="Ufe-Du-xKO"/>
             </connections>
-            <point key="canvasLocation" x="139" y="107"/>
+            <point key="canvasLocation" x="138.40579710144928" y="106.47321428571428"/>
         </tableViewCell>
     </objects>
 </document>

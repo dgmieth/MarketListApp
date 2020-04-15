@@ -12,10 +12,11 @@ import CoreData
 class FinishedShoppingListsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     var purchasedItemsArrayFSLVC = [PurchasedList]()
-    var filteredPurchasedList = [PurchasedItem]()
+    var searchBarArray = [PurchasedItem]()
     var uObjCtrl = UniversalObjectController()
     let headerCell = FinishedShoppingListsVCHeaderCellTableViewCell()
     let mainCell = FinishedShoppingListsVCItemsCells()
+    let searchCell = FinishedShoppingListsSearchCells()
     var dataController : DataController!
     @IBOutlet weak var finishedListsTableView: UITableView!
     @IBOutlet weak var searchBarFSLVC: UISearchBar!
@@ -33,6 +34,7 @@ extension FinishedShoppingListsVC{
         finishedListsTableView.separatorStyle = .none
         finishedListsTableView.tableFooterView = UIView()
 
+        finishedListsTableView.register(UINib(nibName: "FinishedShoppingListsSearchCells", bundle: nil), forCellReuseIdentifier: "FinishedShoppingListsSearchCells")
         finishedListsTableView.register(UINib(nibName: "FinishedShoppingListsVCItemsCells", bundle: nil), forCellReuseIdentifier: "mainCell")
         finishedListsTableView.register(UINib(nibName: "FinishedShoppingListsVCHeaderCellTableViewCell", bundle: nil), forCellReuseIdentifier: "headerCell")
 
@@ -46,9 +48,13 @@ extension FinishedShoppingListsVC{
                 leftView.tintColor = UIColor.black
             }
         }
-        let cancel = searchBarFSLVC.value(forKey: "cancelButton") as! UIButton
-        cancel.tintColor = .white
         searchBarFSLVC.delegate = self
+        
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        purchasedItemsArrayFSLVC = [PurchasedList]()
+        searchBarArray = [PurchasedItem]()
     }
 }
 //MARK:- TABLEVIEW
@@ -78,14 +84,27 @@ extension FinishedShoppingListsVC {
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if searchingOn {
-            return filteredPurchasedList.count
+            return searchBarArray.count
         }
         return purchasedItemsArrayFSLVC[section].isOpened() ? purchasedItemsArrayFSLVC[section].getBoughItems().count : 0
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if searchingOn {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "mainCell", for: indexPath) as! FinishedShoppingListsVCItemsCells
-            cell.itemNameLbl.text = filteredPurchasedList[indexPath.row].getItemName()
+            tableView.separatorStyle = .singleLine
+            let item = searchBarArray[indexPath.row]
+            let cell = tableView.dequeueReusableCell(withIdentifier: "FinishedShoppingListsSearchCells", for: indexPath) as! FinishedShoppingListsSearchCells
+            cell.itemInfoLbl.text = item.getItemName()
+            cell.dateInfoLbl.text = uObjCtrl.dateDateToString(withDate: item.purchasedList!.getListFinishedDate()!)
+            cell.priceInfoLbl.text = item.getItemPrice()
+            switch UnitMeasure.allCases[item.getItemPriceDescription()]  {
+            case .averageWeight:
+                cell.qttyInfoLbl.text = "\(item.getBoughtQuantity()) unidade(s)"
+            case .kilogram, .liter:
+                cell.qttyInfoLbl.text = "\(uObjCtrl.numberByLocalityDoubleToString(valueToFormat: item.getItemBoughQuantityInDouble())) \(uObjCtrl.returnUnitMeasureInString(forNumber: item.getItemPriceDescription()))(s)"
+            default:
+                cell.qttyInfoLbl.text = "\(item.getBoughtQuantity()) \(uObjCtrl.returnUnitMeasureInString(forNumber: item.getItemPriceDescription()))(s)"
+            }
+            cell.finalPriceInfoLbl.text = item.getFinalAmmount()
             return cell
         }
         let ary = purchasedItemsArrayFSLVC[indexPath.section].getBoughItems()
@@ -117,14 +136,40 @@ extension FinishedShoppingListsVC {
         } else {
             return UITableViewCell()
         }
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if searchingOn {
+            endSearchMode()
+            var foundValue = false
+            var counter = 0
+            var newIndexPath = IndexPath()
+            let item = searchBarArray[indexPath.row]
+            while foundValue == false {
+                if purchasedItemsArrayFSLVC[counter].getListFinishedDate() == item.purchasedList!.getListFinishedDate()! {
+                    for i in 0..<purchasedItemsArrayFSLVC[counter].getBoughItems().count {
+                        if item == purchasedItemsArrayFSLVC[counter].getBoughItems()[i] {
+                            newIndexPath = IndexPath(row: i, section: counter)
+                            foundValue = true
+                            break
+                        }       }       }
+                counter += 1
+            }
+            DispatchQueue.main.async {
+                !self.purchasedItemsArrayFSLVC[newIndexPath.section].isOpened() ? self.purchasedItemsArrayFSLVC[newIndexPath.section].openSubcell() : nil
+                tableView.reloadData()
+                tableView.selectRow(at: newIndexPath, animated: true, scrollPosition: .middle)
+            }
+        } else {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
         
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if searchingOn {
-            return CGFloat(89)
+            return searchCell.hCell
         }
         if purchasedItemsArrayFSLVC[indexPath.section].isOpened() {
-            return CGFloat(mainCell.cellHeigh)
+            return mainCell.cellHeigh
         }
         return CGFloat(0)
     }
@@ -152,43 +197,63 @@ extension FinishedShoppingListsVC{
             purchasedItemsArrayFSLVC = results
         }
         let fetchRequest1 = NSFetchRequest<PurchasedItem>(entityName: "PurchasedItem")
-        fetchRequest1.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        fetchRequest1.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true), NSSortDescriptor(key: "purchasedList.boughDate", ascending: false)]
         if let results = try? dataController.viewContext.fetch(fetchRequest1){
-            filteredPurchasedList = results
+            searchBarArray = results
         }
         else {
             print("ERROR | FINISHEDSHOPPINGLISTSVC | VIEWWILLAPPEAR | purchasedItemsArrayFSLCV had NIL")
         }
+        searchBarFSLVC.isHidden = purchasedItemsArrayFSLVC.count == 0 ? true : false
     }
 }
 //MARK:- SEARCH BAR
 extension FinishedShoppingListsVC: UISearchBarDelegate{
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        showCanceButton()
         loadData()
         if searchText.isEmpty {
             finishedListsTableView.reloadData()
             return
         } else {
             let myFilter = searchText.lowercased()
-            filteredPurchasedList = filteredPurchasedList.filter({ $0.name?.lowercased().range(of: myFilter, options: [.diacriticInsensitive]) != nil})
+            searchBarArray = searchBarArray.filter({ $0.name?.lowercased().range(of: myFilter, options: [.diacriticInsensitive]) != nil})
         }
         finishedListsTableView.reloadData()
     }
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-//        enableUserInterfaceSearchBar(value: false)
-        searchingOn = true
+        showCanceButton()
         finishedListsTableView.reloadData()
     }
-
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-//        enableUserInterfaceSearchBar(value: true)
-        searchingOn = false
-        searchBar.resignFirstResponder()
-        searchBar.text = ""
-        loadData()
-        finishedListsTableView.reloadData()
+        endSearchMode()
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.endEditing(true)
+        showCanceButton()
+    }
+    func showCanceButton(){
+        searchingOn = true
+        searchBarFSLVC.showsCancelButton = true
+        let cancel = searchBarFSLVC.value(forKey: "cancelButton") as! UIButton
+        cancel.tintColor = .black
+        cancel.isEnabled = true
+    }
+    func endSearchMode(){
+        DispatchQueue.main.async {
+            self.searchBarFSLVC.endEditing(true)
+            self.searchBarFSLVC.showsCancelButton = false
+            self.searchBarFSLVC.resignFirstResponder()
+            self.searchBarFSLVC.text = ""
+            self.searchingOn = false
+            self.loadData()
+            self.finishedListsTableView.keyboardDismissMode = .onDrag
+            self.finishedListsTableView.reloadData()
+        }
+        
+    }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        finishedListsTableView.keyboardDismissMode = .onDrag
+        searchingOn ? showCanceButton() : nil
     }
 }

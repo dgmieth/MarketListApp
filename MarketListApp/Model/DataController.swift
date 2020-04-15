@@ -10,14 +10,14 @@ import Foundation
 import CoreData
 
 class DataController {
-    let persistentContainer:NSPersistentContainer
+    let persistentContainer:NSPersistentCloudKitContainer
     
     var viewContext:NSManagedObjectContext{
         return persistentContainer.viewContext
     }
     
     init(modelName: String) {
-        persistentContainer = NSPersistentContainer(name: modelName)
+        persistentContainer = NSPersistentCloudKitContainer(name: modelName)
     }
     
     func load(completion: (()-> Void)? = nil) {

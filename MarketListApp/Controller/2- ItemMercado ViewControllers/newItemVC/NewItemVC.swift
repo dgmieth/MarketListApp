@@ -23,7 +23,7 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
     //decimal keyboard toolbar
     var decimalKeyTooblar : UIToolbar?
     var keyboardHeight = CGFloat()
- 
+    
     @IBOutlet weak var scrolViewOutlet: UIScrollView!
     @IBOutlet weak var newMarketAndSectorSuperView: UIView!
     @IBOutlet weak var newMarketandNewSectorLabel: UILabel!
@@ -50,6 +50,9 @@ class NewItemVC : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate
 }
 //MARK:- VC INATE FUNCTIONS
 extension NewItemVC{
+    override func viewWillAppear(_ animated: Bool) {
+        updateArray()
+    }
     override func viewDidLoad() {
         loadFunction()
     }
@@ -311,7 +314,7 @@ extension NewItemVC{
             alertForEmptyNecessaryTextFields(title: "Item sem preço", message: "Informe o preço do item")
             return (false, results)
         }
-            return (true, results)
+        return (true, results)
     }
     func getInformationFromFields()->[ValueFor : (hasValue: Bool, value: String)]{
         var ary = [ValueFor : (hasValue: Bool, value: String)]()
@@ -322,7 +325,6 @@ extension NewItemVC{
         ary[.soldBy] = formOfSalePicker.selectedRow(inComponent: 0) >= 0 ? (true, "\(formOfSalePicker.selectedRow(inComponent: 0))") :(false, "")
         ary[.avgWeight] = uObjCtrl.isThereText(inTextField: standarWeightTextField.text)
         ary[.price] = uObjCtrl.isTherePrice(inTextField: priceTextField.text).0 ? (true, priceTextField.text!) : (false, "")
-        print(ary[.price])
         ary[.cold] = coldItemChooser.isOn ? (true, "") : (false, "")
         return ary
     }
@@ -361,6 +363,11 @@ extension NewItemVC{
     }
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         let centralTag = 2
+        if textField == priceTextField {
+            DispatchQueue.main.async {
+                textField.selectedTextRange = textField.textRange(from: textField.endOfDocument, to: textField.endOfDocument)
+            }
+        }
         if textField.tag <= centralTag || textField.tag == 5 {
             return true
         } else if textField.tag > centralTag {
@@ -546,7 +553,7 @@ extension NewItemVC{
     }
     func beforeViewDisappearFunctions() {
         saveModel()
-//        saveAndCallDelegate()
+        //        saveAndCallDelegate()
         registerToKeyboardNotificationsInNewItemVC(registerTrueAndUnregisterFalse: false)
     }
 }

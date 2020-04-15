@@ -17,6 +17,5 @@ class FinishedShoppingListsVCHeaderCellTableViewCell: UITableViewCell {
     @IBOutlet weak var itemsPriceLbl: UILabel!
     @IBOutlet weak var itemsPriceInfoLbl: UILabel!
     @IBOutlet weak var collapseOpenBtn: UIButton!
-    
-    
+
 }

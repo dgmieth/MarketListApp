@@ -59,21 +59,22 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
     
     //MARK:- VIEW LOADING
     override func viewWillAppear(_ animated: Bool) {
+        updateArray()
         if let hasItem = passedItem {
             itemObj = objCtrlSIVC.getItemInfo(fromItem: hasItem, inMakertsArray: marketsArray)
-            prepareSectorPicker(inCase: 3)
-            gettingRowNumberForPikers(fromCellInformation: itemObj!)
             keyboardNotificationRegistration(registerTrueAndUnregisterFalse: true)
             userInterfaceUpdateFunction(giveUpdateIdentifier: 1)
         } else {
             print("ERROR | SINGLEITEMINFOVC | VIEWWILLAPPEAR | selectedCellInformation had NIL")
         }
+        
     }
     override func viewDidLoad() {
         settingTheDelegates()
     }
     override func viewWillDisappear(_ animated: Bool) {
         keyboardNotificationRegistration(registerTrueAndUnregisterFalse: false)
+        marketsArray = [Market]()
     }
     //MARK:- PICKER VIEW
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -135,9 +136,7 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
                 standardWeightLbl.text = "Peso/volume padrao:"
             }
             gettingRowNumberForPikers(fromCellInformation: itemObj!, animated: true)
-            //            (withInformationFromCell: itemObj!, animated: true)
             priceTxtF.text = cell.getFormOfSale().getItemPriceDoubleToString()
-            //                cell.getFormOfSale().getItemPrice()
             coldSwt.isOn = cell.getItemTemp()
             if let img = itemImageSelectedImage {
                 pictureImg.image = img
@@ -238,7 +237,7 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
                 priceLbl.text = ("Preço (\(uObjCtrl.returnUnitMeasureInString(forNumber: row)))")
             default:
                 unitMeasureLbl.text = "1 \(uObjCtrl.returnUnitMeasureInString(forNumber: row))"
-                priceLbl.text = ("Preço (\(uObjCtrl.returnUnitMeasureInString(forNumber: row))))")
+                priceLbl.text = ("Preço (\(uObjCtrl.returnUnitMeasureInString(forNumber: row)))")
             }
         }
     }
@@ -294,6 +293,11 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
         }
     }
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        if textField == priceTxtF {
+            DispatchQueue.main.async {
+                textField.selectedTextRange = textField.textRange(from: textField.endOfDocument, to: textField.endOfDocument)
+            }
+        }
         if textField.tag < 3 {
             return true
         } else if textField.tag >= 3  {
@@ -307,6 +311,7 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
             textField.inputAccessoryView = decimalKeyTooblar
             return true
         }
+        
         return false
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -328,6 +333,7 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
         }
         return true
     }
+    
     //upadting price textField in realTime
     @objc func realTimePriceTextFieldUpdateDoubleDigitisSingleItemVC(){
         priceTxtF.text = (Double(priceTxtF.text!.numbersOnly.integerValue)/100).twoDigits
@@ -430,10 +436,10 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
         }
         //check if item is sold in average weight
         if formOfsalePkr.selectedRow(inComponent: 0) == 1 {
-              cell.getFormOfSale().setStandardWeight(standarWeightIs: setStandardWeightTxtF.text!)
-          } else {
-              cell.getFormOfSale().setStandardWeight()
-          }
+            cell.getFormOfSale().setStandardWeight(standarWeightIs: setStandardWeightTxtF.text!)
+        } else {
+            cell.getFormOfSale().setStandardWeight()
+        }
         //check if user changed temp value
         if let temp = itemTempSelectedValue {
             cell.setItemTemp(isItCold: temp)
@@ -471,6 +477,7 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
         marketPkr.selectRow(info.1, inComponent: 0, animated: vl)
         sectorPkr.selectRow(info.2, inComponent: 0, animated: vl)
         formOfsalePkr.selectRow(info.3, inComponent: 0, animated: vl)
+        updateLablesAccordingToFormOfSalePickerViewInformation(atRow: info.3)
     }
     func settingTheDelegates(){
         marketPkr.delegate = self
@@ -486,7 +493,7 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
         
         imagePicker.delegate = self
         
-         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard(_:))))
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard(_:))))
     }
 }
 //MARK:- COREDATA
@@ -510,6 +517,7 @@ extension SingleItemInfoVC{
         }
     }
     func deleteFromModel(item: Item, goToItemsMercadoVC value: Bool = false){
+        item.subtractItemFromMarketAndSectorCounter()
         dataController.viewContext.delete(item)
         saveModel(goToItemsMercadoVC: value)
     }

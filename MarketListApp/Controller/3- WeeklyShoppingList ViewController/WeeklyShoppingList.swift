@@ -20,11 +20,6 @@ class WeeklyShoppingList: UIViewController, UITableViewDelegate, UITableViewData
     var objCtrl = WeeklyShoppingListObjectController()
     var uObjCtrl = UniversalObjectController()
     var chosenImageForItemImageExpandedVC = UIImage()
-//    var delegate : WeeklyShoppingListDelegate?
-    
-//    let marketCell = MarketItemWeeklyShoppingList()
-//    let sectorCell = SectorItemWeeklyShoppingList()
-//    let itemCell = ItemItemWeeklyShoppingListVC ()
     var dataController : DataController!
     
     @IBOutlet weak var searchBar: UISearchBar!
@@ -59,9 +54,9 @@ class WeeklyShoppingList: UIViewController, UITableViewDelegate, UITableViewData
         loadData()
         if objCtrl.hasItemsToBuy(lookInArray: marketsArray) {
             objCtrl.fillMIndex(withArray: marketsArray)
-            updateLables()
             registerToKeyboardNotifications(registerTrueAndUnregisterFalse: true)
             enableUserInterface(value: true)
+            updateLables()
         } else {
             enableUserInterface(value: false)
             print("ERROR | WeeklyShoppingListVC || viewWillAppear || array is empty") }
@@ -73,6 +68,8 @@ class WeeklyShoppingList: UIViewController, UITableViewDelegate, UITableViewData
     override func viewWillDisappear(_ animated: Bool) {
         saveData()
         registerToKeyboardNotifications(registerTrueAndUnregisterFalse: false)
+        marketsArray = [Market]()
+        searchBarArray = [Item]()
     }
 }
 //MARK:- TABLE VIEW
@@ -106,15 +103,19 @@ extension WeeklyShoppingList{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if searchingOn {
             let iCell = tableView.dequeueReusableCell(withIdentifier: "cellForItemInTableViews", for: indexPath) as! CellForItemInTableViews
-            iCell.namLbl.text = searchBarArray[indexPath.row].name!
-            return iCell
+            iCell.checkMarkBtn.addTarget(self, action: #selector(setItemAsPurchased(sender:)), for: .touchUpInside)
+            iCell.imageBtn.addTarget(self, action: #selector(getItemImage(sender:)), for: .touchUpInside)
+            iCell.notesBtn.addTarget(self, action: #selector(getItemNotes(sender:)), for: .touchUpInside)
+            return objCtrl.returnCell(withCell: iCell, cellType: .searchBar, inIndexPath: indexPath, itemIndexPath: IndexPath(), searchBarArray: searchBarArray) as! CellForItemInTableViews
         } else {
             if objCtrl.returnMarketIndex(inSection: indexPath.section).0 {
                 let index = objCtrl.returnMarketIndex(inSection: indexPath.section).1
                 if !objCtrl.checkMarketHasItemsInHeaders(inMarketsArray: marketsArray, inSection: index){
+                    tableView.separatorStyle = .none
                     let cellOne = tableView.dequeueReusableCell(withIdentifier: "cellOne", for: indexPath)
                     return cellOne
                 } else {
+                    tableView.separatorStyle = .singleLine
                     let rowAndSection = objCtrl.returnItemObjIndexPath(inMarketsArray: marketsArray, inSection: index, inRow: indexPath.row)
                     if marketsArray[index].getSector()[rowAndSection.section].isOpened(){
                         if rowAndSection.row < 0 {
@@ -136,6 +137,7 @@ extension WeeklyShoppingList{
                         }     }     }     }
         }
         let cellOne = tableView.dequeueReusableCell(withIdentifier: "cellOne", for: indexPath)
+        tableView.separatorStyle = .none
         return cellOne
         
     }
@@ -153,7 +155,8 @@ extension WeeklyShoppingList{
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if searchingOn {
-
+            cellPath = indexPath
+            present(didSelectRowAtAlertsWSLVC(withIndexPath: cellPath), animated: true)
         } else {
             if objCtrl.returnMarketIndex(inSection: indexPath.section).0 {
                 let index = objCtrl.returnMarketIndex(inSection: indexPath.section).1
@@ -181,7 +184,7 @@ extension WeeklyShoppingList{
     }
     //set items as purchased upon touching it
     @objc func setItemAsPurchased(sender: UIButton) {
-        let item = objCtrl.getItemObj(usingTag: sender.tag, inMarketsArray: marketsArray, dataControler: dataController)
+        let item = searchingOn ? searchBarArray[sender.tag] : objCtrl.getItemObj(usingTag: sender.tag, inMarketsArray: marketsArray, dataControler: dataController)
         item.getIsAlreadyPurchased() ? item.setIsAlreadyPurchased(value: false) : item.setIsAlreadyPurchased(value: true)
         saveData()
         updateLables()
@@ -189,7 +192,8 @@ extension WeeklyShoppingList{
     }
     //get items image upon touching it
     @objc func getItemImage(sender: UIButton) {
-        chosenImageForItemImageExpandedVC = objCtrl.getItemImage(usingTag: sender.tag, inMarketsArray: marketsArray)
+        endSearchMode()
+        chosenImageForItemImageExpandedVC = searchingOn ? searchBarArray[sender.tag].getImage() : objCtrl.getItemImage(usingTag: sender.tag, inMarketsArray: marketsArray)
         goToItemImageExpandedVC()
     }
     //get notes about the item
@@ -202,8 +206,12 @@ extension WeeklyShoppingList{
     func removeItemFromListWhenDesctructiveButtonInAlertIsTouched(selectedCell cell: Item){
         cell.setIsAlreadyPurchased(value: true)
         cell.setAddToBuyList(changeBoolValue: false)
+        loadData()
         saveData()
         updateLables()
+        if !objCtrl.hasItemsToBuy(lookInArray: marketsArray) {
+            enableUserInterface(value: false)
+        }
     }
 }
 //MARK:- KEYBOARD
@@ -251,9 +259,13 @@ extension WeeklyShoppingList{
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .sentences
+        textField.selectedTextRange = textField.textRange(from: textField.endOfDocument, to: textField.endOfDocument)
     }
     //textfield delegate method
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        DispatchQueue.main.async {
+            textField.selectedTextRange = textField.textRange(from: textField.endOfDocument, to: textField.endOfDocument)
+        }
         if textField == newInformationTxt {
             if decimalKeyToolbar == nil {
                 decimalKeyToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 44))
@@ -283,9 +295,9 @@ extension WeeklyShoppingList{
 //MARK:- ALERTS
 extension WeeklyShoppingList{
     func didSelectRowAtAlertsWSLVC(withIndexPath indexPath: IndexPath)->UIAlertController {
-        let item = objCtrl.getItemObj(indexPath: indexPath, inMarketsArray: marketsArray, dataControler: dataController)
+        let item = searchingOn ? searchBarArray[indexPath.row] : objCtrl.getItemObj(indexPath: indexPath, inMarketsArray: marketsArray, dataControler: dataController)
         uObjCtrl.registerDecimalFunctionInTextFieldIfItemSoldByInKiloOrLiter(withUnitMeasureRawValue: item.getFormOfSale().getUnitMeasure())
-        let alert = UIAlertController()
+        let alert = UIAlertController(title: item.getName(), message: nil, preferredStyle: .actionSheet)
         let editPrice = UIAlertAction(title: "Editar Preço", style: .default) { (action) in
             self.price = true
             self.settingUpLblForEditingItemInformation(withTitle: "Preço", isItPrice: true, withCell: item)
@@ -299,13 +311,14 @@ extension WeeklyShoppingList{
             } else {
                 self.realTiemTextFieldUpdate(registerTrueAndUnregisterFalse: true, isItPrice: false, isItKiloLiter: false)
             }
+            
             self.settingUpLblForEditingItemInformation(withTitle: "Quantidade", isItPrice: false, withCell: item)
             self.weeklyShoppingListTableView.deselectRow(at: indexPath, animated: true)
         }
         let removeItem = UIAlertAction(title: "Remover Item", style: .destructive) { (action) in
-            self.removeItemFromListWhenDesctructiveButtonInAlertIsTouched(selectedCell: item)
             self.weeklyShoppingListTableView.deselectRow(at: indexPath, animated: true)
             self.objCtrl.fillMIndex(withArray: self.marketsArray)
+            self.removeItemFromListWhenDesctructiveButtonInAlertIsTouched(selectedCell: item)
         }
         let cancel = UIAlertAction(title: "Cancelar", style: .cancel) { (action) in
             self.weeklyShoppingListTableView.deselectRow(at: indexPath, animated: true)
@@ -317,8 +330,8 @@ extension WeeklyShoppingList{
         return alert
     }
     func itemInfoAlertWSLVC(withSenderTag tag: Int) -> UIAlertController {
-        let cell = objCtrl.getItemObj(usingTag: tag, inMarketsArray: marketsArray, dataControler: dataController)
-        let alertMsg = cell.getItemInformation().hasValue ? "\n\(cell.getItemInformation().value.uppercased())" : ""
+        let item = searchingOn ? searchBarArray[tag] : objCtrl.getItemObj(usingTag: tag, inMarketsArray: marketsArray, dataControler: dataController)
+        let alertMsg = item.getItemInformation().hasValue ? "\n\(item.getItemInformation().value.uppercased())" : ""
         let alert = UIAlertController( title: "Obsevações:", message: alertMsg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel))
         return alert
@@ -328,7 +341,7 @@ extension WeeklyShoppingList{
 extension WeeklyShoppingList{
     @IBAction func saveButtonPressed(_ sender: Any) {
         if !newInformationTxt.text!.isEmpty && uObjCtrl.isThereText(inTextField: newInformationTxt.text).0 {
-            let item = objCtrl.getItemObj(indexPath: cellPath, inMarketsArray: marketsArray, dataControler: dataController)
+            let item = searchingOn ? searchBarArray[cellPath.row] : objCtrl.getItemObj(indexPath: cellPath, inMarketsArray: marketsArray, dataControler: dataController)
             if price {
                 item.getFormOfSale().setItemPriceStringToDouble(howMuchIsIt: newInformationTxt.text!)
             } else if quantity {
@@ -338,10 +351,13 @@ extension WeeklyShoppingList{
                 print("ERROR || EDITING PRICE/QUANTITY INFORMATION IN WEEKLYSHOPPINGLISTVC || STRING IS EMPTY/ZERO")
             }
         }
+        loadData()
         updateLables()
+        searchingOn ? showCanceButton() : nil
         scrollViewHideAndUnhide(trueToHideFalseToUnhide: true)
     }
     @IBAction func cancelButtonPressed(_ sender: Any) {
+        searchingOn ? showCanceButton() : nil
         scrollViewHideAndUnhide(trueToHideFalseToUnhide: true)
     }
     //Conlcude list buttonPressed
@@ -350,13 +366,14 @@ extension WeeklyShoppingList{
             purchasedItemsArrayWSLVC.append(list)
             saveData()
         }
-//        delegate?.callDelegateWSL()
+        //        delegate?.callDelegateWSL()
         navigationController?.popViewController(animated: true)
     }
 }
 //MARK:- LAYOUT
 extension WeeklyShoppingList{
     func updateLables(){
+        finishListBtn.isEnabled = objCtrl.totalAmountAndQttyBought(withArray: marketsArray).qttyDouble > 0 ? true : false
         boughitemsLbl2.text = "\(objCtrl.totalAmountAndQttyBought(withArray: marketsArray).qtty) item(s)"
         boughtListPriceLbl2.text = objCtrl.totalAmountAndQttyBought(withArray: marketsArray).amount
         weeklyShoppingListTableView.reloadData()
@@ -428,6 +445,7 @@ extension WeeklyShoppingList{
             } else {
                 newInformationTxt.text = ""
             }
+            newInformationTxt.becomeFirstResponder()
         } else if !value {
             newInformationTxt.text = ""
             newInformationTxt.removeTarget(self, action: #selector(realTimePriceTextFieldUpdateTripleDigits), for: UIControl.Event.editingChanged)
@@ -445,15 +463,13 @@ extension WeeklyShoppingList{
         performSegue(withIdentifier: "goToItemImageExpandedFromWeeklyShoppingListVC", sender: self)
     }
 }
-//MARK:- DELEGATE
-extension WeeklyShoppingList {
-    
-}
 //MARK:- LOADING/UNLOADING FUNCTIONS
 extension WeeklyShoppingList{
     func initialFunctions(){
         weeklyShoppingListTableView.delegate = self
         weeklyShoppingListTableView.dataSource = self
+        weeklyShoppingListTableView.separatorColor = .black
+        weeklyShoppingListTableView.tableFooterView = UIView()
         
         newInformationTxt.delegate = self
         searchBar.delegate = self
@@ -474,8 +490,6 @@ extension WeeklyShoppingList{
                 leftView.tintColor = UIColor.black
             }
         }
-        let cancel = searchBar.value(forKey: "cancelButton") as! UIButton
-        cancel.tintColor = .white
     }
 }
 //MARK:- COREDATA
@@ -506,6 +520,7 @@ extension WeeklyShoppingList{
 //MARK:- SEARCH BAR
 extension WeeklyShoppingList: UISearchBarDelegate{
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        showCanceButton()
         loadData()
         if searchText.isEmpty {
             weeklyShoppingListTableView.reloadData()
@@ -517,21 +532,41 @@ extension WeeklyShoppingList: UISearchBarDelegate{
         weeklyShoppingListTableView.reloadData()
     }
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        showCanceButton()
         enableUserInterfaceSearchBar(value: false)
-        searchingOn = true
         weeklyShoppingListTableView.reloadData()
     }
-
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        enableUserInterfaceSearchBar(value: true)
-        searchingOn = false
-        searchBar.resignFirstResponder()
-        searchBar.text = ""
-        loadData()
-        weeklyShoppingListTableView.reloadData()
+        endSearchMode()
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.endEditing(true)
+        showCanceButton()
+    }
+    func showCanceButton(){
+        searchingOn = true
+        searchBar.showsCancelButton = true
+        let cancel = searchBar.value(forKey: "cancelButton") as! UIButton
+        cancel.tintColor = .black
+        cancel.isEnabled = true
+    }
+    func endSearchMode(){
+        DispatchQueue.main.async {
+            self.searchBar.endEditing(true)
+            self.searchBar.showsCancelButton = false
+            self.searchBar.resignFirstResponder()
+            self.searchBar.text = ""
+            self.searchingOn = false
+            self.loadData()
+            self.enableUserInterfaceSearchBar(value: true)
+            self.weeklyShoppingListTableView.keyboardDismissMode = .onDrag
+            self.weeklyShoppingListTableView.reloadData()
+            self.updateLables()
+        }
+    }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        weeklyShoppingListTableView.keyboardDismissMode = .onDrag
+        searchingOn ? showCanceButton() : nil
     }
 }
 

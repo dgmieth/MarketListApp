@@ -87,7 +87,7 @@ extension WeeklyShoppingListObjectController {
         return ary[section].isOpened() ? marketCell.hValue : marketCell.hValue + 10
     }
     //CELL VIEWS
-    func returnCell(withCell cell : Any, cellType type : TVCellType, itemInArray ary: [Market], inIndexPath indexPath: IndexPath, itemIndexPath: IndexPath)->Any {
+    func returnCell(withCell cell : Any, cellType type : TVCellType, itemInArray ary: [Market] = [Market](), inIndexPath indexPath: IndexPath, itemIndexPath: IndexPath, searchBarArray searchAry: [Item] = [Item]())->Any {
         if type == .market {
             let mCell = cell as! MarketHeaderCell
             mCell.marketNameLbl.text = ary[indexPath.section].getName()
@@ -108,28 +108,27 @@ extension WeeklyShoppingListObjectController {
             
             iCell.namLbl.text = item.getName()
             if item.getBrand().hasValue {
-                iCell.brandLblInfo.text = item.getBrand().Value
-                iCell.brandLblInfo.font = UIFont(name: "Charter", size: 15)
+                iCell.information1InfoLbl.text = item.getBrand().Value
+                iCell.information1InfoLbl.font = UIFont(name: "Charter", size: 15)
             } else {
-                iCell.brandLblInfo.text = "nao informada"
-                iCell.brandLblInfo.font = UIFont(name: "Charter-Italic", size: 15)
+                iCell.information1InfoLbl.text = "nao informada"
+                iCell.information1InfoLbl.font = UIFont(name: "Charter-Italic", size: 15)
             }
-            iCell.priceValueLbl.text = item.getFormOfSale().getItemPriceDoubleToString()
-            iCell.soldByValueLbl.text = String(soldBy)
+            iCell.information2InfoLbl.text = item.getFormOfSale().getItemPriceDoubleToString()
             iCell.imageImgView.image = item.getImage()
             switch item.getFormOfSale().getUnitMeasure() {
             case UnitMeasure.averageWeight.rawValue:
-                iCell.priceLbl.text = ("Preço de 1 kilo/litro:")
+                iCell.information2Lbl.text = ("Preço (kilo/litro):")
             case UnitMeasure.gram.rawValue, UnitMeasure.mililiter.rawValue:
-                iCell.priceLbl.text = ("Preço de \(Int(item.getFormOfSale().getStandarWeightValue())) \(soldBy)s:")
+                iCell.information2Lbl.text = ("Preço (\(Int(item.getFormOfSale().getStandarWeightValue())) \(soldBy)s):")
             default:
-                iCell.priceLbl.text = ("Preço de 1 \(soldBy):")
+                iCell.information2Lbl.text = ("Preço (1 \(soldBy)):")
             }
             if !item.getIsAlreadyPurchased() {
                 iCell.cellViewView.backgroundColor = nil
                 iCell.checkMarkBtn.setImage(nil, for: .normal)
             } else {
-                iCell.checkMarkBtn.setImage(UIImage(named: "checkMarkAppAdded"), for: .normal)
+                iCell.checkMarkBtn.setImage(UIImage(named: "checkmark"), for: .normal)
                 iCell.cellViewView.backgroundColor = uObjCtrl.getUIColorForSelectedTableViewCells()
             }
             iCell.coldImg.isHidden = item.getItemTemp() ? false : true
@@ -139,17 +138,71 @@ extension WeeklyShoppingListObjectController {
             } else {
                 iCell.notesBtn.isHidden = true
             }
-            iCell.toBuyLbl.isHidden = false
-            iCell.qttyToByLbl.isHidden = false
+            iCell.information3Lbl.text = "Comprar:"
             if item.getFormOfSale().getUnitMeasure() == UnitMeasure.averageWeight.rawValue {
-                iCell.qttyToByLbl.text = "\(Int(item.getFormOfSale().getItemQtty())) unidade(s)"
+                iCell.information3InfoLbl.text = "\(Int(item.getFormOfSale().getItemQtty())) unidade(s)"
             } else {
-                iCell.qttyToByLbl.text = (item.getFormOfSale().getUnitMeasure() == 4 || item.getFormOfSale().getUnitMeasure() == 5) ? "\(uObjCtrl.numberByLocalityDoubleToString(valueToFormat: item.getFormOfSale().getItemQtty())) \(soldBy)(s)" : "\(Int(item.getFormOfSale().getItemQtty())) \(soldBy)(s)"
+                iCell.information3InfoLbl.text = (item.getFormOfSale().getUnitMeasure() == 4 || item.getFormOfSale().getUnitMeasure() == 5) ? "\(uObjCtrl.numberByLocalityDoubleToString(valueToFormat: item.getFormOfSale().getItemQtty())) \(soldBy)(s)" : "\(Int(item.getFormOfSale().getItemQtty())) \(soldBy)(s)"
             }
+            iCell.information4Lbl.isHidden = false
+            iCell.information4InfoLbl.isHidden = false
+            iCell.information4Lbl.text = "Total:"
+            iCell.information4InfoLbl.text = item.getFormOfSale().getFormattedFinalQuantityPrice()
             let tagNumber = indexPath.section*uObjCtrl.getConstantForCellAddress()+indexPath.row
             iCell.checkMarkBtn.tag = tagNumber
             iCell.imageBtn.tag = tagNumber
             iCell.notesBtn.tag = tagNumber
+            return iCell
+        } else if type == .searchBar {
+            let iCell = cell as! CellForItemInTableViews
+            let item = searchAry[indexPath.row]
+            let soldBy = uObjCtrl.returnUnitMeasureInString(forNumber: Int(item.getFormOfSale().getUnitMeasure()))
+            
+            iCell.namLbl.text = item.getName()
+            if item.getBrand().hasValue {
+                iCell.information1InfoLbl.text = item.getBrand().Value
+                iCell.information1InfoLbl.font = UIFont(name: "Charter", size: 15)
+            } else {
+                iCell.information1InfoLbl.text = "nao informada"
+                iCell.information1InfoLbl.font = UIFont(name: "Charter-Italic", size: 15)
+            }
+            iCell.information2InfoLbl.text = item.getFormOfSale().getItemPriceDoubleToString()
+            iCell.imageImgView.image = item.getImage()
+            switch item.getFormOfSale().getUnitMeasure() {
+            case UnitMeasure.averageWeight.rawValue:
+                iCell.information2Lbl.text = ("Preço (kilo/litro):")
+            case UnitMeasure.gram.rawValue, UnitMeasure.mililiter.rawValue:
+                iCell.information2Lbl.text = ("Preço (\(Int(item.getFormOfSale().getStandarWeightValue())) \(soldBy))s:")
+            default:
+                iCell.information2Lbl.text = ("Preço (1 \(soldBy)):")
+            }
+            if !item.getIsAlreadyPurchased() {
+                iCell.cellViewView.backgroundColor = nil
+                iCell.checkMarkBtn.setImage(nil, for: .normal)
+            } else {
+                iCell.checkMarkBtn.setImage(UIImage(named: "checkmark"), for: .normal)
+                iCell.cellViewView.backgroundColor = uObjCtrl.getUIColorForSelectedTableViewCells()
+            }
+            iCell.coldImg.isHidden = item.getItemTemp() ? false : true
+            if item.getItemInformation().hasValue {
+                iCell.notesBtn.isHidden = false
+                iCell.notesBtn.setImage(UIImage(systemName: "info.circle.fill"), for: .normal)
+            } else {
+                iCell.notesBtn.isHidden = true
+            }
+            iCell.information3Lbl.text = "Comprar:"
+            if item.getFormOfSale().getUnitMeasure() == UnitMeasure.averageWeight.rawValue {
+                iCell.information3InfoLbl.text = "\(Int(item.getFormOfSale().getItemQtty())) unidade(s)"
+            } else {
+                iCell.information3InfoLbl.text = (item.getFormOfSale().getUnitMeasure() == 4 || item.getFormOfSale().getUnitMeasure() == 5) ? "\(uObjCtrl.numberByLocalityDoubleToString(valueToFormat: item.getFormOfSale().getItemQtty())) \(soldBy)(s)" : "\(Int(item.getFormOfSale().getItemQtty())) \(soldBy)(s)"
+            }
+            iCell.information4Lbl.isHidden = false
+            iCell.information4InfoLbl.isHidden = false
+            iCell.information4Lbl.text = "Total:"
+            iCell.information4InfoLbl.text = item.getFormOfSale().getFormattedFinalQuantityPrice()
+            iCell.checkMarkBtn.tag = indexPath.row
+            iCell.imageBtn.tag = indexPath.row
+            iCell.notesBtn.tag = indexPath.row
             return iCell
         }
         return cell
@@ -282,20 +335,23 @@ extension WeeklyShoppingListObjectController{
     func totalAmountAndQttyBought(withArray ary: [Market]) -> (amount: String, qtty: String, amountDouble: Double, qttyDouble: Double){
         var amount = 0.00
         var quantity = 0.00
+        totalPriceBought = 0.0
+        totalQttyBought = 0.0
         for m in ary {
             for s in m.getSector() {
                 for i in s.getItem() {
-                    if i.getIsAlreadyPurchased(){
-                        switch i.getFormOfSale().getUnitMeasureNoRawValue() {
-                        case .single, .averageWeight:
-                            quantity += i.getFormOfSale().getItemQtty()
-                        default:
-                            quantity += 1
-                        }
-                        amount += i.getFormOfSale().getFinalQuantityPrice()
-                        totalPriceBought = amount
-                        totalQttyBought = quantity
-                    }       }       }       }
+                    if i.getAddToBuyList() {
+                        if i.getIsAlreadyPurchased(){
+                            switch i.getFormOfSale().getUnitMeasureNoRawValue() {
+                            case .single, .averageWeight:
+                                quantity += i.getFormOfSale().getItemQtty()
+                            default:
+                                quantity += 1
+                            }
+                            amount += i.getFormOfSale().getFinalQuantityPrice()
+                            totalPriceBought = amount
+                            totalQttyBought = quantity
+                        }       }       }       }       }
         return (uObjCtrl.currencyDoubleToString(usingNumber: amount), qtty: "\(Int(quantity))", totalPriceBought, totalQttyBought)
     }
     func finishLists(withMarketsArray marketsArray: [Market], withDataController dataController: DataController, withFinishedListsArray ary: [PurchasedList])->PurchasedList? {
