@@ -10,19 +10,19 @@ import UIKit
 import CoreData
 
 class HomeVC: UIViewController {
-
+    
     var mainMarketsArray = [Market]()
     var marketsArray = [Market]()
     var dataController:DataController!
     var purchasedItemsArray = [PurchasedList]()
     //MARK:- VIEW LOADING
     override func viewDidLoad() {
-//        loadData()
+        //        loadData()
         
     }
     //MARK: - BUTTONS
     @IBAction func goToItemsMercadoVC(_ sender: Any) {
-            performSegue(withIdentifier: "goToItemsMercadoVC", sender: self)
+        performSegue(withIdentifier: "goToItemsMercadoVC", sender: self)
     }
     @IBAction func goToWeeklyShoppingList(_ sender: Any) {
         performSegue(withIdentifier: "goToWeeklyShoppingListVC", sender: self)
@@ -42,7 +42,7 @@ class HomeVC: UIViewController {
         if segue.identifier == "goToItemsMercadoVC" {
             let destination = segue.destination as! ItemsMercadoVC
             destination.dataController = dataController
-       } else if segue.identifier == "goToWeeklyShoppingListVC" {
+        } else if segue.identifier == "goToWeeklyShoppingListVC" {
             let destination = segue.destination as! WeeklyShoppingList
             destination.dataController = dataController
         } else if segue.identifier == "goToFinishedListsVC" {
@@ -60,11 +60,11 @@ class HomeVC: UIViewController {
     }
     //MARK:-CORE DATA
     func loadData(){
-         let fetchRequest = NSFetchRequest<Market>(entityName: "Market")
-         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "orderingID", ascending: true)]
-         if let results = try? dataController.viewContext.fetch(fetchRequest){
-             mainMarketsArray = results
-         }
+        let fetchRequest = NSFetchRequest<Market>(entityName: "Market")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "orderingID", ascending: true)]
+        if let results = try? dataController.viewContext.fetch(fetchRequest){
+            mainMarketsArray = results
+        }
         let fetchRequest1 = NSFetchRequest<PurchasedList>(entityName: "PurchasedList")
         fetchRequest1.sortDescriptors = [NSSortDescriptor(key: "boughDate", ascending: false)]
         if let results = try? dataController.viewContext.fetch(fetchRequest1){

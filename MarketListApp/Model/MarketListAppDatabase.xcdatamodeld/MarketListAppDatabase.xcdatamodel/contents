@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19D76" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="FormOfSale" representedClassName="FormOfSale" syncable="YES" codeGenerationType="class">
         <attribute name="allOtherDivisors" attributeType="Double" defaultValueString="1" usesScalarValueType="YES"/>
         <attribute name="avgWeightDivisor" attributeType="Double" defaultValueString="1000" usesScalarValueType="YES"/>
@@ -64,6 +64,9 @@
         <attribute name="qttyOfItems" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="items" toMany="YES" deletionRule="Cascade" destinationEntity="Item" inverseName="sector" inverseEntity="Item"/>
         <relationship name="market" maxCount="1" deletionRule="Nullify" destinationEntity="Market" inverseName="sectors" inverseEntity="Market"/>
+        <fetchedProperty name="fetchedProperty" optional="YES">
+            <fetchRequest name="fetchedPropertyFetchRequest" entity="Market"/>
+        </fetchedProperty>
     </entity>
     <elements>
         <element name="FormOfSale" positionX="-27" positionY="117" width="128" height="208"/>
@@ -71,6 +74,6 @@
         <element name="Market" positionX="-63" positionY="-18" width="128" height="133"/>
         <element name="PurchasedItem" positionX="-18" positionY="171" width="128" height="148"/>
         <element name="PurchasedList" positionX="0" positionY="180" width="128" height="118"/>
-        <element name="Sector" positionX="-54" positionY="9" width="128" height="148"/>
+        <element name="Sector" positionX="-54" positionY="9" width="128" height="176"/>
     </elements>
 </model>

@@ -92,6 +92,7 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
         return 0
     }
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        pickerView.tintColor = UIColor.init(named: "textColor")
         if pickerView.tag == 1 {
             return objCtrlSIVC.returnViewForRows(withPicker: pickerView, inMarketsArray: marketsArray, inRow: row)
         } else if pickerView.tag == 2 {
@@ -124,6 +125,8 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
                 setStandardWeightTxtF.isHidden = false
                 standardWeightLbl.text = "Gramas/ml por unidade:"
                 setStandardWeightTxtF.text = "\(Int((cell.getFormOfSale().getStandarWeightValue()*Double(cell.getFormOfSale().getDivisor()[.averageWeight]!)))) "
+                setStandardWeightTxtF.backgroundColor = nil
+                setStandardWeightTxtF.borderStyle = .none
             case .gram, .mililiter:
                 unitMeasureLbl.isHidden = false
                 setStandardWeightTxtF.isHidden = true
@@ -146,17 +149,17 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
         //user interface when edit is pressed
         case 2:
             nameTxtF.isEnabled = true
-            nameTxtF.backgroundColor = UIColor.white
+            nameTxtF.backgroundColor = UIColor.init(named: "tableViewColor")
             nameTxtF.borderStyle = .roundedRect
             brandTxtF.isEnabled = true
-            brandTxtF.backgroundColor = UIColor.white
+            brandTxtF.backgroundColor = UIColor.init(named: "tableViewColor")
             brandTxtF.borderStyle = .roundedRect
             priceTxtF.isEnabled = true
-            priceTxtF.backgroundColor = UIColor.white
+            priceTxtF.backgroundColor = UIColor.init(named: "tableViewColor")
             priceTxtF.borderStyle = .roundedRect
             if itemObj!.0.getFormOfSale().getUnitMeasureNoRawValue() == UnitMeasure.averageWeight {
                 setStandardWeightTxtF.isEnabled = true
-                setStandardWeightTxtF.backgroundColor = UIColor.white
+                setStandardWeightTxtF.backgroundColor = UIColor.init(named: "tableViewColor")
                 setStandardWeightTxtF.borderStyle = .roundedRect
             }
             marketPkr.isUserInteractionEnabled = true
@@ -203,7 +206,7 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
                 unitMeasureLbl.isHidden = vl
                 setStandardWeightTxtF.isHidden = !vl
                 setStandardWeightTxtF.isEnabled = vl
-                setStandardWeightTxtF.backgroundColor = UIColor.white
+                setStandardWeightTxtF.backgroundColor = UIColor.init(named: "tableViewColor")
                 setStandardWeightTxtF.borderStyle = .roundedRect
             } else {
                 unitMeasureLbl.isHidden = vl
@@ -282,7 +285,13 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
     }
     //delete item
     @IBAction func deleteBtnPressed(_ sender: Any) {
+        let sector = itemObj!.0.sector
         deleteFromModel(item: itemObj!.0, goToItemsMercadoVC: true)
+        saveModel()
+        if let ary = sector?.getItem() {
+            reorderingItems(withItemsArray: ary)
+        }
+        saveModel(goToItemsMercadoVC: true)
     }
     //MARK:- TEXTFIELDS
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -461,6 +470,13 @@ class SingleItemInfoVC: UIViewController, UIPickerViewDataSource, UIPickerViewDe
             sectorPkr.selectRow(itemObj!.2, inComponent: 0, animated: true)
         }
     }
+    func reorderingItems(withItemsArray ary : [Item]){
+        for i in 0..<ary.count {
+            if i != ary[i].getOrderingID(){
+                ary[i].setOredringId(setAt: i)
+            }
+        }
+    }
     //MARK:- SEGUEWAYS
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToImageExpandedSIVC" {
@@ -519,7 +535,6 @@ extension SingleItemInfoVC{
     func deleteFromModel(item: Item, goToItemsMercadoVC value: Bool = false){
         item.subtractItemFromMarketAndSectorCounter()
         dataController.viewContext.delete(item)
-        saveModel(goToItemsMercadoVC: value)
     }
 }
 

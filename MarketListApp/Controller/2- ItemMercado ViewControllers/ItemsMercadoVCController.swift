@@ -66,7 +66,7 @@ extension itemsMercadoObjectController{
             let item = ary[market].getSector()[sector].getItem()[item]
             let soldBy = uObjCtrl.returnUnitMeasureInString(forNumber: Int(item.getFormOfSale().getUnitMeasure()))
             
-            iCell.namLbl.text = item.getName()
+            iCell.namLbl.text = "\(item.getOrderingID())- \(item.getName())"
             if item.getBrand().hasValue {
                 iCell.information1InfoLbl.text = item.getBrand().Value
                 iCell.information1InfoLbl.font = UIFont(name: "Charter", size: 15)
@@ -205,6 +205,29 @@ extension itemsMercadoObjectController{
         }
         return ary[section].getHasItems() ? true : false
     }
+    func aryHasTwoOrMoreItems(withAry ary: [Market]) -> Bool{
+        var items = 0
+        for m in ary {
+            for s in m.getSector() {
+                items += s.getItem().count
+                print("items = \(items)")
+                if items >= 2 {
+                    return true
+                }       }
+        }
+        return false
+    }
+    func returnSectorsArray(marketsArray ary: [Market])->[Sector]{
+        var sAry = [Sector]()
+        for m in 0..<ary.count{
+            for s in 0..<ary[m].getSector().count {
+                if ary[m].getSector()[s].getHasItems(){
+                    sAry.append(ary[m].getSector()[s])
+                }
+            }
+        }
+        return sAry
+    }
     //MARK:- LAYOUT
     func getTextForPopUpToAddItemToShoppingList(item: Item) -> [String] {
         var priceLabel = String()
@@ -238,9 +261,9 @@ extension itemsMercadoObjectController{
         return ary[section].getSector()[cellIndex.section].getItem()[cellIndex.row].getImage()
     }
     func getItemObject(usingTag tag : Int, inMarketsArray ary: [Market]) -> Item {
-         let section = Int(tag/uObjCtrl.getConstantForCellAddress())
-         let row = Int(tag%uObjCtrl.getConstantForCellAddress())
-         let cellIndex = uObjCtrl.sectionSubsectionForItemInTableView(atSection: section, atRow: row, inMarketArray: ary)
-         return ary[section].getSector()[cellIndex.section].getItem()[cellIndex.row]
-     }
+        let section = Int(tag/uObjCtrl.getConstantForCellAddress())
+        let row = Int(tag%uObjCtrl.getConstantForCellAddress())
+        let cellIndex = uObjCtrl.sectionSubsectionForItemInTableView(atSection: section, atRow: row, inMarketArray: ary)
+        return ary[section].getSector()[cellIndex.section].getItem()[cellIndex.row]
+    }
 }

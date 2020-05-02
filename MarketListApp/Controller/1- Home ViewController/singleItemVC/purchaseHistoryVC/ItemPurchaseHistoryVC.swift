@@ -34,20 +34,27 @@ class ItemPurchaseHistoryVC: UIViewController, UITableViewDelegate, UITableViewD
         purchaseHistoryTableView.delegate = self
         purchaseHistoryTableView.dataSource = self
         
-        purchaseHistoryTableView.allowsSelection = false
-        purchaseHistoryTableView.separatorStyle = .none
-
+        //        purchaseHistoryTableView.allowsSelection = false
+        purchaseHistoryTableView.separatorColor = UIColor.init(named: "textColor")
+        purchaseHistoryTableView.tableFooterView = UIView()
+        
         purchaseHistoryTableView.register(UINib(nibName: "ItemPurchaseHistoryVCCell", bundle: nil), forCellReuseIdentifier: "itemPurchaseHistoryVCCell")
+        
     }
     //MARK:- TABLEVIEW
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return item!.getPurchaseHistory().count > 0 ? item!.getPurchaseHistory().count : 1
+        if let toUseItem = item {
+            return toUseItem.getPurchaseHistory().count > 0 ? toUseItem.getPurchaseHistory().count : 1
+        }
+        return 1
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        tableView.separatorStyle = .none
         if indexPath.row == 0 && item!.getPurchaseHistory().count == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "purchasedHistoryVCCell", for: indexPath)
             return cell
         } else if indexPath.row <= item!.getPurchaseHistoryArrayLength() - qttyItemsInArray {
+            tableView.separatorStyle = .singleLine
             let cell = tableView.dequeueReusableCell(withIdentifier: "itemPurchaseHistoryVCCell", for: indexPath) as! ItemPurchaseHistoryVCCell
             cell.itemDateLbl.text = item!.getPurchaseHistory()[indexPath.row][0]
             cell.itemPriceLbl.text = item!.getPurchaseHistory()[indexPath.row][1]
@@ -56,6 +63,7 @@ class ItemPurchaseHistoryVC: UIViewController, UITableViewDelegate, UITableViewD
             cell.ItemFinalVlLbl.text = item!.getPurchaseHistory()[indexPath.row][4]
             return cell
         } else {
+            tableView.separatorStyle = .singleLine
             let cell = tableView.dequeueReusableCell(withIdentifier: "oldPurchasedHistoryVCCell", for: indexPath)
             return cell
         }

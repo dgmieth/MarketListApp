@@ -156,6 +156,6 @@ extension UniversalObjectController {
 //MARK:- USER INTERFACE ELEMENTS
 extension UniversalObjectController{
     func getUIColorForSelectedTableViewCells() -> UIColor {
-        return UIColor(red: 0.933, green: 0.933, blue: 0.933, alpha: 1.0)
+        return UIColor.init(named: "selectedCell")!
     }
 }

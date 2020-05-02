@@ -11,8 +11,6 @@ import CoreData
 
 class ListOfMarketsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
-    
-    
     var listOfMarkets = [Market]()
     var searchBarArray = [Market]()
     var dataController : DataController!
@@ -23,27 +21,30 @@ class ListOfMarketsViewController: UIViewController, UITableViewDelegate, UITabl
     var aryHasItems = false
     
     override func viewWillAppear(_ animated: Bool) {
+        marketsTableView.setEditing(false, animated: true)
         loadData()
     }
     override func viewDidLoad() {
         super.viewDidLoad()
         
         marketsTableView.tableFooterView = UIView()
+        marketsTableView.separatorColor = UIColor(named: "textColor")
         
         if let textfield = searchBar.value(forKey: "searchField") as? UITextField {
-            textfield.backgroundColor = UIColor.white
+            textfield.backgroundColor = UIColor.init(named: "tableViewColor")
             textfield.attributedPlaceholder = NSAttributedString(string: textfield.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor : UIColor.black])
-            textfield.textColor = UIColor.black
+            textfield.textColor = UIColor(named: "textColor")
             
             if let leftView = textfield.leftView as? UIImageView {
                 leftView.image = leftView.image?.withRenderingMode(.alwaysTemplate)
-                leftView.tintColor = UIColor.black
+                leftView.tintColor = UIColor(named: "textColor")
             }
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
         listOfMarkets = [Market]()
         searchBarArray = [Market]()
+        marketsTableView.setEditing(false, animated: true)
     }
 }
 //MARK:- TABLE VIEW
@@ -61,27 +62,37 @@ extension ListOfMarketsViewController{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if aryHasItems {
+            tableView.allowsSelection = true
+            tableView.isScrollEnabled = true
             if searchingOn {
                 let sCell = tableView.dequeueReusableCell(withIdentifier: "searchCell", for: indexPath)
                 sCell.textLabel!.text = searchBarArray[indexPath.row].getName()
                 tableView.separatorStyle = .singleLine
                 return sCell
             } else {
+                if tableView.isEditing == true {
+                    let eCell = tableView.dequeueReusableCell(withIdentifier: "editingCell", for: indexPath)
+                    eCell.textLabel!.text = listOfMarkets[indexPath.row].getName()
+                    return eCell
+                }
                 tableView.separatorStyle = .singleLine
                 let mCell = tableView.dequeueReusableCell(withIdentifier: "mainCell", for: indexPath)
-                mCell.textLabel!.text = listOfMarkets[indexPath.row].getName()
+                mCell.textLabel!.text = "\(listOfMarkets[indexPath.row].getOrderingID())- \(listOfMarkets[indexPath.row].getName())"
                 mCell.detailTextLabel!.text = "\(listOfMarkets[indexPath.row].getSector().count) setor(es)/ \(listOfMarkets[indexPath.row].getQttOfItems()) item(s)"
                 return mCell
             }
         }
+        tableView.allowsSelection = false
+        tableView.isScrollEnabled = false
         let cellOne = tableView.dequeueReusableCell(withIdentifier: "emptyArray", for: indexPath)
         tableView.separatorStyle = .none
         return cellOne
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return aryHasItems ? CGFloat(44) : CGFloat(tableView.bounds.height)
+        return aryHasItems ? CGFloat(44) : CGFloat((tableView.bounds.height-44))
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(listOfMarkets[indexPath.row].getOrderingID())
         if searchingOn {
             var foundMatch = false
             var counter = 0
@@ -99,10 +110,12 @@ extension ListOfMarketsViewController{
             }
         } else {
             let alert = UIAlertController(title: listOfMarkets[indexPath.row].getName(), message: nil, preferredStyle: .actionSheet)
-            let delete = UIAlertAction(title: "Delete", style: .destructive) { (delete) in
+            let delete = UIAlertAction(title: "Deletar mercado", style: .destructive) { (delete) in
                 let alert2 = UIAlertController(title: "Deletar \(self.listOfMarkets[indexPath.row].getName())", message: "Você tem certeza que dseja deletar o mercado \(self.listOfMarkets[indexPath.row].getName())? Esta ação deletará o(s) setor(es)/item(s) vinculado(s) a este mercado e não poderá ser desfeita", preferredStyle: .actionSheet)
                 let sim = UIAlertAction(title: "Sim", style: .destructive) { (action) in
                     let market = self.listOfMarkets[indexPath.row]
+                    self.listOfMarkets.remove(at: indexPath.row)
+                    self.listOfMarkets.count > 0 ? self.reorderingMarkets(withMarketsArray: self.listOfMarkets) : nil
                     self.delete(item: market)
                     self.saveData()
                     self.loadData()
@@ -113,7 +126,7 @@ extension ListOfMarketsViewController{
                 self.present(alert2, animated: true, completion: nil)
                 tableView.deselectRow(at: indexPath, animated: true)
             }
-            let edit = UIAlertAction(title: "Editar", style: .default) { (action) in
+            let edit = UIAlertAction(title: "Editar nome", style: .default) { (action) in
                 var textfield = UITextField()
                 let alert3 = UIAlertController(title: "Editar", message: "Altere ou renomeie o nome do mercado.", preferredStyle: .alert)
                 let save = UIAlertAction(title: "Salvar", style: .default) { (action) in
@@ -159,6 +172,7 @@ extension ListOfMarketsViewController{
         }
         alert.addTextField { (field) in
             field.placeholder = "Alterar: escreva e salve"
+            field.autocapitalizationType = .sentences
             textField = field
         }
         alert.addAction(save)
@@ -176,7 +190,7 @@ extension ListOfMarketsViewController{
     }
     func loadData(){
         let fetchRequest = NSFetchRequest<Market>(entityName: "Market")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "orderingID", ascending: true)]
         if let results = try? dataController.viewContext.fetch(fetchRequest){
             listOfMarkets = results     }
         let fetchRequest1 = NSFetchRequest<Market>(entityName: "Market")
@@ -185,6 +199,7 @@ extension ListOfMarketsViewController{
             searchBarArray = results     }
         enableUserInterface()
         aryHasItems = listOfMarkets.count > 0 ? true : false
+        rightNavigationBarButton()
     }
     
     func delete(item: Market){
@@ -197,26 +212,52 @@ extension ListOfMarketsViewController{
 //MARK:- DATA MANIPUlATION
 extension ListOfMarketsViewController{
     func setOrderingInMarkets() -> Int{
-        var orderedMarketsList = [Market]()
-        var index = 0
-        let fetchRequest = NSFetchRequest<Market>(entityName: "Market")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "orderingID", ascending: true)]
-        if let results = try? dataController.viewContext.fetch(fetchRequest){
-            orderedMarketsList = results     }
-        for i in 0..<orderedMarketsList.count {
-            if orderedMarketsList[i].getOrderingID() != i {
-                orderedMarketsList[i].setOredringId(setAt: i)
+        return listOfMarkets.count
+    }
+    func reorderingMarkets(withMarketsArray ary: [Market]){
+        for m in 0..<ary.count{
+            print("\(ary[m].getOrderingID())- \(ary[m].getName())")
+            if m != ary[m].getOrderingID(){
+                ary[m].setOredringId(setAt: m)
             }
-            index = i
+            print("\(ary[m].getOrderingID())- \(ary[m].getName())")
         }
-        return index
     }
 }
-//MARK:- USER INTERFACE
+//MARK:- LAYOUT
 extension ListOfMarketsViewController {
     func enableUserInterface(){
         searchBar.isHidden = listOfMarkets.count == 0 ? true : false
         newMarketBtn.isEnabled = searchingOn ? false : true
+        rightNavigationBarButton()
+    }
+    func rightNavigationBarButton(value : Bool = true, text : String = "Editar"){
+        if value {
+            if listOfMarkets.count > 1 {
+                self.navigationItem.rightBarButtonItems?.removeAll()
+                let button = UIBarButtonItem(title: text, style: .plain, target: self, action: #selector(reorderSectors(sender:)))
+                self.navigationItem.rightBarButtonItem  = button
+            } else {
+                if self.navigationItem.rightBarButtonItems?.count != 0 {
+                    self.navigationItem.rightBarButtonItems?.remove(at: 0)
+                }       }
+        } else {
+            if self.navigationItem.rightBarButtonItems?.count != 0 {
+                self.navigationItem.rightBarButtonItems?.remove(at: 0)
+            }       }
+    }
+}
+//MARK:- TARGETS
+extension ListOfMarketsViewController{
+    @objc func reorderSectors(sender: UIBarButtonItem){
+        if marketsTableView.isEditing {
+            rightNavigationBarButton()
+            marketsTableView.setEditing(false, animated: true)
+        } else {
+            rightNavigationBarButton(text: "Concluir")
+            marketsTableView.setEditing(true, animated: true)
+        }
+        marketsTableView.reloadData()
     }
 }
 //MARK:- SEARCH BAR
@@ -247,11 +288,12 @@ extension ListOfMarketsViewController{
         showCanceButton()
     }
     func showCanceButton(){
+        marketsTableView.setEditing(false, animated: true)
         searchingOn = true
-        searchBar.showsCancelButton = true
+        searchBar.setShowsCancelButton(true, animated: true)
         enableUserInterface()
         let cancel = searchBar.value(forKey: "cancelButton") as! UIButton
-        cancel.tintColor = .black
+        cancel.tintColor = UIColor.init(named: "textColor")
         cancel.isEnabled = true
     }
     func endSearchMode(){
@@ -270,5 +312,25 @@ extension ListOfMarketsViewController{
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         marketsTableView.keyboardDismissMode = .onDrag
         searchingOn ? showCanceButton() : nil
+    }
+}
+//MARK:- TABLEVIEW EDITING MODE
+extension ListOfMarketsViewController{
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
+    }
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let sector = listOfMarkets[sourceIndexPath.row]
+        listOfMarkets.remove(at: sourceIndexPath.row)
+        listOfMarkets.insert(sector, at: destinationIndexPath.row)
+        reorderingMarkets(withMarketsArray: listOfMarkets)
+        saveData()
+        marketsTableView.reloadData()
     }
 }

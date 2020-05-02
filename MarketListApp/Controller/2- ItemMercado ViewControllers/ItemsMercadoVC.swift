@@ -11,8 +11,9 @@ import CoreData
 
 class ItemsMercadoVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     
-    var fullArray = [Market]()
+    var fullArray : [Market]!
     var itemsOnlyArray = [Market]()
+    var editingArray : [Sector]!
     var objCtrl = itemsMercadoObjectController()
     var uObjCtrl = UniversalObjectController()
     var dataController : DataController!
@@ -46,30 +47,43 @@ extension ItemsMercadoVC{
         if let ary = objCtrl.getArrayWithItemsOnly(inMarketsArray: fullArray){
             itemsOnlyArray = ary
             reloadData()
-            searchBarInTouched.isHidden = false
-        } else { searchBarInTouched.isHidden = true }
+        } else { enableSearchBar() }
+        rightNavigationBarButton()
+        itemsMercadoTableView.setEditing(false, animated: true)
         itemsMercadoTableView.reloadData()
     }
     override func viewDidLoad() {
         initialFunctions()
+        print(itemsMercadoTableView.isEditing)
     }
     override func viewWillDisappear(_ animated: Bool) {
         finalFunctions()
         itemsOnlyArray = [Market]()
         fullArray = [Market]()
         searchBarArray = [Item]()
+        editingArray = [Sector]()
+        itemsMercadoTableView.setEditing(false, animated: true)
     }
 }
 //MARK:- TABLEVIEW METHODS
 extension ItemsMercadoVC{
     func numberOfSections(in tableView: UITableView) -> Int {
+        if tableView.isEditing == true {
+            return editingArray.count }
         return searchingOn ? 1 : objCtrl.getSectionsForTableView(inMarketsArray: itemsOnlyArray)
         
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if tableView.isEditing == true { return editingArray[section].getItem().count }
         return searchingOn ? searchBarArray.count : objCtrl.getRowsForTableView(inMarketsArray: itemsOnlyArray, inSection: section)
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if tableView.isEditing == true {
+            let eHeader = tableView.dequeueReusableCell(withIdentifier: "editingSector")
+            eHeader?.textLabel!.text = "Setor: \(editingArray[section].getName())"
+            eHeader?.detailTextLabel!.text = "No \(editingArray[section].market!.getName())"
+            return eHeader
+        }
         if !searchingOn {
             if objCtrl.checkMarketHasItemsInHeaders(inArray: itemsOnlyArray, inSection: section) {
                 let mCell = tableView.dequeueReusableCell(withIdentifier: "marketHeaderCell") as! MarketHeaderCell
@@ -79,6 +93,7 @@ extension ItemsMercadoVC{
         return UIView()
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if tableView.isEditing == true { return CGFloat(44)}
         if !searchingOn {
             if objCtrl.checkMarketHasItemsInHeaders(inArray: itemsOnlyArray, inSection: section){
                 return objCtrl.returnHeighForHeader(inSection: section, usingMarketsArray: itemsOnlyArray)
@@ -86,6 +101,13 @@ extension ItemsMercadoVC{
         return CGFloat(0)
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        tableView.isScrollEnabled = true
+        tableView.allowsSelection = true
+        if tableView.isEditing == true {
+            let eCell = tableView.dequeueReusableCell(withIdentifier: "editingCell", for: indexPath)
+            eCell.textLabel!.text = editingArray[indexPath.section].getItem()[indexPath.row].getName()
+            return eCell
+        }
         if searchingOn {
             let iCell = tableView.dequeueReusableCell(withIdentifier: "cellForItemInTableViews", for: indexPath) as! CellForItemInTableViews
             iCell.checkMarkBtn.addTarget(self, action: #selector(addToShoppingList(sender:)), for: .touchUpInside)
@@ -95,6 +117,8 @@ extension ItemsMercadoVC{
         } else {
             if !objCtrl.checkMarketHasItemsInHeaders(inArray: itemsOnlyArray, inSection: indexPath.section){
                 tableView.separatorStyle = .none
+                tableView.isScrollEnabled = false
+                tableView.allowsSelection = false
                 let cellOne = tableView.dequeueReusableCell(withIdentifier: "cellOne", for: indexPath)
                 return cellOne
             } else {
@@ -118,12 +142,13 @@ extension ItemsMercadoVC{
         }
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if tableView.isEditing == true { return CGFloat(45) }
         if searchingOn {
             return CGFloat(89)
         }
         if objCtrl.checkMarketHasItemsInHeaders(inArray: itemsOnlyArray, inSection: indexPath.section){
             return objCtrl.returnHeightForCell(atIndexPath: indexPath, usingMarketsArray: itemsOnlyArray)   }
-        return CGFloat(tableView.bounds.height)
+        return CGFloat((tableView.bounds.height-44))
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if searchingOn {
@@ -165,6 +190,7 @@ extension ItemsMercadoVC{
         fetchRequest1.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         if let results = try? dataController.viewContext.fetch(fetchRequest1){
             searchBarArray = results     }
+        loadEditingArray()
     }
     func delete(item: Item){
         dataController.viewContext.delete(item)
@@ -203,6 +229,22 @@ extension ItemsMercadoVC {
     //get item notes
     @objc func getItemNotesItemsVC(sender: UIButton){
         present(itemInfoAlertIMVC(withSenderTag: sender.tag), animated: true, completion: nil)
+        itemsMercadoTableView.reloadData()
+    }
+    @objc func reorderSectors(sender: UIBarButtonItem){
+        if itemsMercadoTableView.isEditing {
+            rightNavigationBarButton()
+            itemsMercadoTableView.setEditing(false, animated: true)
+            editingArray = [Sector]()
+            if let ary = objCtrl.getArrayWithItemsOnly(inMarketsArray: fullArray){
+                itemsOnlyArray = ary
+                reloadData()
+            }
+        } else {
+            rightNavigationBarButton(text: "Concluir")
+            loadEditingArray()
+            itemsMercadoTableView.setEditing(true, animated: true)
+        }
         itemsMercadoTableView.reloadData()
     }
 }
@@ -316,7 +358,7 @@ extension ItemsMercadoVC{
         var textField = UITextField()
         let alert = UIAlertController(title: "Item Information", message: "\nOBSERVACOES:\n\(item.getItemInformation().value)", preferredStyle: .alert)
         let save = UIAlertAction(title: "Salvar", style: .default) { (action) in
-            !textField.text!.isEmpty ? item.setItemInformation(information: textField.text!) : item.setItemInformation(information: nil)
+            !textField.text!.isEmpty ? item.setItemInformation(information: textField.text!) : nil
             self.saveData()
             self.reloadData()
         }
@@ -338,7 +380,7 @@ extension ItemsMercadoVC{
         return alert
     }
 }
-//MARK:- USER INTERFACE
+//MARK:- LAYOUT
 extension ItemsMercadoVC{
     //setting kilo decimal or other form of sales units in the textfield
     func setTextFieldForDecimalIfItemSoldByKiloOrLiter(setTrueUnsetFalse value : Bool = false) {
@@ -378,14 +420,45 @@ extension ItemsMercadoVC{
     func hideUserInterfaceInSearchBar(value: Bool){
         addNewItemBtn.isEnabled = !value
     }
+    func rightNavigationBarButton(value : Bool = true, text : String = "Editar"){
+        if objCtrl.aryHasTwoOrMoreItems(withAry: itemsOnlyArray) {
+            if value {
+                self.navigationItem.rightBarButtonItems?.removeAll()
+                let button = UIBarButtonItem(title: text, style: .plain, target: self, action: #selector(reorderSectors(sender:)))
+                self.navigationItem.rightBarButtonItem  = button
+            } else {
+                if self.navigationItem.rightBarButtonItems?.count != 0 {
+                    self.navigationItem.rightBarButtonItems?.remove(at: 0)
+                }
+            }
+        } else {
+            if self.navigationItem.rightBarButtonItems?.count != 0 {
+                self.navigationItem.rightBarButtonItems?.remove(at: 0)
+            }
+        }
+    }
+    func enableSearchBar(){
+        searchBarInTouched.isHidden = itemsOnlyArray.count > 0 ? false : true
+    }
 }
 //MARK:- DATA HANDLING
 extension ItemsMercadoVC{
     func reloadData(){
         itemsMercadoTableView.reloadData()
+        enableSearchBar()
         DispatchQueue.main.async {
             self.registerToKeyboardNotifications(registerTrueAndUnregisterFalse: true)
         }
+    }
+    func reorderIDItems(withItemArray ary : [Item]){
+        for i in 0..<ary.count {
+            if ary[i].getOrderingID() != i {
+                ary[i].setOredringId(setAt: i)
+            }
+        }
+    }
+    func loadEditingArray(){
+        editingArray = objCtrl.returnSectorsArray(marketsArray: fullArray)
     }
 }
 //MARK: - SEGUEWAYS
@@ -424,13 +497,13 @@ extension ItemsMercadoVC{
     func initialFunctions(){
         itemsMercadoTableView.delegate = self
         itemsMercadoTableView.dataSource = self
-        itemsMercadoTableView.separatorColor = .black
+        itemsMercadoTableView.separatorColor = UIColor.init(named: "textColor")
+        itemsMercadoTableView.separatorStyle = .singleLine
         
         itemsMercadoTableView.register(UINib(nibName: "MarketHeaderCell", bundle: nil), forCellReuseIdentifier: "marketHeaderCell")
         itemsMercadoTableView.register(UINib(nibName: "CellForSectorInTableViews", bundle: nil), forCellReuseIdentifier: "cellForSectorInTableViews")
         itemsMercadoTableView.register(UINib(nibName: "CellForItemInTableViews", bundle: nil), forCellReuseIdentifier: "cellForItemInTableViews")
-        itemsMercadoTableView.separatorStyle = .singleLine
-        itemsMercadoTableView.separatorColor = .black
+        
         
         itemsMercadoTableView.tableFooterView = UIView()
         
@@ -441,13 +514,13 @@ extension ItemsMercadoVC{
         searchBarInTouched.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard(_:))))
         
         if let textfield = searchBarInTouched.value(forKey: "searchField") as? UITextField {
-            textfield.backgroundColor = UIColor.white
+            textfield.backgroundColor = UIColor.init(named: "tableViewColor")
             textfield.attributedPlaceholder = NSAttributedString(string: textfield.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor : UIColor.black])
-            textfield.textColor = UIColor.black
+            textfield.textColor = UIColor(named: "textColor")
             
             if let leftView = textfield.leftView as? UIImageView {
                 leftView.image = leftView.image?.withRenderingMode(.alwaysTemplate)
-                leftView.tintColor = UIColor.black
+                leftView.tintColor = UIColor(named: "textColor")
             }
         }
         
@@ -472,7 +545,6 @@ extension ItemsMercadoVC: UISearchBarDelegate{
         itemsMercadoTableView.reloadData()
     }
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        
         showCanceButton()
         hideUserInterfaceInSearchBar(value: true)
         itemsMercadoTableView.reloadData()
@@ -485,10 +557,11 @@ extension ItemsMercadoVC: UISearchBarDelegate{
         showCanceButton()
     }
     func showCanceButton(){
+        itemsMercadoTableView.setEditing(false, animated: true)
         searchingOn = true
-        searchBarInTouched.showsCancelButton = true
+        searchBarInTouched.setShowsCancelButton(true, animated: true)
         let cancel = searchBarInTouched.value(forKey: "cancelButton") as! UIButton
-        cancel.tintColor = .black
+        cancel.tintColor = UIColor(named: "textColor")
         cancel.isEnabled = true
     }
     func endSearchMode(){
@@ -502,11 +575,58 @@ extension ItemsMercadoVC: UISearchBarDelegate{
             self.hideUserInterfaceInSearchBar(value: false)
             self.itemsMercadoTableView.keyboardDismissMode = .onDrag
             self.itemsMercadoTableView.reloadData()
-            print("endSearchMode called")
         }
     }
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         itemsMercadoTableView.keyboardDismissMode = .onDrag
         searchingOn ? showCanceButton() : nil
+    }
+}
+//MARK:- TABLEVIEW EDITING MODE
+extension ItemsMercadoVC{
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
+    }
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return editingArray.count > 0 ? true : false
+    }
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let dSector = editingArray[destinationIndexPath.section]
+        let item = editingArray[sourceIndexPath.section].getItem()[sourceIndexPath.row]
+        var sAry = editingArray[sourceIndexPath.section].getItem()
+        var dAry = editingArray[destinationIndexPath.section].getItem()
+        if sourceIndexPath.section != destinationIndexPath.section {
+            item.subtractItemFromMarketAndSectorCounter()
+            dAry.insert(item, at: destinationIndexPath.row)
+            sAry.remove(at: sourceIndexPath.row)
+            item.sector = dSector
+            item.addOneitemInMarketAndSectorCounter()
+            for i in 0..<sAry.count {
+                if i != sAry[i].getOrderingID(){
+                    sAry[i].setOredringId(setAt: i)
+                }
+            }
+            for i in 0..<dAry.count {
+                if i != dAry[i].getOrderingID(){
+                    dAry[i].setOredringId(setAt: i)
+                }
+            }
+        } else {
+            item.setOredringId(setAt: destinationIndexPath.row)
+            sAry.remove(at: sourceIndexPath.row)
+            sAry.insert(item, at: destinationIndexPath.row)
+            for i in 0..<sAry.count {
+                if i != sAry[i].getOrderingID(){
+                    sAry[i].setOredringId(setAt: i)
+                }
+            }
+        }
+        
+        saveData()
+        loadData()
+        tableView.reloadData()
     }
 }

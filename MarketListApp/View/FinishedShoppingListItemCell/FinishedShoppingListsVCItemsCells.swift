@@ -33,6 +33,6 @@ class FinishedShoppingListsVCItemsCells: UITableViewCell {
     }
     func initViews() {
         selectedBackgroundView = UIView(frame: frame)
-        selectedBackgroundView?.backgroundColor = UIColor(red: 0.161, green: 0.136, blue: 0.127, alpha: 0.1)
+        selectedBackgroundView?.backgroundColor = UIColor.init(named: "selectedCell")
     }
 }

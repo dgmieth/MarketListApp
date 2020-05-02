@@ -19,7 +19,7 @@ class WeeklyShoppingListObjectController {
     //univesarlObjectController
     private var uObjCtrl = UniversalObjectController()
     //bottom price and item quantity labels
-//    private var returnString = [BottomInformationLabelsInWeeklyShoppingItemsVC : String]()
+    //    private var returnString = [BottomInformationLabelsInWeeklyShoppingItemsVC : String]()
     
     private var totalQttyBought = 0.00
     private var totalPriceBought = 0.00
@@ -106,7 +106,7 @@ extension WeeklyShoppingListObjectController {
             let item = ary[indexPath.section].getSector()[itemIndexPath.section].getItem()[itemIndexPath.row]
             let soldBy = uObjCtrl.returnUnitMeasureInString(forNumber: Int(item.getFormOfSale().getUnitMeasure()))
             
-            iCell.namLbl.text = item.getName()
+            iCell.namLbl.text = "\(item.getOrderingID())- \(item.getName())"
             if item.getBrand().hasValue {
                 iCell.information1InfoLbl.text = item.getBrand().Value
                 iCell.information1InfoLbl.font = UIFont(name: "Charter", size: 15)

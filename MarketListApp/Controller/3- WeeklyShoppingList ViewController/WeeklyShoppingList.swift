@@ -101,6 +101,8 @@ extension WeeklyShoppingList{
         return CGFloat(0)
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        tableView.isScrollEnabled = true
+        tableView.allowsSelection = true
         if searchingOn {
             let iCell = tableView.dequeueReusableCell(withIdentifier: "cellForItemInTableViews", for: indexPath) as! CellForItemInTableViews
             iCell.checkMarkBtn.addTarget(self, action: #selector(setItemAsPurchased(sender:)), for: .touchUpInside)
@@ -112,8 +114,9 @@ extension WeeklyShoppingList{
                 let index = objCtrl.returnMarketIndex(inSection: indexPath.section).1
                 if !objCtrl.checkMarketHasItemsInHeaders(inMarketsArray: marketsArray, inSection: index){
                     tableView.separatorStyle = .none
-                    let cellOne = tableView.dequeueReusableCell(withIdentifier: "cellOne", for: indexPath)
-                    return cellOne
+                    tableView.isScrollEnabled = false
+                    tableView.allowsSelection = false
+                    return tableView.dequeueReusableCell(withIdentifier: "cellOne", for: indexPath)
                 } else {
                     tableView.separatorStyle = .singleLine
                     let rowAndSection = objCtrl.returnItemObjIndexPath(inMarketsArray: marketsArray, inSection: index, inRow: indexPath.row)
@@ -136,10 +139,10 @@ extension WeeklyShoppingList{
                             return UITableViewCell()
                         }     }     }     }
         }
-        let cellOne = tableView.dequeueReusableCell(withIdentifier: "cellOne", for: indexPath)
         tableView.separatorStyle = .none
-        return cellOne
-        
+        tableView.isScrollEnabled = false
+        tableView.allowsSelection = false
+        return tableView.dequeueReusableCell(withIdentifier: "cellOne", for: indexPath)
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if searchingOn {
@@ -151,7 +154,7 @@ extension WeeklyShoppingList{
                 return objCtrl.returnHeightForCell(atIndexPath: IndexPath(row: indexPath.row, section: index), usingMarketsArray: marketsArray)
             }
         }
-        return CGFloat(tableView.bounds.height)
+        return CGFloat((tableView.bounds.height-44))
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if searchingOn {
@@ -468,7 +471,7 @@ extension WeeklyShoppingList{
     func initialFunctions(){
         weeklyShoppingListTableView.delegate = self
         weeklyShoppingListTableView.dataSource = self
-        weeklyShoppingListTableView.separatorColor = .black
+        weeklyShoppingListTableView.separatorColor = UIColor.init(named: "textColor")
         weeklyShoppingListTableView.tableFooterView = UIView()
         
         newInformationTxt.delegate = self
@@ -481,13 +484,13 @@ extension WeeklyShoppingList{
         weeklyShoppingListTableView.register(UINib(nibName: "CellForItemInTableViews", bundle: nil), forCellReuseIdentifier: "cellForItemInTableViews")
         
         if let textfield = searchBar.value(forKey: "searchField") as? UITextField {
-            textfield.backgroundColor = UIColor.white
+            textfield.backgroundColor = UIColor.init(named: "tableViewColor")
             textfield.attributedPlaceholder = NSAttributedString(string: textfield.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor : UIColor.black])
-            textfield.textColor = UIColor.black
+            textfield.textColor = UIColor(named: "textColor")
             
             if let leftView = textfield.leftView as? UIImageView {
                 leftView.image = leftView.image?.withRenderingMode(.alwaysTemplate)
-                leftView.tintColor = UIColor.black
+                leftView.tintColor = UIColor(named: "textColor")
             }
         }
     }
@@ -545,9 +548,9 @@ extension WeeklyShoppingList: UISearchBarDelegate{
     }
     func showCanceButton(){
         searchingOn = true
-        searchBar.showsCancelButton = true
+        searchBar.setShowsCancelButton(true, animated: true)
         let cancel = searchBar.value(forKey: "cancelButton") as! UIButton
-        cancel.tintColor = .black
+        cancel.tintColor = UIColor.init(named: "textColor")
         cancel.isEnabled = true
     }
     func endSearchMode(){

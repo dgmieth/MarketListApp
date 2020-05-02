@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 class FinishedShoppingListsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
+    
     var purchasedItemsArrayFSLVC = [PurchasedList]()
     var searchBarArray = [PurchasedItem]()
     var uObjCtrl = UniversalObjectController()
@@ -21,6 +21,7 @@ class FinishedShoppingListsVC: UIViewController, UITableViewDelegate, UITableVie
     @IBOutlet weak var finishedListsTableView: UITableView!
     @IBOutlet weak var searchBarFSLVC: UISearchBar!
     var searchingOn : Bool = false
+    var noItems = false
 }
 //MARK:- VIEW LOADING
 extension FinishedShoppingListsVC{
@@ -32,25 +33,25 @@ extension FinishedShoppingListsVC{
         finishedListsTableView.dataSource = self
         
         finishedListsTableView.separatorStyle = .none
+        finishedListsTableView.separatorColor = UIColor.init(named: "textColor")
         finishedListsTableView.tableFooterView = UIView()
-
+        
         finishedListsTableView.register(UINib(nibName: "FinishedShoppingListsSearchCells", bundle: nil), forCellReuseIdentifier: "FinishedShoppingListsSearchCells")
         finishedListsTableView.register(UINib(nibName: "FinishedShoppingListsVCItemsCells", bundle: nil), forCellReuseIdentifier: "mainCell")
         finishedListsTableView.register(UINib(nibName: "FinishedShoppingListsVCHeaderCellTableViewCell", bundle: nil), forCellReuseIdentifier: "headerCell")
-
+        
         if let textfield = searchBarFSLVC.value(forKey: "searchField") as? UITextField {
-            textfield.backgroundColor = UIColor.white
+            textfield.backgroundColor = UIColor.init(named: "tableViewColor")
             textfield.attributedPlaceholder = NSAttributedString(string: textfield.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor : UIColor.black])
-            textfield.textColor = UIColor.black
-
+            textfield.textColor = UIColor(named: "textColor")
+            
             if let leftView = textfield.leftView as? UIImageView {
                 leftView.image = leftView.image?.withRenderingMode(.alwaysTemplate)
-                leftView.tintColor = UIColor.black
+                leftView.tintColor = UIColor(named: "textColor")
             }
         }
         searchBarFSLVC.delegate = self
         
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.black]
     }
     override func viewWillDisappear(_ animated: Bool) {
         purchasedItemsArrayFSLVC = [PurchasedList]()
@@ -60,9 +61,11 @@ extension FinishedShoppingListsVC{
 //MARK:- TABLEVIEW
 extension FinishedShoppingListsVC {
     func numberOfSections(in tableView: UITableView) -> Int {
+        if noItems { return 1 }
         return searchingOn ? 1 : purchasedItemsArrayFSLVC.count
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if noItems { return UIView() }
         if !searchingOn {
             let items = purchasedItemsArrayFSLVC[section]
             let hCell = tableView.dequeueReusableCell(withIdentifier: "headerCell") as! FinishedShoppingListsVCHeaderCellTableViewCell
@@ -77,18 +80,27 @@ extension FinishedShoppingListsVC {
         
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if noItems { return CGFloat(0) }
         if !searchingOn {
             return purchasedItemsArrayFSLVC[section].isOpened() ? CGFloat(headerCell.hCell) : CGFloat(headerCell.hCell + 10)
         }
         return CGFloat(0)
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if noItems { return 1 }
         if searchingOn {
             return searchBarArray.count
         }
         return purchasedItemsArrayFSLVC[section].isOpened() ? purchasedItemsArrayFSLVC[section].getBoughItems().count : 0
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        tableView.isScrollEnabled = true
+        tableView.allowsSelection = true
+        if noItems {
+            tableView.isScrollEnabled = false
+            tableView.allowsSelection = false
+            return tableView.dequeueReusableCell(withIdentifier: "finishedListsCell", for: indexPath)
+        }
         if searchingOn {
             tableView.separatorStyle = .singleLine
             let item = searchBarArray[indexPath.row]
@@ -165,6 +177,9 @@ extension FinishedShoppingListsVC {
         
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if noItems {
+            return CGFloat((tableView.bounds.height - 44))
+        }
         if searchingOn {
             return searchCell.hCell
         }
@@ -182,7 +197,7 @@ extension FinishedShoppingListsVC{
             finishedListsTableView.separatorStyle = .none
         } else {
             purchasedItemsArrayFSLVC[sender.tag].openSubcell()
-            finishedListsTableView.separatorColor = .black
+            finishedListsTableView.separatorColor = UIColor.init(named: "textColor")
             finishedListsTableView.separatorStyle = .singleLine
         }
         finishedListsTableView.reloadData()
@@ -194,7 +209,11 @@ extension FinishedShoppingListsVC{
         let fetchRequest = NSFetchRequest<PurchasedList>(entityName: "PurchasedList")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "boughDate", ascending: false)]
         if let results = try? dataController.viewContext.fetch(fetchRequest){
-            purchasedItemsArrayFSLVC = results
+            if results.count == 0 {
+                noItems = true
+            } else {
+                purchasedItemsArrayFSLVC = results
+            }
         }
         let fetchRequest1 = NSFetchRequest<PurchasedItem>(entityName: "PurchasedItem")
         fetchRequest1.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true), NSSortDescriptor(key: "purchasedList.boughDate", ascending: false)]
@@ -209,7 +228,7 @@ extension FinishedShoppingListsVC{
 }
 //MARK:- SEARCH BAR
 extension FinishedShoppingListsVC: UISearchBarDelegate{
-   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         showCanceButton()
         loadData()
         if searchText.isEmpty {
@@ -234,9 +253,9 @@ extension FinishedShoppingListsVC: UISearchBarDelegate{
     }
     func showCanceButton(){
         searchingOn = true
-        searchBarFSLVC.showsCancelButton = true
+        searchBarFSLVC.setShowsCancelButton(true, animated: true)
         let cancel = searchBarFSLVC.value(forKey: "cancelButton") as! UIButton
-        cancel.tintColor = .black
+        cancel.tintColor = UIColor.init(named: "textColor")
         cancel.isEnabled = true
     }
     func endSearchMode(){

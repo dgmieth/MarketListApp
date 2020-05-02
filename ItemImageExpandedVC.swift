@@ -10,7 +10,7 @@ import UIKit
 
 class ItemImageExpandedVC: UIViewController {
     var selectedCellImage = UIImage()
-
+    
     @IBOutlet weak var itemImageExpanded: UIImageView!
     
     override func viewDidLoad() {

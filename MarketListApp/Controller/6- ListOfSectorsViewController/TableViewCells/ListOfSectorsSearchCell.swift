@@ -12,7 +12,6 @@ class ListOfSectorsSearchCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         initViews()
-        
     }
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -20,6 +19,6 @@ class ListOfSectorsSearchCell: UITableViewCell {
     }
     func initViews() {
         selectedBackgroundView = UIView(frame: frame)
-        selectedBackgroundView?.backgroundColor = UIColor(red: 0.161, green: 0.136, blue: 0.127, alpha: 0.1)
+        selectedBackgroundView?.backgroundColor = UIColor.init(named: "selectedCell")
     }
 }

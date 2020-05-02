@@ -69,6 +69,7 @@ extension NewItemVC{
         return returnNumberOfRowsForComponent(inPicker: pickerView)
     }
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        pickerView.tintColor = UIColor.init(named: "textColor")
         if pickerView.tag == 1 {
             return retunrViewForRow(inPicker: pickerView, atRow: row, usingTextFromAry: marketsArray)
         } else if pickerView.tag == 2 {
@@ -130,7 +131,7 @@ extension NewItemVC {
     func lblForPickerRows(forPkrRow row : RowForPickerInNewItemVC, inPkr pkr: UIPickerView, withText text: String, atRow rowPkr3 : Int = 0) -> UILabel {
         let genericLbl = UILabel()
         genericLbl.textAlignment = .center
-        genericLbl.textColor = .black
+        genericLbl.textColor = UIColor.init(named: "textColor")
         genericLbl.font = UIFont(name: "Charter-Italic", size: fontSizePkrView)
         switch row {
         case .first:
@@ -223,8 +224,8 @@ extension NewItemVC {
             }  else if pickerTag == 2 {
                 let newSector = Sector(context: dataController.viewContext)
                 newSector.name = newMarketAndNewSectorTextField.text!
-                newSector.market = marketsArray[chosenMarketIndex]
                 newSector.setOredringId(setAt: marketsArray[chosenMarketIndex].getSector().count)
+                newSector.market = marketsArray[chosenMarketIndex]
                 saveModel()
                 sectorsArray = marketsArray[chosenMarketIndex].getSector()
                 reloadPicker(informMarketOrPicker: "sector")
@@ -241,8 +242,8 @@ extension NewItemVC {
         if returnCanSaveItem().canSave {
             let ary = returnCanSaveItem().ary
             let newItem = Item(context: dataController.viewContext)
-            newItem.sector = marketsArray[chosenMarketIndex].getSector()[chosenSectorIndex]
             newItem.setOredringId(setAt: marketsArray[chosenMarketIndex].getSector()[chosenSectorIndex].getItem().count)
+            newItem.sector = marketsArray[chosenMarketIndex].getSector()[chosenSectorIndex]
             newItem.setName(itsNameIs: ary[.name]!.value)
             newItem.brand = ary[.brand]!.hasValue ? ary[.brand]!.value : ""
             let newFormOfSale = FormOfSale(context: dataController.viewContext)
@@ -305,11 +306,9 @@ extension NewItemVC{
         } else if !results[.sector]!.hasValue {
             alertForEmptyNecessaryTextFields(title: "Setor não selecionado", message: "Selecione o setor")
             return (false, results)
-        } else if formOfSalePicker.selectedRow(inComponent: 0) == 1 {
-            if !results[.avgWeight]!.hasValue {
-                alertForEmptyNecessaryTextFields(title: "Item sem peso médio", message: "Informe o peso médio por unidade")
-                return (false, results)
-            }
+        } else if formOfSalePicker.selectedRow(inComponent: 0) == 1 && !results[.avgWeight]!.hasValue {
+            alertForEmptyNecessaryTextFields(title: "Item sem peso médio", message: "Informe o peso médio por unidade")
+            return (false, results)
         } else if !results[.price]!.hasValue {
             alertForEmptyNecessaryTextFields(title: "Item sem preço", message: "Informe o preço do item")
             return (false, results)
@@ -589,7 +588,6 @@ extension NewItemVC{
     //updating lable for creating new market/sector
     func textForPopUpWindowNewMarketSector(withText text: String) {
         newMarketandNewSectorLabel.text = "Informe o nome do \(text)"
-        newMarketandNewSectorLabel.textColor = .black
         newMarketandNewSectorLabel.font = UIFont(name: "Charter-Bold", size: 20)
         newMarketAndNewSectorTextField.textAlignment = .center
     }

@@ -42,6 +42,9 @@ extension Market {
             self.hasItems = false
         }
     }
+    func addSubctractItems(qttyToAddOrSubctract value: Int){
+        self.qttOfItems = self.qttOfItems + Int16(value)
+    }
     func getQttOfItems()-> Int{
         return Int(self.qttOfItems)
     }

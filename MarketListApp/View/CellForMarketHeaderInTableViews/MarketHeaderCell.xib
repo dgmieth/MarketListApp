@@ -2,7 +2,8 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -21,7 +22,7 @@
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="crd-Ec-RS5">
                                 <rect key="frame" x="0.0" y="27" width="314" height="1"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" name="textColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="mpR-i4-ZdQ"/>
                                 </constraints>
@@ -32,15 +33,15 @@
                                     <constraint firstAttribute="height" constant="30" id="gXt-i3-3DP"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Charter-Bold" family="Charter" pointSize="25"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="textColor" name="textColor"/>
                                 <nil key="highlightedColor"/>
-                                <color key="shadowColor" red="0.69019607843137254" green="0.74509803921568629" blue="0.77254901960784317" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="shadowColor" name="grayBackgroundView"/>
                                 <size key="shadowOffset" width="1" height="1"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 item(s)" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xy7-7V-qMj" userLabel="itemsQttLbl">
                                 <rect key="frame" x="317" y="7" width="54" height="16"/>
                                 <fontDescription key="fontDescription" name="Charter-BoldItalic" family="Charter" pointSize="13"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="textColor" name="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
@@ -57,7 +58,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="30"/>
                     </button>
                 </subviews>
-                <color key="backgroundColor" red="0.0" green="0.75686274509803919" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="pwF-6Q-Zoz" secondAttribute="trailing" id="6ir-aR-TZs"/>
                     <constraint firstAttribute="bottom" secondItem="pwF-6Q-Zoz" secondAttribute="bottom" id="DZm-tW-GTI"/>
@@ -71,6 +71,7 @@
                     <constraint firstItem="qnS-Yc-a59" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="xTf-fM-Mcp"/>
                 </constraints>
             </tableViewCellContentView>
+            <color key="backgroundColor" name="blueMainTheme"/>
             <constraints>
                 <constraint firstItem="UkM-7r-MIN" firstAttribute="centerY" secondItem="njF-e1-oar" secondAttribute="centerY" id="Ouc-Yx-tyI"/>
             </constraints>
@@ -83,4 +84,15 @@
             <point key="canvasLocation" x="138.40579710144928" y="109.82142857142857"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <namedColor name="blueMainTheme">
+            <color red="0.0" green="0.68999999761581421" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="grayBackgroundView">
+            <color red="0.94099998474121094" green="0.94099998474121094" blue="0.96899998188018799" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="textColor">
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+        </namedColor>
+    </resources>
 </document>
