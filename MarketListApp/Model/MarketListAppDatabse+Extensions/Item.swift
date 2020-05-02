@@ -57,26 +57,47 @@ extension Item {
     func getPurchase() -> Bool {
         return self.purchased
     }
-    func setPurchaseHistory(withText txt: [String]){
-        if var counter = self.purchasingHistory {
+    func setPurchaseHistoryString(withText txt: [String]){
+        if var counter = self.purchasingHistoryString {
             counter.append(txt)
-            self.purchasingHistory = counter
+            self.purchasingHistoryString = counter
         } else {
             let counter = [txt]
-            self.purchasingHistory = counter
+            self.purchasingHistoryString = counter
         }
     }
-    func getPurchaseHistory() -> [[String]]{
+    func getPurchaseHistoryString() -> [[String]]{
         let length = Int(self.purchasedArrayLength)
-        if let aryLength = self.purchasingHistory {
+        if let aryLength = self.purchasingHistoryString {
             if aryLength.count == length {
-                self.purchasingHistory!.remove(at: length - 1)
-                return self.purchasingHistory!
+                self.purchasingHistoryString!.remove(at: length - 1)
+                return self.purchasingHistoryString!
             } else {
-                return self.purchasingHistory!
+                return self.purchasingHistoryString!
             }
         }
         return [[String]]()
+    }
+    func setPurchaseHistoryDouble(withText txt: [Double]){
+        if var counter = self.purchasingHistoryDouble {
+            counter.append(txt)
+            self.purchasingHistoryDouble = counter
+        } else {
+            let counter = [txt]
+            self.purchasingHistoryDouble = counter
+        }
+    }
+    func getPurchaseHistoryDouble() -> [[Double]]{
+        let length = Int(self.purchasedArrayLength)
+        if let aryLength = self.purchasingHistoryDouble {
+            if aryLength.count == length {
+                self.purchasingHistoryDouble!.remove(at: length - 1)
+                return self.purchasingHistoryDouble!
+            } else {
+                return self.purchasingHistoryDouble!
+            }
+        }
+        return [[Double]]()
     }
     func setItemInformation(information info : String?){
         self.information = info

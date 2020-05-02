@@ -373,20 +373,22 @@ extension WeeklyShoppingListObjectController{
                             hItem.setMarket(market: item.sector!.market!.getName())
                             hItem.setTotalAmmount(value: item.getFormOfSale().getFinalQuantityPrice())
                             var array = [String]()
+                            var dArray = [Double]()
                             array.append(uObjCtrl.currentSystemDate())
                             let soldBy = item.getFormOfSale()
                             switch soldBy.getUnitMeasureNoRawValue() {
                             case .kilogram, .liter:
-                                array.append("\(soldBy.getItemPriceDoubleToString())")
-                                array.append("\(soldBy.getItemQtty())")
                                 array.append(uObjCtrl.returnUnitMeasureInString(forNumber: soldBy.getUnitMeasure()))
+                                dArray.append(soldBy.getItemQtty())
+                                dArray.append(soldBy.getItemPriceDouble())
                             default:
-                                array.append("\(soldBy.getItemPriceDoubleToString())")
-                                array.append("\(Int(soldBy.getItemQtty()))")
                                 array.append(uObjCtrl.returnUnitMeasureInString(forNumber: soldBy.getUnitMeasure()))
+                                dArray.append(soldBy.getItemQtty())
+                                dArray.append(soldBy.getItemPriceDouble())
                             }
-                            array.append("\(uObjCtrl.currencyDoubleToString(usingNumber: soldBy.getFinalQuantityPrice()))")
-                            item.setPurchaseHistory(withText: array)
+                            dArray.append( soldBy.getFinalQuantityPrice())
+                            item.setPurchaseHistoryString(withText: array)
+                            item.setPurchaseHistoryDouble(withText: dArray)
                             hItem.purchasedList = purchasedItems
                             item.setAddToBuyList(changeBoolValue: false)
                             item.setIsAlreadyPurchased(value: false)
